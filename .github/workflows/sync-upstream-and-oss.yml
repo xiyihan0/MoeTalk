@@ -185,4 +185,4 @@ jobs:
             destination="oss://${OSS_BUCKET}/${OSS_PREFIX%/}/"
           fi
 
-          ossutil sync publish/ "${destination}" --delete
+          ossutil sync publish/ "${destination}" --delete --force --no-progress
