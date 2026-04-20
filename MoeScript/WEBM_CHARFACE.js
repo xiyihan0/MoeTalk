@@ -6,6 +6,7 @@
 	const BLANK_IMAGE = "data:image/gif;base64,R0lGODlhAQABAAAAACwAAAAAAQABAAA=";
 	const imageSrcDescriptor = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype,"src");
 	const originalSetAttribute = Element.prototype.setAttribute;
+	const originalFetch = typeof window.fetch === "function" ? window.fetch.bind(window) : null;
 	const state = {
 		manifest: null,
 		manifestPromise: null,
@@ -14,7 +15,8 @@
 		fallbacks: new Set(),
 		observer: null,
 		manifestWarned: false,
-		srcPatched: false
+		srcPatched: false,
+		fetchPatched: false
 	};
 
 	const api = {
@@ -34,6 +36,7 @@
 	if(!api.enabled)return;
 
 	patchImageSourceHooks();
+	patchFetchHook();
 
 	if(document.readyState === "loading")
 	{
@@ -79,7 +82,7 @@
 				const manifestUrl = manifestUrls[i];
 				try
 				{
-					const response = await fetch(manifestUrl,
+					const response = await originalFetch(manifestUrl,
 					{
 						cache: "no-store"
 					});
@@ -238,6 +241,63 @@
 		};
 
 		state.srcPatched = true;
+	}
+
+	function patchFetchHook()
+	{
+		if(state.fetchPatched || !originalFetch)return;
+
+		window.fetch = async function(input,init)
+		{
+			const requestMethod = getFetchMethod(input,init);
+			if(requestMethod && requestMethod !== "GET")return originalFetch(input,init);
+
+			const source = getFetchSource(input);
+			const normalized = normalizeSource(source);
+			if(!normalized)return originalFetch(input,init);
+
+			const dataUrl = await getFrameDataUrl(source);
+			if(!dataUrl)return originalFetch(input,init);
+
+			syncFallbackCache(normalized,dataUrl);
+			return createFetchResponse(dataUrl, normalized);
+		};
+
+		state.fetchPatched = true;
+	}
+
+	function getFetchMethod(input,init)
+	{
+		const method = init && init.method || input && input.method || "GET";
+		return String(method).toUpperCase();
+	}
+
+	function getFetchSource(input)
+	{
+		if(!input)return null;
+		if(typeof Request !== "undefined" && input instanceof Request)return input.url;
+		if(typeof URL !== "undefined" && input instanceof URL)return input.href;
+		return String(input);
+	}
+
+	async function createFetchResponse(dataUrl,source)
+	{
+		const response = await originalFetch(dataUrl);
+		if(!response.ok)return response;
+
+		const blob = await response.blob();
+		return new Response(blob,
+		{
+			status: 200,
+			statusText: "OK",
+			headers:
+			{
+				"Content-Type": blob.type || "image/png",
+				"Cache-Control": "public, max-age=31536000, immutable",
+				"X-MT-WebM-CharFace": "1",
+				"X-MT-WebM-CharFace-Source": source
+			}
+		});
 	}
 
 	async function resolveFrameInfo(source)
