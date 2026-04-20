@@ -6091,7 +6091,11 @@
 								{
 									children: [(0, O.jsx)('div',
 									{
-										onClick: function(e){location.reload(true)},
+										onClick: function(e)
+										{
+											if(本地)location.reload(true)
+											else location.href = href || '/'
+										},
 										children: (0, O.jsx)(V,
 										{
 											children: (0, O.jsx)(W,

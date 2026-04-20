@@ -1,5 +1,6 @@
 /*@ServiceWorker.js@*/
 let cacheName = '缓存';
+let webmCharFaceFallbackCache = 'webm-charface-fallback-v1';
 
 // 预缓存文件列表
 const cacheList = []
@@ -35,17 +36,60 @@ self.addEventListener('activate', event => {
 	);
 });
 
+self.addEventListener('message', event => {
+	const data = event.data || {}
+	if(data.type !== 'MT_WEBM_CHARFACE_CACHE_PUT' || !data.url || !data.dataUrl)return
+	event.waitUntil((async() =>
+	{
+		const response = await fetch(data.dataUrl)
+		if(!response.ok)return
+		const blob = await response.blob()
+		const cache = await caches.open(webmCharFaceFallbackCache)
+		await cache.put(data.url, new Response(blob,
+		{
+			headers:
+			{
+				'Content-Type': blob.type || 'image/png',
+				'Cache-Control': 'public, max-age=31536000, immutable',
+				'X-MT-WebM-CharFace': '1'
+			}
+		}))
+	})())
+})
+
 // 3. 拦截请求
 this.addEventListener('fetch', event =>
 {
 	const pattern = /\/$|html|php/ig// 排除HTML和PHP
 	const request = event.request;
+	const url = new URL(request.url)
 	// 拦截非GET请求、非HTTP开头和流式下载请求
 	if(request.method !== 'GET' || !request.url.startsWith('http') || request.url.includes('/streamsaver/'))return;
-	event.respondWith(caches.match(request).then(res =>
+	if(isWebmCharFaceRequest(url))
+	{
+		event.respondWith((async() =>
+		{
+			const fallbackCache = await caches.open(webmCharFaceFallbackCache)
+			const fallbackRes = await fallbackCache.match(request, {ignoreSearch: true})
+			if(fallbackRes)return fallbackRes
+			return fetchWithPrimaryCache(request,pattern)
+		})())
+		return
+	}
+	event.respondWith(fetchWithPrimaryCache(request,pattern))
+})
+
+function isWebmCharFaceRequest(url)
+{
+	return /\/GameData\/.+\/CharFace\/.+\.webp$/i.test(url.pathname)
+}
+
+function fetchWithPrimaryCache(request,pattern)
+{
+	return caches.match(request).then(res =>
 	{
 		if(res)return res// 匹配到缓存直接返回
-		const requestClone = event.request.clone()// 复制请求头
+		const requestClone = request.clone()// 复制请求头
 		// return fetch(requestClone).then(new_res => new_res)// 直接请求，并返回
 		return fetch(requestClone).then(new_res =>// 直接请求，缓存后返回
 		{
@@ -55,5 +99,5 @@ this.addEventListener('fetch', event =>
 			if(!pattern.test(new_res.url))caches.open(cacheName).then(cache => cache && cache.put(requestClone, responseClone))// 进行缓存
 			return new_res
 		})
-	}))
-})
+	})
+}

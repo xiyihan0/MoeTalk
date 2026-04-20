@@ -47,7 +47,18 @@ jobs:
           rsync -a --delete \
             --exclude '.git/' \
             --exclude '.github/' \
+            --exclude '.codex-arona-decoded/' \
+            --exclude '.codex-arona-frames/' \
+            --exclude '.codex-arona-natural-decoded/' \
+            --exclude '.codex-arona-natural-src/' \
+            --exclude '.codex-webm-out/' \
+            --exclude '.codex-webm-scratch/' \
+            --exclude '.codex-arona-first-libvpx.png' \
+            --exclude '.codex-arona-natural.webm' \
+            --exclude 'webm-charface-assets/dirs.csv' \
+            --exclude 'webm-charface-assets/results.csv' \
             --exclude 'publish-pages/' \
+            --filter='- GameData/**/CharFace/***' \
             ./ publish-pages/
 
           touch publish-pages/.nojekyll
