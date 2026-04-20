@@ -24,6 +24,7 @@
 		fps: 10,
 		getManifestUrls,
 		loadManifest,
+		getKnownFrames,
 		getFrameDataUrl,
 		applyToImage,
 		scanNode,
@@ -112,7 +113,7 @@
 		return state.manifestPromise;
 	}
 
-	function normalizeSource(source)
+	function normalizeDirectorySource(source)
 	{
 		if(!source)return null;
 		let raw = String(source);
@@ -120,7 +121,7 @@
 		if(matchIndex < 0)return null;
 		let normalized = raw.slice(matchIndex).split("?")[0].split("#")[0].replaceAll("\\","/");
 		if(!normalized.includes("/CharFace/"))return null;
-		if(!normalized.toLowerCase().endsWith(".webp"))return null;
+		if(normalized.endsWith("/"))normalized = normalized.slice(0,-1);
 		try
 		{
 			normalized = decodeURIComponent(normalized);
@@ -130,6 +131,68 @@
 			// keep raw value when decodeURIComponent fails
 		}
 		return normalized;
+	}
+
+	function normalizeSource(source)
+	{
+		let normalized = normalizeDirectorySource(source);
+		if(!normalized)return null;
+		if(!normalized.toLowerCase().endsWith(".webp"))return null;
+		return normalized;
+	}
+
+	function getKnownFrames(source)
+	{
+		const manifest = state.manifest;
+		const dirKey = normalizeDirectorySource(source);
+		if(!manifest || !dirKey)return null;
+		const dirInfo = manifest.dirs && manifest.dirs[dirKey];
+		if(!dirInfo || !Array.isArray(dirInfo.frames) || !dirInfo.frames.length)return null;
+		return dirInfo.frames.slice();
+	}
+
+	function getFrameInfoFromManifest(source)
+	{
+		const manifest = state.manifest;
+		const normalized = normalizeSource(source);
+		if(!manifest || !normalized)return null;
+
+		const lastSlash = normalized.lastIndexOf("/");
+		if(lastSlash < 0)return null;
+		const dirKey = normalized.slice(0,lastSlash);
+		const frameName = normalized.slice(lastSlash + 1).replace(/\.webp$/i,"");
+		const dirInfo = manifest.dirs && manifest.dirs[dirKey];
+		if(!dirInfo || !Array.isArray(dirInfo.frames) || !dirInfo.frames.length)
+		{
+			return {
+				normalized: normalized,
+				missing: true
+			};
+		}
+
+		if(!dirInfo._frameMap)
+		{
+			dirInfo._frameMap = {};
+			for(let i = 0,l = dirInfo.frames.length;i < l;i++)
+			{
+				dirInfo._frameMap[dirInfo.frames[i]] = i;
+			}
+		}
+
+		if(dirInfo._frameMap[frameName] === undefined)
+		{
+			return {
+				normalized: normalized,
+				missing: true
+			};
+		}
+
+		return {
+			normalized: normalized,
+			missing: false,
+			frameIndex: dirInfo._frameMap[frameName],
+			videoUrl: resolveVideoUrl(dirInfo.video)
+		};
 	}
 
 	function setImageSourceDirect(image,source)
@@ -164,6 +227,15 @@
 	{
 		const normalized = normalizeSource(source);
 		if(!normalized)return false;
+		if(image.dataset.webmCharfaceState === "fallback" && image.dataset.webmCharfaceSource === normalized)return false;
+		const frameInfo = getFrameInfoFromManifest(source);
+		if(frameInfo && frameInfo.missing)
+		{
+			image.dataset.webmOriginalSrc = source;
+			image.dataset.webmCharfaceSource = normalized;
+			image.dataset.webmCharfaceState = "fallback";
+			return false;
+		}
 
 		const requestId = String((parseInt(image.dataset.webmRequestId || "0",10) || 0) + 1);
 		image.dataset.webmRequestId = requestId;
@@ -303,30 +375,12 @@
 	async function resolveFrameInfo(source)
 	{
 		const manifest = await loadManifest();
-		const normalized = normalizeSource(source);
-		if(!manifest || !normalized)return null;
-
-		const lastSlash = normalized.lastIndexOf("/");
-		if(lastSlash < 0)return null;
-		const dirKey = normalized.slice(0,lastSlash);
-		const frameName = normalized.slice(lastSlash + 1).replace(/\.webp$/i,"");
-		const dirInfo = manifest.dirs && manifest.dirs[dirKey];
-		if(!dirInfo || !dirInfo.frames || !dirInfo.frames.length)return null;
-
-		if(!dirInfo._frameMap)
-		{
-			dirInfo._frameMap = {};
-			for(let i = 0,l = dirInfo.frames.length;i < l;i++)
-			{
-				dirInfo._frameMap[dirInfo.frames[i]] = i;
-			}
-		}
-
-		if(dirInfo._frameMap[frameName] === undefined)return null;
-
+		if(!manifest)return null;
+		const frameInfo = getFrameInfoFromManifest(source);
+		if(!frameInfo || frameInfo.missing)return null;
 		return {
-			frameIndex: dirInfo._frameMap[frameName],
-			videoUrl: resolveVideoUrl(dirInfo.video)
+			frameIndex: frameInfo.frameIndex,
+			videoUrl: frameInfo.videoUrl
 		};
 	}
 
@@ -525,8 +579,17 @@
 		const originalSource = image.dataset.webmOriginalSrc || image.getAttribute("src") || image.currentSrc || image.src;
 		const normalized = normalizeSource(originalSource);
 		if(!normalized)return;
+		const frameInfo = getFrameInfoFromManifest(originalSource);
+		if(frameInfo && frameInfo.missing)
+		{
+			image.dataset.webmOriginalSrc = originalSource;
+			image.dataset.webmCharfaceSource = normalized;
+			image.dataset.webmCharfaceState = "fallback";
+			return;
+		}
 		if(image.dataset.webmCharfaceState === "processing" && image.dataset.webmCharfaceSource === normalized)return;
 		if(image.dataset.webmCharfaceState === "done" && image.dataset.webmCharfaceSource === normalized)return;
+		if(image.dataset.webmCharfaceState === "fallback" && image.dataset.webmCharfaceSource === normalized)return;
 		queueImageReplacement(image,originalSource,false);
 	}
 
@@ -554,6 +617,19 @@
 			if(target)
 			{
 				const originalSource = target.dataset && target.dataset.webmOriginalSrc ? target.dataset.webmOriginalSrc : target.getAttribute && target.getAttribute("src") || target.src;
+				const normalized = normalizeSource(originalSource);
+				const frameInfo = getFrameInfoFromManifest(originalSource);
+				if(frameInfo && frameInfo.missing)
+				{
+					target.dataset.webmOriginalSrc = originalSource;
+					target.dataset.webmCharfaceSource = normalized || "";
+					target.dataset.webmCharfaceState = "fallback";
+					return original.apply(this,arguments);
+				}
+				if(normalized && target.dataset && target.dataset.webmCharfaceState === "fallback" && target.dataset.webmCharfaceSource === normalized)
+				{
+					return original.apply(this,arguments);
+				}
 				const dataUrl = await getFrameDataUrl(originalSource);
 				if(dataUrl)
 				{
@@ -574,6 +650,10 @@
 	function start()
 	{
 		patchImageError();
+		loadManifest().catch(function()
+		{
+			return null;
+		});
 		scanNode(document.documentElement);
 
 		state.observer = new MutationObserver(function(records)

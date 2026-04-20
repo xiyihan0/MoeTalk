@@ -58,6 +58,30 @@ $('body').on('click',".INDEX_Emoji",function()
 	}
 	else setTimeout(function(){$('.INDEX_EmojiButton').click()})
 })
+function 过滤差分帧(images,path)
+{
+	if(!Array.isArray(images) || !images.length || !path)return images
+	let api = window.MoeTalkWebMCharFace
+	if(!api || typeof api.getKnownFrames !== 'function')return images
+	let frameCache = {}
+	return images.filter(function(item)
+	{
+		if(item === 'ADD')return true
+		let source = String(item)
+		let pos = source.lastIndexOf('/')
+		if(pos < 0)return true
+		let dir = source.slice(0,pos+1)
+		if(frameCache[dir] === undefined)
+		{
+			let frames = api.getKnownFrames(path+dir)
+			frameCache[dir] = frames && frames.length ? new Set(frames.map(function(v){return String(v)})) : false
+		}
+		let frameSet = frameCache[dir]
+		if(!frameSet)return true
+		let frame = source.slice(pos+1)
+		return frameSet.has(frame)
+	})
+}
 function mt_emojis(S,mode)
 {
 	EMOJI.images = []//表情列表
@@ -203,6 +227,7 @@ function mt_emojis(S,mode)
 	{
 		if(['QNZL','YGST'].includes(mt_settings['选择游戏']))EMOJI.custom.title = ''
 	}
+	if(mode === 'CharFace' && !EMOJI.custom.io)EMOJI.images = 过滤差分帧(EMOJI.images,EMOJI.path)
 
 	let str = toString(EMOJI.images[0])
 	if(str.includes('_REPAIR'))EMOJI.title += `(${EMOJI.images.length}修复)`
