@@ -1,0 +1,19 @@
+{
+  // ESA Pages 项目名。
+  // 如果控制台里已经有同名项目，就会部署到那个项目上。
+  "name": "MoeTalk",
+
+  // 这是纯静态站点，跳过安装和构建步骤。
+  "installCommand": "",
+  "buildCommand": "",
+
+  "assets": {
+    // 直接托管仓库根目录下的静态文件。
+    // 现在的 index.html / setting.html / capture.html 和资源目录都在这里。
+    "directory": "./",
+
+    // 像 /Moedata 这种没有实际文件、但需要回到入口页的导航请求，
+    // 由 ESA 返回 /index.html。
+    "notFoundStrategy": "singlePageApplication"
+  }
+}
