@@ -527,7 +527,11 @@
 		await entry.readyPromise;
 		const fps = frameIndex && frameIndex.fps ? frameIndex.fps : api.fps || 10;
 		const frameNumber = typeof frameIndex === "object" ? frameIndex.frameIndex : frameIndex;
-		const seekTime = frameNumber <= 0 ? 0 : frameNumber / fps + 0.00001;
+		// Some mobile browsers can report loaded first-frame video at t=0 but still
+		// paint an empty frame to canvas. Nudging the seek slightly forward keeps us
+		// within frame 0 while making first-frame extraction much more reliable.
+		const frameEpsilon = Math.min(0.001, 1 / Math.max(fps,1) / 4);
+		const seekTime = frameNumber <= 0 ? frameEpsilon : frameNumber / fps + frameEpsilon;
 		await new Promise(function(resolve,reject)
 		{
 			let timeoutId = 0;
