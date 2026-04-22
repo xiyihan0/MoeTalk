@@ -61,7 +61,7 @@ $('body').on('click',".INDEX_Emoji",function()
 function 过滤差分帧(images,path)
 {
 	if(!Array.isArray(images) || !images.length || !path)return images
-	let api = window.MoeTalkWebMCharFace
+	let api = window.MoeTalkHevcCharFace
 	if(!api || typeof api.getKnownFrames !== 'function')return images
 	let frameCache = {}
 	return images.filter(function(item)

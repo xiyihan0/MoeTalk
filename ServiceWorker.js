@@ -1,6 +1,6 @@
 /*@ServiceWorker.js@*/
 let cacheName = '缓存';
-let webmCharFaceFallbackCache = 'webm-charface-fallback-v1';
+let hevcCharFaceFallbackCache = 'hevc-charface-fallback-v1';
 
 // 预缓存文件列表
 const cacheList = []
@@ -38,20 +38,20 @@ self.addEventListener('activate', event => {
 
 self.addEventListener('message', event => {
 	const data = event.data || {}
-	if(data.type !== 'MT_WEBM_CHARFACE_CACHE_PUT' || !data.url || !data.dataUrl)return
+	if(data.type !== 'MT_HEVC_CHARFACE_CACHE_PUT' || !data.url || !data.dataUrl)return
 	event.waitUntil((async() =>
 	{
 		const response = await fetch(data.dataUrl)
 		if(!response.ok)return
 		const blob = await response.blob()
-		const cache = await caches.open(webmCharFaceFallbackCache)
+		const cache = await caches.open(hevcCharFaceFallbackCache)
 		await cache.put(data.url, new Response(blob,
 		{
 			headers:
 			{
 				'Content-Type': blob.type || 'image/png',
 				'Cache-Control': 'public, max-age=31536000, immutable',
-				'X-MT-WebM-CharFace': '1'
+				'X-MT-Hevc-CharFace': '1'
 			}
 		}))
 	})())
@@ -65,11 +65,11 @@ this.addEventListener('fetch', event =>
 	const url = new URL(request.url)
 	// 拦截非GET请求、非HTTP开头和流式下载请求
 	if(request.method !== 'GET' || !request.url.startsWith('http') || request.url.includes('/streamsaver/'))return;
-	if(isWebmCharFaceRequest(url))
+	if(isHevcCharFaceRequest(url))
 	{
 		event.respondWith((async() =>
 		{
-			const fallbackCache = await caches.open(webmCharFaceFallbackCache)
+			const fallbackCache = await caches.open(hevcCharFaceFallbackCache)
 			const fallbackRes = await fallbackCache.match(request, {ignoreSearch: true})
 			if(fallbackRes)return fallbackRes
 			return fetchWithPrimaryCache(request,pattern)
@@ -79,7 +79,7 @@ this.addEventListener('fetch', event =>
 	event.respondWith(fetchWithPrimaryCache(request,pattern))
 })
 
-function isWebmCharFaceRequest(url)
+function isHevcCharFaceRequest(url)
 {
 	return /\/GameData\/.+\/CharFace\/.+\.webp$/i.test(url.pathname)
 }
