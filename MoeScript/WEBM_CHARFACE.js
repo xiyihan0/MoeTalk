@@ -9,9 +9,11 @@
 	const originalFetch = typeof window.fetch === "function" ? window.fetch.bind(window) : null;
 	const state = {
 		manifest: null,
+		manifests: [],
 		manifestPromise: null,
 		assetRoot: null,
 		videos: new Map(),
+		failedVideos: new Set(),
 		fallbacks: new Set(),
 		observer: null,
 		manifestWarned: false,
@@ -52,6 +54,7 @@
 		if(configured)return [configured];
 
 		const candidates = [
+			"hevc-charface-assets-whitebg/manifest.json",
 			"webm-charface-assets/manifest.json"
 		];
 		const urls = [];
@@ -71,12 +74,13 @@
 
 	async function loadManifest()
 	{
-		if(state.manifest)return state.manifest;
+		if(state.manifests.length)return state.manifests;
 		if(state.manifestPromise)return state.manifestPromise;
 
 		state.manifestPromise = (async function()
 		{
 			let lastError = null;
+			const loadedManifests = [];
 			const manifestUrls = getManifestUrls();
 			for(let i = 0,l = manifestUrls.length;i < l;i++)
 			{
@@ -89,15 +93,25 @@
 					});
 					if(!response.ok)throw new Error("Manifest request failed: " + response.status + " @ " + manifestUrl);
 					const manifest = await response.json();
-					state.manifest = manifest;
-					state.assetRoot = new URL("./", manifestUrl).href;
-					api.fps = manifest.framerate || api.fps;
-					return manifest;
+					loadedManifests.push({
+						manifest,
+						manifestUrl,
+						assetRoot: new URL("./", manifestUrl).href
+					});
 				}
 				catch(error)
 				{
 					lastError = error;
 				}
+			}
+
+			if(loadedManifests.length)
+			{
+				state.manifests = loadedManifests;
+				state.manifest = loadedManifests[0].manifest;
+				state.assetRoot = loadedManifests[0].assetRoot;
+				api.fps = loadedManifests[0].manifest.framerate || api.fps;
+				return loadedManifests;
 			}
 
 			if(!state.manifestWarned)
@@ -106,8 +120,9 @@
 				console.warn("[WEBM_CHARFACE] manifest unavailable", lastError);
 			}
 			state.manifest = null;
+			state.manifests = [];
 			state.assetRoot = null;
-			return null;
+			return [];
 		})();
 
 		return state.manifestPromise;
@@ -143,55 +158,71 @@
 
 	function getKnownFrames(source)
 	{
-		const manifest = state.manifest;
 		const dirKey = normalizeDirectorySource(source);
-		if(!manifest || !dirKey)return null;
-		const dirInfo = manifest.dirs && manifest.dirs[dirKey];
-		if(!dirInfo || !Array.isArray(dirInfo.frames) || !dirInfo.frames.length)return null;
-		return dirInfo.frames.slice();
+		if(!dirKey || !state.manifests.length)return null;
+		for(let i = 0,l = state.manifests.length;i < l;i++)
+		{
+			const manifestEntry = state.manifests[i];
+			const dirInfo = manifestEntry.manifest.dirs && manifestEntry.manifest.dirs[dirKey];
+			if(!dirInfo || !Array.isArray(dirInfo.frames) || !dirInfo.frames.length)continue;
+			return dirInfo.frames.slice();
+		}
+		return null;
 	}
 
 	function getFrameInfoFromManifest(source)
 	{
-		const manifest = state.manifest;
 		const normalized = normalizeSource(source);
-		if(!manifest || !normalized)return null;
+		if(!state.manifests.length || !normalized)return null;
 
 		const lastSlash = normalized.lastIndexOf("/");
 		if(lastSlash < 0)return null;
 		const dirKey = normalized.slice(0,lastSlash);
 		const frameName = normalized.slice(lastSlash + 1).replace(/\.webp$/i,"");
-		const dirInfo = manifest.dirs && manifest.dirs[dirKey];
-		if(!dirInfo || !Array.isArray(dirInfo.frames) || !dirInfo.frames.length)
-		{
-			return {
-				normalized: normalized,
-				missing: true
-			};
-		}
+		const candidates = [];
 
-		if(!dirInfo._frameMap)
+		for(let i = 0,l = state.manifests.length;i < l;i++)
 		{
-			dirInfo._frameMap = {};
-			for(let i = 0,l = dirInfo.frames.length;i < l;i++)
+			const manifestEntry = state.manifests[i];
+			const manifest = manifestEntry.manifest;
+			const dirInfo = manifest.dirs && manifest.dirs[dirKey];
+			if(!dirInfo || !Array.isArray(dirInfo.frames) || !dirInfo.frames.length)continue;
+
+			if(!dirInfo._frameMap)
 			{
-				dirInfo._frameMap[dirInfo.frames[i]] = i;
+				dirInfo._frameMap = {};
+				for(let j = 0,m = dirInfo.frames.length;j < m;j++)
+				{
+					dirInfo._frameMap[dirInfo.frames[j]] = j;
+				}
 			}
+
+			if(dirInfo._frameMap[frameName] === undefined)continue;
+
+			candidates.push({
+				frameIndex: dirInfo._frameMap[frameName],
+				videoUrl: resolveVideoUrl(dirInfo.video, manifestEntry.assetRoot),
+				fps: manifest.framerate || api.fps,
+				manifestUrl: manifestEntry.manifestUrl
+			});
 		}
 
-		if(dirInfo._frameMap[frameName] === undefined)
+		if(!candidates.length)
 		{
 			return {
 				normalized: normalized,
-				missing: true
+				missing: true,
+				candidates: []
 			};
 		}
 
 		return {
 			normalized: normalized,
 			missing: false,
-			frameIndex: dirInfo._frameMap[frameName],
-			videoUrl: resolveVideoUrl(dirInfo.video)
+			frameIndex: candidates[0].frameIndex,
+			videoUrl: candidates[0].videoUrl,
+			fps: candidates[0].fps,
+			candidates: candidates
 		};
 	}
 
@@ -374,25 +405,22 @@
 
 	async function resolveFrameInfo(source)
 	{
-		const manifest = await loadManifest();
-		if(!manifest)return null;
+		const manifests = await loadManifest();
+		if(!manifests || !manifests.length)return null;
 		const frameInfo = getFrameInfoFromManifest(source);
 		if(!frameInfo || frameInfo.missing)return null;
-		return {
-			frameIndex: frameInfo.frameIndex,
-			videoUrl: frameInfo.videoUrl
-		};
+		return frameInfo.candidates || [frameInfo];
 	}
 
-	function resolveVideoUrl(videoPath)
+	function resolveVideoUrl(videoPath,assetRoot)
 	{
 		const rawPath = String(videoPath || "").replaceAll("\\","/");
 		const fileName = rawPath.split("/").pop();
-		if(state.assetRoot && fileName)
+		if(assetRoot && fileName)
 		{
 			try
 			{
-				return new URL(fileName, state.assetRoot).href;
+				return new URL(fileName, assetRoot).href;
 			}
 			catch(error)
 			{
@@ -418,6 +446,7 @@
 			videoUrl: videoUrl,
 			video: video,
 			cache: new Map(),
+			failed: false,
 			queue: Promise.resolve(),
 			canvas: document.createElement("canvas"),
 			ctx: null
@@ -442,6 +471,8 @@
 			function onError()
 			{
 				cleanup();
+				entry.failed = true;
+				state.failedVideos.add(videoUrl);
 				reject(new Error("Video load failed: " + videoUrl));
 			}
 			video.addEventListener("loadedmetadata", onReady);
@@ -495,8 +526,9 @@
 	{
 		const video = entry.video;
 		await entry.readyPromise;
-		const fps = api.fps || 10;
-		const seekTime = frameIndex <= 0 ? 0 : frameIndex / fps + 0.00001;
+		const fps = frameIndex && frameIndex.fps ? frameIndex.fps : api.fps || 10;
+		const frameNumber = typeof frameIndex === "object" ? frameIndex.frameIndex : frameIndex;
+		const seekTime = frameNumber <= 0 ? 0 : frameNumber / fps + 0.00001;
 		await new Promise(function(resolve,reject)
 		{
 			let timeoutId = 0;
@@ -551,25 +583,35 @@
 
 	async function getFrameDataUrl(source)
 	{
-		const frameInfo = await resolveFrameInfo(source);
-		if(!frameInfo)return null;
+		const frameCandidates = await resolveFrameInfo(source);
+		if(!frameCandidates || !frameCandidates.length)return null;
 
-		const entry = getVideoEntry(frameInfo.videoUrl);
-		if(entry.cache.has(frameInfo.frameIndex))return entry.cache.get(frameInfo.frameIndex);
-
-		entry.queue = entry.queue.then(async function()
+		for(let i = 0,l = frameCandidates.length;i < l;i++)
 		{
+			const frameInfo = frameCandidates[i];
+			if(state.failedVideos.has(frameInfo.videoUrl))continue;
+
+			const entry = getVideoEntry(frameInfo.videoUrl);
 			if(entry.cache.has(frameInfo.frameIndex))return entry.cache.get(frameInfo.frameIndex);
-			const dataUrl = await captureFrame(entry,frameInfo.frameIndex);
-			entry.cache.set(frameInfo.frameIndex,dataUrl);
-			return dataUrl;
-		}).catch(function(error)
-		{
-			console.warn("[WEBM_CHARFACE] frame extraction failed", error);
-			return null;
-		});
 
-		return entry.queue;
+			const dataUrl = await (entry.queue = entry.queue.then(async function()
+			{
+				if(entry.cache.has(frameInfo.frameIndex))return entry.cache.get(frameInfo.frameIndex);
+				const captured = await captureFrame(entry, frameInfo);
+				entry.cache.set(frameInfo.frameIndex,captured);
+				return captured;
+			}).catch(function(error)
+			{
+				entry.failed = true;
+				state.failedVideos.add(frameInfo.videoUrl);
+				console.warn("[WEBM_CHARFACE] frame extraction failed", error);
+				return null;
+			}));
+
+			if(dataUrl)return dataUrl;
+		}
+
+		return null;
 	}
 
 	async function applyToImage(image)
