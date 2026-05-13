@@ -15,6 +15,9 @@ permissions:
   pages: write
   id-token: write
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
 # However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
 concurrency:
@@ -30,14 +33,60 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Setup Pages
         uses: actions/configure-pages@v5
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
         with:
-          # Upload entire repository
-          path: '.'
+          enablement: true
+      - name: Prepare Pages artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p publish-pages
+          rsync -a --delete \
+            --exclude '.git/' \
+            --exclude '.github/' \
+            --exclude 'publish-pages/' \
+            ./ publish-pages/
+
+          touch publish-pages/.nojekyll
+
+          cat > publish-pages/404.html <<'EOF'
+          <!doctype html>
+          <html lang="en">
+            <head>
+              <meta charset="utf-8">
+              <title>Redirecting...</title>
+              <meta name="robots" content="noindex">
+              <script>
+                (function () {
+                  var pathname = window.location.pathname;
+                  var redirectRoutes = ["Moedata"];
+
+                  for (var i = 0; i < redirectRoutes.length; i += 1) {
+                    var route = redirectRoutes[i];
+                    var pattern = new RegExp("/" + route + "/?$", "i");
+
+                    if (pattern.test(pathname)) {
+                      var target = pathname.replace(pattern, "/");
+                      var suffix = window.location.search + window.location.hash;
+                      window.location.replace(target + suffix);
+                      return;
+                    }
+                  }
+                })();
+              </script>
+            </head>
+            <body>
+              <p>This page was not found.</p>
+            </body>
+          </html>
+          EOF
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: 'publish-pages'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
