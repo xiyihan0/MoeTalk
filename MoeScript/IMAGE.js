@@ -452,20 +452,21 @@ function mt_capture(清晰度,生成图片,标题)
 if(客户端 === 'HTML5+' || 客户端 === 'Cordova' || 客户端 === 'NW.js')
 {
 	var time = 0;//初始化起始时间
-	$("body").on('touchstart', 'img', function(e)
+	$("body").on('pointerdown', 'img', function(e)
 	{
-		let src = $(this).attr('src')
+		if(e.target.className == '保存图片')return;
+		let src = e.target.src
 		e.stopPropagation();
 		time = setTimeout(function()
 		{
 			let config = {}
 			config.yes = async function()
 			{
-				let ext = 'webp'
+				let ext,data
 				if(src.startsWith('data:'))
 				{//base64转blob
 					ext = src.match(/:image\/(\S*);base64/)[1]
-					let data = atob(src.split(',').pop())
+					data = atob(src.split(',').pop())
 					let l = data.length;
 					let bytes = new Uint8Array(l);
 					for(let i=0;i<l;i++)bytes[i] = data.charCodeAt(i);
@@ -475,15 +476,16 @@ if(客户端 === 'HTML5+' || 客户端 === 'Cordova' || 客户端 === 'NW.js')
 				}
 				else 
 				{
-					ext = data.split('.').pop()
-					data = await getfile(data) || await getfile(href+'MoeData/Ui/error.webp');
+					ext = src.split('.').pop()
+					data = await getfile(src) || await getfile(href+'MoeData/Ui/error.webp');
 				}
-				保存文件(`${getNowDate()}.${ext}`,data,'image')
+				let file = await 保存文件(`${getNowDate()}.${ext}`,data,'image')
+				alert(`图片保存位置：<span class='red'>${file}</span>`)
 			}
-			alert(`确定要保存这张图片吗？\n<img src='${src}' style='width:50%;'>`,config)
+			alert(`确定要保存这张图片吗？\n<img src='${src}'class='保存图片'style='width:50%;'>`,config)
 		}, 1000);//这里设置长按响应时间
 	});
-	$("body").on('touchend', 'img', function(e)
+	$("body").on('pointerup', 'img', function(e)
 	{
 		e.stopPropagation();
 		clearTimeout(time);
