@@ -454,7 +454,7 @@ if(客户端 === 'HTML5+' || 客户端 === 'Cordova' || 客户端 === 'NW.js')
 	var time = 0;//初始化起始时间
 	let touchstart = 'touchstart'
 	let touchend = 'touchend'
-	if(客户端 === 'HTML5+')
+	if(客户端 === 'NW.js')
 	{
 		touchstart = 'pointerdown'
 		touchend = 'pointerup'
