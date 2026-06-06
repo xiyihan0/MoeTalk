@@ -452,7 +452,14 @@ function mt_capture(清晰度,生成图片,标题)
 if(客户端 === 'HTML5+' || 客户端 === 'Cordova' || 客户端 === 'NW.js')
 {
 	var time = 0;//初始化起始时间
-	$("body").on('pointerdown', 'img', function(e)
+	let touchstart = 'touchstart'
+	let touchend = 'touchend'
+	if(客户端 === 'HTML5+')
+	{
+		touchstart = 'pointerdown'
+		touchend = 'pointerup'
+	}
+	$("body").on(touchstart, 'img', function(e)
 	{
 		if(e.target.className == '保存图片')return;
 		let src = e.target.src
@@ -483,9 +490,9 @@ if(客户端 === 'HTML5+' || 客户端 === 'Cordova' || 客户端 === 'NW.js')
 				alert(`图片保存位置：<span class='red'>${file}</span>`)
 			}
 			alert(`确定要保存这张图片吗？\n<img src='${src}'class='保存图片'style='width:50%;'>`,config)
-		}, 1000);//这里设置长按响应时间
+		}, 1500);//这里设置长按响应时间
 	});
-	$("body").on('pointerup', 'img', function(e)
+	$("body").on(touchend, 'img', function(e)
 	{
 		e.stopPropagation();
 		clearTimeout(time);
