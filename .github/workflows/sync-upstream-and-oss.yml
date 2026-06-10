@@ -1,0 +1,188 @@
+name: Sync Fork And Deploy To OSS
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - ".github/**"
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+    inputs:
+      force_oss_sync:
+        description: Force an OSS deploy even when upstream has no new commits
+        required: false
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: fork-sync-and-oss
+  cancel-in-progress: false
+
+env:
+  UPSTREAM_REPO: ggg555ttt/MoeTalk
+  UPSTREAM_BRANCH: main
+
+jobs:
+  sync-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout fork
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.FORK_SYNC_TOKEN || github.token }}
+
+      - name: Sync fork with upstream
+        id: sync
+        if: github.event_name != 'push'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          if git remote get-url upstream >/dev/null 2>&1; then
+            git remote set-url upstream "https://github.com/${UPSTREAM_REPO}.git"
+          else
+            git remote add upstream "https://github.com/${UPSTREAM_REPO}.git"
+          fi
+
+          git fetch origin "${UPSTREAM_BRANCH}"
+          git fetch upstream "${UPSTREAM_BRANCH}"
+
+          non_managed_diff="$(git diff --name-only "upstream/${UPSTREAM_BRANCH}...origin/${UPSTREAM_BRANCH}" -- . ':(exclude).github/**')"
+          behind="$(git rev-list --right-only --count "origin/${UPSTREAM_BRANCH}...upstream/${UPSTREAM_BRANCH}")"
+
+          echo "behind=${behind}" >> "$GITHUB_OUTPUT"
+
+          if [[ -n "${non_managed_diff}" ]]; then
+            echo "::error::This fork contains non-automation changes that are not in ${UPSTREAM_REPO}/${UPSTREAM_BRANCH}. Refusing to overwrite:"
+            printf '%s\n' "${non_managed_diff}"
+            exit 1
+          fi
+
+          if [[ "${behind}" == "0" ]]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          git checkout -B "${UPSTREAM_BRANCH}" "upstream/${UPSTREAM_BRANCH}"
+
+          if git cat-file -e "origin/${UPSTREAM_BRANCH}:.github" 2>/dev/null; then
+            git checkout "origin/${UPSTREAM_BRANCH}" -- .github
+          fi
+
+          if [[ -z "$(git status --porcelain)" ]]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          git add .github
+          git commit -m "Sync fork with upstream"
+          git push --force-with-lease origin "HEAD:${UPSTREAM_BRANCH}"
+
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Decide whether to deploy to OSS
+        id: deploy
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          UPSTREAM_CHANGED: ${{ steps.sync.outputs.changed }}
+          FORCE_OSS_SYNC: ${{ inputs.force_oss_sync }}
+        run: |
+          set -euo pipefail
+
+          should_deploy=false
+
+          if [[ "${EVENT_NAME}" == "push" ]]; then
+            should_deploy=true
+          elif [[ "${UPSTREAM_CHANGED:-false}" == "true" ]]; then
+            should_deploy=true
+          elif [[ "${EVENT_NAME}" == "workflow_dispatch" && "${FORCE_OSS_SYNC:-false}" == "true" ]]; then
+            should_deploy=true
+          fi
+
+          echo "should_deploy=${should_deploy}" >> "$GITHUB_OUTPUT"
+
+      - name: Validate OSS settings
+        if: steps.deploy.outputs.should_deploy == 'true'
+        shell: bash
+        env:
+          OSS_ACCESS_KEY_ID: ${{ secrets.ALIYUN_OSS_ACCESS_KEY_ID }}
+          OSS_ACCESS_KEY_SECRET: ${{ secrets.ALIYUN_OSS_ACCESS_KEY_SECRET }}
+          OSS_REGION: ${{ vars.ALIYUN_OSS_REGION }}
+          OSS_BUCKET: ${{ vars.ALIYUN_OSS_BUCKET }}
+          OSS_ENDPOINT: ${{ vars.ALIYUN_OSS_ENDPOINT }}
+        run: |
+          set -euo pipefail
+
+          required_vars=(OSS_ACCESS_KEY_ID OSS_ACCESS_KEY_SECRET OSS_REGION OSS_BUCKET)
+          for name in "${required_vars[@]}"; do
+            if [[ -z "${!name:-}" ]]; then
+              echo "::error::Missing required Actions secret or variable: ${name}"
+              exit 1
+            fi
+          done
+
+          if [[ -n "${OSS_ENDPOINT:-}" ]]; then
+            echo "OSS_ENDPOINT=${OSS_ENDPOINT}" >> "$GITHUB_ENV"
+          else
+            echo "OSS_ENDPOINT=https://oss-${OSS_REGION}.aliyuncs.com" >> "$GITHUB_ENV"
+          fi
+
+      - name: Install ossutil
+        if: steps.deploy.outputs.should_deploy == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if ! command -v unzip >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y unzip
+          fi
+
+          curl -fsSLO https://gosspublic.alicdn.com/ossutil/v2/2.2.2/ossutil-2.2.2-linux-amd64.zip
+          unzip -q ossutil-2.2.2-linux-amd64.zip
+          chmod +x ossutil-2.2.2-linux-amd64/ossutil
+          sudo mv ossutil-2.2.2-linux-amd64/ossutil /usr/local/bin/ossutil
+          ossutil version
+
+      - name: Prepare publish directory
+        if: steps.deploy.outputs.should_deploy == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p publish
+          rsync -a --delete \
+            --exclude '.git/' \
+            --exclude '.github/' \
+            --exclude 'publish/' \
+            ./ publish/
+
+      - name: Sync site to OSS
+        if: steps.deploy.outputs.should_deploy == 'true'
+        shell: bash
+        env:
+          OSS_ACCESS_KEY_ID: ${{ secrets.ALIYUN_OSS_ACCESS_KEY_ID }}
+          OSS_ACCESS_KEY_SECRET: ${{ secrets.ALIYUN_OSS_ACCESS_KEY_SECRET }}
+          OSS_REGION: ${{ vars.ALIYUN_OSS_REGION }}
+          OSS_BUCKET: ${{ vars.ALIYUN_OSS_BUCKET }}
+          OSS_PREFIX: ${{ vars.ALIYUN_OSS_PREFIX }}
+        run: |
+          set -euo pipefail
+
+          destination="oss://${OSS_BUCKET}/"
+          if [[ -n "${OSS_PREFIX:-}" ]]; then
+            destination="oss://${OSS_BUCKET}/${OSS_PREFIX%/}/"
+          fi
+
+          ossutil sync publish/ "${destination}" --delete --force --no-progress
