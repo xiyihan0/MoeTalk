@@ -66,7 +66,7 @@ function mt_emojis(S,mode)
 	EMOJI.title = '图片表情'//
 	EMOJI.custom = {}//自设表情
 	EMOJI.custom.io = false//自设开关
-	EMOJI.custom.title = '切换自定义'//按钮标题
+	EMOJI.custom.title = '自定'//按钮标题
 	EMOJI.path = `GameData/${mt_settings['选择游戏']}/${mode}/`//表情路径
 	EMOJI.pages.type = mode
 	let id = 'Emoji';
@@ -175,7 +175,7 @@ function mt_emojis(S,mode)
 	{
 		EMOJI.pages[id].type = type
 		EMOJI.custom.io = true
-		EMOJI.custom.title = '切换内置'
+		EMOJI.custom.title = '内置'
 		//重新排列分页
 		let arr = [[]]
 		if(CUSTOM_EMOJI[EMOJI.id])
@@ -217,11 +217,7 @@ function mt_emojis(S,mode)
 	if(str.includes('_REPAIR'))EMOJI.title += `(${imgLength}修复)`
 	else if(str.includes('_OLD'))EMOJI.title += `(${imgLength}旧设)`
 	else if(str.includes('CharID_'))EMOJI.title += `(${imgLength}拓展)`
-	else if(EMOJI.custom.io)EMOJI.title += `(${imgLength}自定义)`
-	else
-	{
-		EMOJI.title += `(${imgLength})`
-	}
+	else EMOJI.title += `(${imgLength})`
 	EMOJI.pageindex = `${PageIndex+1} / ${PageCount || 1}`
 	setTimeout(function()
 	{

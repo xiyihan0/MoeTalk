@@ -2845,8 +2845,7 @@
 												height: '100%',
 												color: '#3f51b5',
 												position: 'absolute',
-												left: 0,
-												color: 'rgb(63, 81, 181)'
+												left: 0
 											},
 											className: "bold",
 											hidden: EMOJI.type === 'CharFace',
@@ -2896,13 +2895,20 @@
 											{
 												"width": "auto",
 												height: '100%',
-												color: EMOJI.custom.title ? '#3f51b5' : '',
 												position: 'absolute',
 												left: 0
 											},
 											className: "bold",
 											disabled: !EMOJI.custom.title,
-											children: EMOJI.custom.title ? EMOJI.custom.title : '切换内置',
+											children: [(0, m.jsx)('span',
+											{
+												style: {color: EMOJI.custom.io ? '' : 'red'},
+												children: !EMOJI.custom.title ? 'ㅤㅤ' : '内置'
+											}), (0, m.jsx)('span',
+											{
+												style: {color: EMOJI.custom.io ? 'red' : ''},
+												children: '自定'
+											})],
 											onClick:function()
 											{
 												let type = ''
@@ -3131,10 +3137,10 @@
 																config.confirm = '提交'
 																config.yes = async function()
 																{
-																	if($$(`.alert_${config.id} input:checked`).length)EMOJI.pages[EMOJI.id].custom = parseInt(EMOJI.pageindex.split(' / ')[1])//添加到新的分页
+																	let imgs = $$('.Emojis img'),l = imgs.length
+																	if($$(`.alert_${config.id} input:checked`).length && l)EMOJI.pages[EMOJI.id].custom = parseInt(EMOJI.pageindex.split(' / ')[1])//添加到新的分页
 																	else EMOJI.pages[EMOJI.id].custom = parseInt(EMOJI.pageindex.split(' / ')[0]-1)
-																	let imgs = $$('.Emojis img')
-																	for(let i=0,l=imgs.length;i<l;i++)
+																	for(let i=0;i<l;i++)
 																	{
 																		let id = `${EMOJI.type}-${getNowDate()}_${i}`
 																		if(!CUSTOM_EMOJI[EMOJI.id])CUSTOM_EMOJI[EMOJI.id] = {}
