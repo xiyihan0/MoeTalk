@@ -95,6 +95,11 @@ function mt_emojis(S,mode)
 		EMOJI.pages[id][EMOJI.pages[id].type]--
 		return;
 	}
+	if(typeof S === 'number')
+	{//跳页
+		EMOJI.pages[id][EMOJI.pages[id].type] = S
+		return;
+	}
 	if(typeof S === 'string')
 	{//切换表情类型
 		EMOJI.pages[id].type = S
@@ -218,7 +223,8 @@ function mt_emojis(S,mode)
 	else if(str.includes('_OLD'))EMOJI.title += `(${imgLength}旧设)`
 	else if(str.includes('CharID_'))EMOJI.title += `(${imgLength}拓展)`
 	else EMOJI.title += `(${imgLength})`
-	EMOJI.pageindex = `${PageIndex+1} / ${PageCount || 1}`
+	EMOJI.pagecount = PageCount || 1
+	EMOJI.pageindex = `${PageIndex+1} / ${EMOJI.pagecount}`
 	setTimeout(function()
 	{
 		if($(`.差分映射.selected`).length)$(`.差分映射.selected`)[0].scrollIntoView({inline:'center',block: 'nearest'})

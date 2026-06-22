@@ -2902,8 +2902,8 @@
 											disabled: !EMOJI.custom.title,
 											children: [(0, m.jsx)('span',
 											{
-												style: {color: EMOJI.custom.io ? '' : 'red'},
-												children: !EMOJI.custom.title ? 'ㅤㅤ' : '内置'
+												style: {color: EMOJI.custom.io ? !EMOJI.custom.title ? 'transparent' : '' : 'red'},
+												children: '内置'
 											}), (0, m.jsx)('span',
 											{
 												style: {color: EMOJI.custom.io ? 'red' : ''},
@@ -2940,14 +2940,37 @@
 												$$('.INDEX_Emoji').click()
 												EMOJI.pages[EMOJI.id].scrollTop = 0
 											}
-										}), (0, m.jsx)(ea.Dx,
+										}), EMOJI.pagecount > 1 ? (0, m.jsx)('select',
 										{
 											className: "bold",
 											style:
 											{
+												fontSize: '1.7rem',
 												textAlign:"center",
-												color: EMOJI.custom.io ? 'rgb(63, 81, 181)' : EMOJI.custom.from ? 'red' : mt_charface[EMOJI.id] && mt_charface[EMOJI.id].filter(function(item){return item[0][0].includes('CFID')}).length ? 'green' : ''
+												color: EMOJI.custom.io ? 'rgb(63, 81, 181)' : EMOJI.custom.from ? 'red' : mt_charface[EMOJI.id] && mt_charface[EMOJI.id].filter(function(item){return item[0][0].includes('CFID')}).length ? 'green' : 'rgb(45, 70, 100)'
 											},
+											children: Array(EMOJI.pagecount).fill(0).map(function(v,k)
+											{
+												v = `${k+1} / ${EMOJI.pagecount}`
+												return (0, m.jsx)('option',
+												{
+													style: {color: v == EMOJI.pageindex ? '' : 'black'},
+													className: v == EMOJI.pageindex ? "bold" : '',
+													children: v,
+													value: k,
+													selected: v == EMOJI.pageindex ? true : false
+												})
+											}),
+											onChange: function(e)
+											{
+												e = parseInt(e.target.value)
+												mt_emojis(e,EMOJI.type)
+												$$('.INDEX_Emoji').click()
+												EMOJI.pages[EMOJI.id].scrollTop = 0
+											}
+										}) : (0, m.jsx)(ea.Dx,
+										{
+											className: "bold",
 											children: EMOJI.pageindex
 										}), (0, m.jsx)(c.Bx,
 										{
