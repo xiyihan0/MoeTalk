@@ -2945,8 +2945,7 @@
 											className: "bold",
 											style:
 											{
-												fontSize: '1.7rem',
-												textAlign:"center",
+												fontSize: '100%',
 												color: EMOJI.custom.io ? 'rgb(63, 81, 181)' : EMOJI.custom.from ? 'red' : mt_charface[EMOJI.id] && mt_charface[EMOJI.id].filter(function(item){return item[0][0].includes('CFID')}).length ? 'green' : 'rgb(45, 70, 100)'
 											},
 											children: Array(EMOJI.pagecount).fill(0).map(function(v,k)
