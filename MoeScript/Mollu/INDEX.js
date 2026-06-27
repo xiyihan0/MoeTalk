@@ -3030,27 +3030,22 @@
 										style:
 										{
 											display: 'flex',
-											maxHeight: '80%'
+											maxHeight: '80%',
+											flexDirection: 'column'//
 										},
 										children: [(0, m.jsx)('div',
 										{
-											style:
-											{
-												overflow: 'scroll',
-												width: '5rem'
-											},
+											// style:
+											// {
+											// 	overflow: 'scroll',
+											// 	width: '5rem'
+											// },
 											hidden: !差分映射 || EMOJI.type === 'Emoji',
-											children: !差分映射 || EMOJI.type === 'Emoji' ? '' : (0, m.jsx)('div',
+											children: !差分映射 || EMOJI.type === 'Emoji' ? '' : (0, m.jsx)(HList.Z,
 											{
-												className: 'scrollbar',
-												style:
-												{
-													overflow: 'scroll',
-													height: '100%'
-												},
 												children: (0, m.jsx)(k,
 												{
-													style: {padding:0,flexDirection: 'column'},
+													style: {padding:0},
 													children: mt_settings['选择角色'].list.concat({no:'0',index:'1'}).map(function(e, n)
 													{
 														return (0, m.jsx)('img',
@@ -3531,6 +3526,30 @@
 								children: (0, m.jsx)(c.xL,
 								{
 									icon: ico.FQ0
+								})
+							}), (0, m.jsx)(eU,
+							{
+								style: {display: mt_settings['使用风格'] !== 'MomoToki' ? 'none' : 'show'},
+								className: 'MomoToki',
+								title: "发送消息",
+								onClick: function()
+								{
+									let text = $$('.chatText')[0]
+									if(text.value !== '')
+									{
+										sendMessage({content: text.value,isFirst: true},'chat')//#点击发送
+										text.value = ''
+										text.click()
+									}
+								},
+								children: (0, m.jsx)('svg',
+								{
+									viewBox: '0 0 24 24',
+									children: (0, m.jsx)('path',
+									{
+										d: 'M2.01 21 23 12 2.01 3 2 10l15 2-15 2z',
+										fill: 'currentColor'
+									})
 								})
 							})]
 						}), (0, m.jsx)(eR,
@@ -9035,7 +9054,7 @@
 					}, [c, x, t, n, y]), (0, m.jsx)('div',
 					{
 						className: '消息',
-						style: {padding: isFirst ? "" : "0.5rem 1rem 0 1rem"},
+						style: {padding: "0.5rem 1rem 0px"},
 						children: [(0, m.jsxs)(m.Fragment,
 						{
 							children: "chat" === t.type || "image" === t.type ? (0, m.jsxs)(m.Fragment,

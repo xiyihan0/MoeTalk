@@ -351,6 +351,14 @@ function isfirst(chatIndex,chats,mode)
 {
 	if(chats[chatIndex])
 	{
+		if(mt_settings['使用风格'] == 'MomoToki')
+		{
+			if(chatIndex-1 < 0)return true//首条消息
+			if(chats[chatIndex].isFirst)return true//强制显示
+			if(chats[chatIndex].is_breaking)return true//截图分割
+			if(chats[chatIndex].heads && chats[chatIndex].heads.list.length)return true//头像列表
+			return false
+		}
 		let typeArr = ['heart','info','reply']
 		if(mode === 'player')typeArr.pop()
 
@@ -532,8 +540,8 @@ function makeMessage(type,data,chatIndex,mode)
 	{
 		复选框 = `<input type="checkbox" ${selected ? 'checked' : ''} class="dels" style="background-color: ${color};" data-html2canvas-ignore="true">`
 	}
-	if(mode === '预览')复选框 = ''
-	return `<div class="消息" title='${color}' style="${head ? '' : 'padding: 0.5rem 1rem 0px;'}background-color:${selected && mode !== 'area' ? '#CAD7DD;' : 背景色};" ${alt}>
+	if(mode === '预览')复选框 = ''//${head ? '' : 'padding: 0.5rem 1rem 0px;'}
+	return `<div class="消息" title='${color}' style="padding: 0.5rem 1rem 0 1rem;background-color:${selected && mode !== 'area' ? '#CAD7DD;' : 背景色};" ${alt}>
 		${聊天}
 		${复选框}
 	</div>`

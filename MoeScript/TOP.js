@@ -390,6 +390,7 @@ $("body").on('click',"#设置选项",function()
 	str += "<button id='截图设置'>截图设置</button> "
 	str += "<button id='下载设置'>下载设置</button> "
 	str += "<button id='发送方式'>文字发送方式</button> "
+	str += "<button id='使用风格'>软件使用风格</button> "
 	str += "<button id='虚拟滚动'>虚拟滚动（测试）</button><br><br>"
 	str += "<button id='实验选项'>实验性选项（测试）</button> "
 	str += "<button id='清除缓存'>清除缓存</button> "
@@ -397,7 +398,27 @@ $("body").on('click',"#设置选项",function()
 	str += "<div style='display:flex;justify-content:center;'><h1><a class='bold'style='text-decoration:underline;'href='setting.html'>更多设置</a></h1></div>\n"
 	alert(str,config)
 });
+$("body").on('click',"#使用风格",function()
+{
 
+	let option = ''
+	option = `<option value="MoeTalk" ${mt_settings['使用风格'] != 'MomoToki' ? 'selected' : ''}>MoeTalk（默认）</option>`
+	option += `<option value="MomoToki" ${mt_settings['使用风格'] == 'MomoToki' ? 'selected' : ''}>MomoToki（待完善）</option>`
+	let str = ''
+	str += `请选择：<select class='使用风格' style='font-size: 1.5rem;'>${option}</select>\n`
+	let config = {}
+	config.title = '软件使用风格'
+	config.yes = function()
+	{
+		let v = $('.使用风格').val()
+		if(v == 'MomoToki')mt_settings['使用风格'] = v
+		else delete mt_settings['使用风格']
+		saveStorage('设置选项',mt_settings,'local')
+		$('.MomoToki').css('display',mt_settings['使用风格'] !== 'MomoToki' ? 'none' : '')
+		refreshMessage(chats)
+	}
+	alert(str,config)
+});
 $("body").on('click',"#快捷键说明",function()
 {
 	let str = "文本换行：Shift+Enter\n发送文本：Ctrl+Enter\n发送回复：Ctrl+R\n发送旁白：Ctrl+I\n发送羁绊：Ctrl+H\n前一角色：Ctrl+<\n后一角色：Ctrl+>\n主要角色：Ctrl+?\n"
