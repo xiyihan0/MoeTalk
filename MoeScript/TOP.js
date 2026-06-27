@@ -414,7 +414,6 @@ $("body").on('click',"#使用风格",function()
 		if(v == 'MomoToki')mt_settings['使用风格'] = v
 		else delete mt_settings['使用风格']
 		saveStorage('设置选项',mt_settings,'local')
-		$('.MomoToki').css('display',mt_settings['使用风格'] !== 'MomoToki' ? 'none' : '')
 		refreshMessage(chats)
 	}
 	alert(str,config)

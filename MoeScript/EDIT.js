@@ -911,6 +911,7 @@ function refreshMessage(json) {
 		$('.INDEX_tips').show()
 		otherChats.length ? $('.reply').show() : $('.reply').hide()//选择肢管理
 	}
+	$('.MomoToki').css('display',mt_settings['使用风格'] !== 'MomoToki' ? 'none' : '')
 	// （可选）如果你希望刷新数据后，自动平滑滚动到最新的一条消息，可以加上这句：
 	setTimeout(() => {
 		json.length && 跳转索引(json.length - 1, { behavior: 'auto', block: 'end' });
