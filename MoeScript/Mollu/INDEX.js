@@ -2783,7 +2783,7 @@
 						}),
 						s = function()
 						{
-							EMOJI.pages[EMOJI.id].scrollTop = $$('.PopupEmoticonChat__Section2-sc-vzjcea-0').scrollTop()
+							EMOJI.pages[EMOJI.id].scrollTop = $$('.表情').scrollTop()
 							t(!1)
 						};
 					//*定义差分文件链接
@@ -2947,14 +2947,20 @@
 											style:
 											{
 												fontSize: '1.4rem',
-												color: EMOJI.custom.io ? 'rgb(63, 81, 181)' : EMOJI.custom.from ? 'red' : mt_charface[EMOJI.id] && mt_charface[EMOJI.id].filter(function(item){return item[0][0].includes('CFID')}).length ? 'green' : 'rgb(45, 70, 100)'
+												color: EMOJI.color
 											},
 											children: Array(EMOJI.pagecount).fill(0).map(function(v,k)
 											{
 												v = `${k+1} / ${EMOJI.pagecount}`
+												let color = ''
+												if(mt_charface[EMOJI.id])
+												{
+													if(typeof mt_charface[EMOJI.id][EMOJI.pagecount-1][0][3] == 'number')color = 'green'
+													if(typeof mt_charface[EMOJI.id][k][0][3] == 'number')color = 'red'
+												}
 												return (0, m.jsx)('option',
 												{
-													style: {color: v == EMOJI.pageindex ? '' : 'black'},
+													style: {color: color},
 													className: v == EMOJI.pageindex ? "bold" : '',
 													children: v,
 													value: k,
@@ -2995,12 +3001,12 @@
 											{
 												"width": "auto",
 												height: '100%',
-												color: EMOJI.custom.from ? 'red' : '#3f51b5',
+												color: EMOJI.plugin ? 'red' : '#3f51b5',
 												position: 'absolute',
 												right: 0
 											},
 											hidden: EMOJI.type === 'Emoji' && !EMOJI.custom.io,
-											children: EMOJI.type === 'Emoji' ? EMOJI.custom.io ? '编辑' : '管理' : EMOJI.custom.from ? '❗声明' : '编辑',
+											children: EMOJI.type === 'Emoji' ? EMOJI.custom.io ? '编辑' : '管理' : EMOJI.plugin ? '❗声明' : '编辑',
 											onClick: function()
 											{
 												$$('.INDEX_EmojiIfno:visible').length ? $$('.INDEX_EmojiIfno').hide() : $$('.INDEX_EmojiIfno').show()
@@ -3009,11 +3015,11 @@
 													let str = ''
 													let config = {}
 													config.style = 'text-align:center;'
-													if(EMOJI.custom.from)
+													if(EMOJI.plugin)
 													{
 														config.title = '版权声明'
-														str += `作者：${EMOJI.custom.from.name}\n`
-														str += `<a href='${EMOJI.custom.from.link}'><u>${EMOJI.custom.from.link}</u></a>\n`
+														str += `作者：${EMOJI.plugin.name}\n`
+														str += `<a href='${EMOJI.plugin.link}'><u>${EMOJI.plugin.link}</u></a>\n`
 														str += '<span style="color:red;">请尊重作者的劳动成果\n严禁用本套立绘差分进行牟利和商业用途\n违者将追究法律责任！\n</span>'
 													}
 													else
@@ -3048,27 +3054,28 @@
 													style: {padding:0},
 													children: mt_settings['选择角色'].list.concat({no:'0',index:'1'}).map(function(e, n)
 													{
-														return (0, m.jsx)('img',
+														return (0, m.jsx)('div',
 														{
-															alt: String(e.no),
-															title: String(e.index),
-															src: loadhead(e.no,e.index),
-															onError: function(e){IMAGE_error(e)},
-															style: {width: '3rem',height: '3rem'},
-															className: '差分映射 '+ (e.no == 差分映射.id && e.index == 差分映射.index ? 'eLaCqa fuyFOl selected' : 'eLaCqa fuyFOl')
-														}, n)
+															style: {width: '3.5rem',height: '3rem'},
+															children: (0, m.jsx)('img',
+															{
+																alt: String(e.no),
+																title: String(e.index),
+																src: loadhead(e.no,e.index),
+																onError: function(e){IMAGE_error(e)},
+																style: {width: '3rem',height: '3rem'},
+																className: '差分映射 '+ (e.no == 差分映射.id && e.index == 差分映射.index ? 'eLaCqa fuyFOl selected' : 'eLaCqa fuyFOl')
+															}, n)
+														})
 													})
 												})
 											})
 										}), (0, m.jsx)('div',
 										{
-											style: {width: "100%",overflow:'scroll'},
-											children: (0, m.jsx)(eE,
+											style: {overflow:'scroll'},
+											className: 'scrollbar 表情',
+											children: (0, m.jsxs)(eM,
 											{
-												className: 'scrollbar',
-												style: {maxHeight: "100%"},
-												children: (0, m.jsxs)(eM,
-												{
 													children: [EMOJI.images.map(function(v,k)
 													{
 														if(EMOJI.error.includes(v))return;
@@ -3114,7 +3121,7 @@
 																		"width": "auto",
 																		"color": "rgb(63, 81, 181)"
 																	},
-																	children: '编辑表情\n',
+																	children: '可选中\n',
 																	hidden: !link
 																}) : '',(0, m.jsx)('span',
 																{
@@ -3127,7 +3134,7 @@
 																title: v,
 																onClick:function(e)
 																{
-																	if(e.target.innerText === '编辑表情\n')
+																	if(e.target.innerText === '可选中\n')
 																	{
 																		e.target.innerText = '已选中\n'
 																		e.target.style.color = "red"
@@ -3135,7 +3142,7 @@
 																	}
 																	else if(e.target.innerText === '已选中\n')
 																	{
-																		e.target.innerText = '编辑表情\n'
+																		e.target.innerText = '可选中\n'
 																		e.target.style.color = "rgb(63, 81, 181)"
 																		e.target.parentElement.classList.remove('selected')
 																	}
@@ -3146,7 +3153,7 @@
 																{
 																	color: !EMOJI.custom.io && CUSTOM_EMOJI[no] && CUSTOM_EMOJI[no][v] > -1 ? 'green' : ''
 																},
-																children: mt_settings['表情信息'][v] || v.substring(v.lastIndexOf('/')+1),
+																children: EmojiInfo,
 															}) ,(0, m.jsx)('img',
 															{
 																alt: EMOJI.type,
@@ -3350,7 +3357,6 @@
 														}, n)
 													})]
 												})
-											})
 										})]
 									})]
 								})
@@ -4037,7 +4043,7 @@
 												{
 													style: {whiteSpace: 'nowrap'},
 													className: '显示头像',
-													children: '显示/隐藏头像'
+													children: '显示头像'
 												})]
 											}), (0, m.jsxs)('div',
 											{

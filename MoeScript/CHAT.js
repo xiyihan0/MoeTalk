@@ -69,6 +69,8 @@ function mt_emojis(S,mode)
 	EMOJI.custom.title = '自定'//按钮标题
 	EMOJI.path = `GameData/${mt_settings['选择游戏']}/${mode}/`//表情路径
 	EMOJI.pages.type = mode
+	EMOJI.color = 'rgb(45, 70, 100)'
+	EMOJI.plugin = ''
 	let id = 'Emoji';
 	if(mode === 'CharFace')
 	{
@@ -120,27 +122,33 @@ function mt_emojis(S,mode)
 
 			let Index = mt_charface.index
 			let CharFace = mt_charface[id][PageIndex]//
-			let cfid = toString(CharFace[0][0])
-			if(cfid.includes('/'))EMOJI.custom.from = CustomFaceAuthor[cfid.split('/')[0]]
+			if(mt_charface[id][PageCount-1][0][3])EMOJI.color = 'green'
+			if(typeof CharFace[0][3] == 'number')
+			{
+				EMOJI.color = 'red'
+				EMOJI.plugin = CustomFaceAuthor[`CFID_${CharFace[0][3]}`]
+			}
 			foreach(CharFace,function(k,v)
 			{
-				foreach(v[1],function(k,index)
+				let path = v[0]
+				if(typeof v[3] == 'number')path = `CFID_${v[3]}/CharID_${path}`;//拓展差分
+				if(typeof v[3] == 'object')//错误文件
 				{
-					if(typeof index === 'number')EMOJI.images.push(`${v[0]}/${Index[index]}`)
-					else if(typeof index === 'object')
+					foreach(v[3],function(k,index)
 					{
-						if(typeof index[1] === 'number')EMOJI.images.push(`${v[0]}/${Index[index[0]]}_${Index[index[1]]}`)
-						else for(let i=0;i<=index[1];i++)EMOJI.images.push(`${v[0]}/${Index[index[0]]}_${i}`)
-					}
-					else for(let i=0;i<=index;i++)EMOJI.images.push(`${v[0]}/${i}`)
-				})
-				if(v[2])
-				{
-					foreach(v[2],function(k,index)
-					{
-						EMOJI.error.push(`${v[0]}/${index}`)
+						EMOJI.error.push(`${path}/${index}`)
 					})
 				}
+				foreach(v[1],function(k,index)
+				{
+					if(typeof index === 'number')EMOJI.images.push(`${path}/${Index[index]}`)
+					else if(typeof index === 'object')
+					{
+						if(typeof index[1] === 'number')EMOJI.images.push(`${path}/${Index[index[0]]}_${Index[index[1]]}`)
+						else for(let i=0;i<=index[1];i++)EMOJI.images.push(`${path}/${Index[index[0]]}_${i}`)
+					}
+					else for(let i=0;i<=index;i++)EMOJI.images.push(`${path}/${i}`)
+				})
 			})
 		}
 		if(mode === 'Emoji')
@@ -178,6 +186,7 @@ function mt_emojis(S,mode)
 	if(PageCount === 0)type = 'custom'
 	if(type === 'custom')
 	{
+		EMOJI.color = 'blue'
 		EMOJI.pages[id].type = type
 		EMOJI.custom.io = true
 		EMOJI.custom.title = '内置'
@@ -236,7 +245,7 @@ function mt_emojis(S,mode)
 
 	setTimeout(function()
 	{
-		$('.PopupEmoticonChat__Section2-sc-vzjcea-0').scrollTop(EMOJI.pages[id].scrollTop)
+		$('.表情').scrollTop(EMOJI.pages[id].scrollTop)
 	}, 100)
 }
 function moeLog(arr,mode = false)
