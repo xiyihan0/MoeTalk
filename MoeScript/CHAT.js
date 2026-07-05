@@ -139,16 +139,21 @@ function mt_emojis(S,mode)
 						EMOJI.error.push(`${path}/${index}`)
 					})
 				}
-				foreach(v[1],function(k,index)
+				if(typeof v[1] == 'number')for(let i=0;i<=v[1];i++)EMOJI.images.push(`${path}/${i}`)
+				else
 				{
-					if(typeof index === 'number')EMOJI.images.push(`${path}/${Index[index]}`)
-					else if(typeof index === 'object')
+					foreach(v[1],function(k,index)
 					{
-						if(typeof index[1] === 'number')EMOJI.images.push(`${path}/${Index[index[0]]}_${Index[index[1]]}`)
-						else for(let i=0;i<=index[1];i++)EMOJI.images.push(`${path}/${Index[index[0]]}_${i}`)
-					}
-					else for(let i=0;i<=index;i++)EMOJI.images.push(`${path}/${i}`)
-				})
+						if(typeof index === 'number')EMOJI.images.push(`${path}/${Index[index]}`)
+						else if(typeof index === 'object')
+						{
+							if(typeof index[1] === 'number')EMOJI.images.push(`${path}/${Index[index[0]]}_${Index[index[1]]}`)
+							else for(let i=0;i<=index[1];i++)EMOJI.images.push(`${path}/${Index[index[0]]}_${i}`)
+						}
+						else for(let i=0;i<=index;i++)EMOJI.images.push(`${path}/${i}`)
+					})
+				}
+				
 			})
 		}
 		if(mode === 'Emoji')
