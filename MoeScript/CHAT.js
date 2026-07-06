@@ -1134,7 +1134,7 @@ $("body").on('click',".INDEX_delete",function()
 		title = '删除项目'
 		str += `删除当前正在编辑的项目，包括所有分支\n\n`
 		str += `点击【${mt_text.confirm[mtlang]}】将所有内容全部删除\n`
-		str += '可在项目管理中的<b class="red">自动备份</b>中恢复'
+		str += '可在<b class="red">项目管理-操作备份</b>中恢复'
 	}
 	
 	let config = {}
@@ -1146,9 +1146,9 @@ $("body").on('click',".INDEX_delete",function()
 		{
 			let info = {}
 			info.title = '读取或删除前的项目'
-			info.nickname = '自动备份'
+			info.nickname = '操作备份'
 			info.date = getNowDate();
-			await 数据操作('Ps','自动备份',await 生成存档(info))
+			await 数据操作('Ps','操作备份',await 生成存档(info))
 			otherChats = []
 			clear = true
 			mt_schar = {}

@@ -2548,7 +2548,7 @@
 										{
 											fontSize: "1rem"
 										},
-										children: '当前项目将自动备份'
+										children: '当前内容将存入【项目管理-操作备份】'
 									}), (0, m.jsxs)(ea.$_,
 									{
 										children: [(0, m.jsx)(ea.Lw,

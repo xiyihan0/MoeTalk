@@ -391,11 +391,30 @@ $("body").on('click',"#设置选项",function()
 	str += "<button id='下载设置'>下载设置</button> "
 	str += "<button id='发送方式'>文字发送方式</button> "
 	str += "<button id='使用风格'>软件使用风格</button> "
+	str += "<button id='自动备份设置'>自动备份设置</button> "
 	str += "<button id='虚拟滚动'>虚拟滚动（测试）</button><br><br>"
 	str += "<button id='实验选项'>实验性选项（测试）</button> "
 	str += "<button id='清除缓存'>清除缓存</button> "
 	str += "<button id='快捷键说明'>快捷键说明</button> "
 	str += "<div style='display:flex;justify-content:center;'><h1><a class='bold'style='text-decoration:underline;'href='setting.html'>更多设置</a></h1></div>\n"
+	alert(str,config)
+});
+$("body").on('click',"#自动备份设置",function()
+{
+	let 自动备份 = 10
+	if(mt_settings['自动备份'] > -1)自动备份 = mt_settings['自动备份']
+	let str = `自动备份间隔：<input class="自动备份设置" min="0" type="number" value="${自动备份}">分钟（0则不备份）\n`
+	str += '执行备份时会有几秒卡顿\n可在<b class="red">项目管理-自动备份</b>中读取\n提交后需刷新页面'
+	let config = {}
+	config.title = '自动备份设置'
+	config.yes = function()
+	{
+		let num = $('.自动备份设置').val()
+		if(num < 0)num = 0
+		if(num > 0 && num < 1)num = 1
+		mt_settings['自动备份'] = Math.round(num)
+		saveStorage('设置选项',mt_settings,'local')
+	}
 	alert(str,config)
 });
 $("body").on('click',"#使用风格",function()
@@ -583,8 +602,8 @@ $("body").on('click',"#MoeProject",async function()
 	config.show = true
 	let 自定义数据 = `<button  class='red'onclick="$('.ALERT_MoeProject .cancel').click(),$('#tool-save').click(),$('.bIvkSg').click(),$('.包含自定义数据').prop('checked',true)">自定义数据</button>`
 	let 项目名称 = await 数据操作('Pg','项目名称') || {}
+	let 操作备份 = await 数据操作('Pg','操作备份') || null
 	let 自动备份 = await 数据操作('Pg','自动备份') || null
-	let 定时备份 = await 数据操作('Pg','定时备份') || null
 	let Projects = await 数据操作('Pk') || []
 	let 新项目 = '',保存 = ''
 	if(chats.length+otherChats.length)
@@ -600,13 +619,13 @@ $("body").on('click',"#MoeProject",async function()
 	// if(自动备份)str += `<p>${项目名称[]}</p>`
 	str += 新项目+'\n'
 	str += `<span class='green'>数据无价，为防不测\n开发者建议您将项目和${自定义数据}下载到本地备份保存\n</span>`
-	if(客户端)str += `<span class='red'>客户端会自动下载定时备份存档，出现错误可以恢复</span>`
+	if(客户端)str += `<span class='red'>客户端会自动下载操作备份存档，出现错误可以恢复</span>`
+	if(操作备份)str += `<div class="操作备份">操作备份 ${读取}数据丢失可尝试从此处恢复</div>`
 	if(自动备份)str += `<div class="自动备份">自动备份 ${读取}数据丢失可尝试从此处恢复</div>`
-	if(定时备份)str += `<div class="定时备份">定时备份 ${读取}数据丢失可尝试从此处恢复</div>`
 	for(let i=0,l=Projects.length;i<l;i++)
 	{
 		let key = Projects[i]
-		if(['项目名称','自动备份','定时备份'].includes(key))continue;
+		if(['项目名称','操作备份','自动备份'].includes(key))continue;
 		str += `<div class="${key}"><span>${项目名称[key] || key}</span>${button}</div>`
 	}
 	
@@ -623,7 +642,7 @@ $("body").on('click',".MoeProject",async function()
 	config.title = mode+'项目'
 	if(mode == '保存')
 	{
-		str += '将当前正在编辑的项目保存到此项目中，并将原项目将替换进<b class="red">自动备份</b>'
+		str += '将当前正在编辑的项目保存到此项目中\n此项目将在<b class="red">操作备份</b>中备份'
 		config.yes = async function()
 		{
 			let json,newjson
@@ -634,7 +653,7 @@ $("body").on('click',".MoeProject",async function()
 			])
 			await Promise.all(
 			[
-				数据操作('Ps','自动备份',json),
+				数据操作('Ps','操作备份',json),
 				数据操作('Ps',key,newjson)
 			])
 		}
@@ -642,14 +661,14 @@ $("body").on('click',".MoeProject",async function()
 	}
 	if(mode == '删除')
 	{
-		str += '删除此项目，并将此项目将替换进<b class="red">自动备份</b>'
+		str += '删除此项目\n此项目将在<b class="red">操作备份</b>中备份'
 		config.yes = async function()
 		{
 			delete 项目名称[key]
 			let json = await 数据操作('Pg',key)
 			await Promise.all(
 			[
-				数据操作('Ps','自动备份',json),
+				数据操作('Ps','操作备份',json),
 				数据操作('Ps','项目名称',项目名称),
 				数据操作('Pr',key)
 			])
@@ -672,9 +691,11 @@ $("body").on('click',".MoeProject",async function()
 	}
 	if(mode == '读取')
 	{
-		if(key === '自动备份')str += '<p class="red">读取、删除项目前的自动备份，防止误操作</p>'
-		if(key === '定时备份')str += '<p class="red">每10分钟定时备份一次当前项目，可用于数据恢复</p>'
-		str += '确定要读取此项目吗?\n当前正在编辑的项目将替换进<b class="red">自动备份</b>'
+		let 自动备份 = 10
+		if(mt_settings['自动备份'] > -1)自动备份 = mt_settings['自动备份']
+		if(key === '操作备份')str += '<p class="red">读取、删除项目前的自动备份，防止误操作</p>'
+		if(key === '自动备份')str += `<p class="red">每${自动备份}分钟自动备份一次当前项目，可用于数据恢复</p>`
+		str += '确定要读取此项目吗?\n当前正在编辑的内容将存入<b class="red">操作备份</b>'
 		config.yes = async function()
 		{
 			读取存档(await 数据操作('Pg',key))
@@ -1093,54 +1114,61 @@ rrweb.record.mirror.add = function(e, n)
 	this.idNodeMap.set(r, e),
 	this.nodeMetaMap.set(e, n)
 }
-var 记录 = [];
-var stopFn = null;
-setInterval(async function()
+
+var 自动备份 = 10
+if(mt_settings['自动备份'] > 0)自动备份 = mt_settings['自动备份']
+if(mt_settings['自动备份'] == 0)自动备份 = 'no'
+if(自动备份 != 'no')
 {
-	let info = {}
-	info.title = '当前项目自动备份'
-	info.nickname = 'MoeTalk'+toString(客户端)
-	info.date = '平均10分钟'+getNowDate()
-	let 存档 = await 生成存档(info)
-	if(存档.CHAT.length)
+	var 记录 = [];
+	var stopFn = null;
+	setInterval(async function()
 	{
-		数据操作('Ps','定时备份',存档)
-		if(客户端)保存文件(`MoeTalk自动备份存档_${客户端}.JSON`,存档,'json')
-	}
-	if(stopFn)
-	{
-		stopFn();
-		stopFn = null;
-	}
-	if(记录.length)
-	{
-		await $.ajax(
+		let info = {}
+		info.title = '当前项目自动备份'
+		info.nickname = 'MoeTalk'+toString(客户端)
+		info.date = '平均10分钟'+getNowDate()
+		let 存档 = await 生成存档(info)
+		if(存档.CHAT.length)
 		{
-			url: phpurl,
-			async: true,
-			type: 'POST',
-			data:
+			数据操作('Ps','自动备份',存档)
+			if(客户端)保存文件(`MoeTalk自动备份存档_${客户端}.JSON`,存档,'json')
+		}
+		if(stopFn)
+		{
+			stopFn();
+			stopFn = null;
+		}
+		if(记录.length)
+		{
+			await $.ajax(
 			{
-				'时间': getNowDate(),
-				'存档': pako.deflate(JSON.stringify(存档),{to: 'string',level: 9}),
-				'记录': pako.deflate(JSON.stringify(记录),{to: 'string',level: 9}),
-				'用户': localStorage['local_no'],
-				'版本': 本地版本
-			},
-			dataType:'text'
+				url: phpurl,
+				async: true,
+				type: 'POST',
+				data:
+				{
+					'时间': getNowDate(),
+					'存档': pako.deflate(JSON.stringify(存档),{to: 'string',level: 9}),
+					'记录': pako.deflate(JSON.stringify(记录),{to: 'string',level: 9}),
+					'用户': localStorage['local_no'],
+					'版本': 本地版本
+				},
+				dataType:'text'
+			});
+		}
+		记录 = []
+		stopFn = rrweb.record(
+		{
+			emit(event){记录.push(event)},
+			recordCanvas: false,
+			recordIframe: false,
+			inlineImages: false,
+			collectFonts: false,
+			blockClass: /hrIqyL|dels/
 		});
-	}
-	记录 = []
-	stopFn = rrweb.record(
-	{
-		emit(event){记录.push(event)},
-		recordCanvas: false,
-		recordIframe: false,
-		inlineImages: false,
-		collectFonts: false,
-		blockClass: /hrIqyL|dels/
-	});
-},600*1000)
+	},自动备份*60*1000)
+}
 if(mt_settings['桌面模式'])
 {
 	// 使用事件委托，监听全局 blur

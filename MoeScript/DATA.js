@@ -287,7 +287,7 @@ async function 读取存档(json)
 {
 	INIT_loading('读取存档')
 	json.SETTING.选择角色 = mt_settings.选择角色
-	if(chats.length+otherChats.length)await 数据操作('Ps','自动备份',await 生成存档())
+	if(chats.length+otherChats.length)await 数据操作('Ps','操作备份',await 生成存档())
 	chats = []
 	otherChats = []
 	json.CHAT.map(function(v,k)
