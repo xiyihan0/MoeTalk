@@ -13,10 +13,10 @@ var 错误图片 = href+'MoeData/Ui/error.webp'
 var 下载文件 = {}
 async function IMAGE_error(image,play)
 {
-	let src,url,img
+	let src,url,img,game = mt_settings['选择游戏']
 	src = image.src ? image.getAttribute('src') : image.target.getAttribute('src')
 	url = src.split('/').pop().replace('.webp','')
-	if(src && src.startsWith('GameData'))
+	if(本地 && src && game != 'NONE' && src.startsWith('GameData'))
 	{
 		img = 'https://moetalk.xiyihan.cn/'+src
 		if(!下载文件[img])

@@ -503,7 +503,7 @@ async function 检查数据()
 	{
 		if(!$('.更新数据').length)update()
 		$('.更新数据').text('数据文件下载中……')
-		let data = await getfile(MoeTalkURL+'/Moedata/links.json')
+		let data = await getfile(MoeTalkURL+'/MoeData/links.json')
 		data = data ? JSON.parse(data).data : []
 		let arr = []
 		arr.push('https://moetalk.xiyihan.cn')
