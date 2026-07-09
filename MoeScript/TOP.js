@@ -402,7 +402,7 @@ $("body").on('click',"#设置选项",function()
 $("body").on('click',"#自动备份设置",function()
 {
 	let 自动备份 = 10
-	if(mt_settings['自动备份'] > -1)自动备份 = mt_settings['自动备份']
+	if(localStorage['自动备份'] > -1)自动备份 = localStorage['自动备份']
 	let str = `自动备份间隔：<input class="自动备份设置" min="0" type="number" value="${自动备份}">分钟（0则不备份）\n`
 	str += '执行备份时会有几秒卡顿\n可在<b class="red">项目管理-自动备份</b>中读取\n提交后需刷新页面'
 	let config = {}
@@ -412,7 +412,7 @@ $("body").on('click',"#自动备份设置",function()
 		let num = $('.自动备份设置').val()
 		if(num < 0)num = 0
 		if(num > 0 && num < 1)num = 1
-		mt_settings['自动备份'] = Math.round(num)
+		localStorage['自动备份'] = Math.round(num)
 		saveStorage('设置选项',mt_settings,'local')
 	}
 	alert(str,config)
@@ -692,7 +692,7 @@ $("body").on('click',".MoeProject",async function()
 	if(mode == '读取')
 	{
 		let 自动备份 = 10
-		if(mt_settings['自动备份'] > -1)自动备份 = mt_settings['自动备份']
+		if(localStorage['自动备份'] > -1)自动备份 = localStorage['自动备份']
 		if(key === '操作备份')str += '<p class="red">读取、删除项目前的自动备份，防止误操作</p>'
 		if(key === '自动备份')str += `<p class="red">每${自动备份}分钟自动备份一次当前项目，可用于数据恢复</p>`
 		str += '确定要读取此项目吗?\n当前正在编辑的内容将存入<b class="red">操作备份</b>'
@@ -1116,8 +1116,8 @@ rrweb.record.mirror.add = function(e, n)
 }
 
 var 自动备份 = 10
-if(mt_settings['自动备份'] > 0)自动备份 = mt_settings['自动备份']
-if(mt_settings['自动备份'] == 0)自动备份 = 'no'
+if(localStorage['自动备份'] > 0)自动备份 = localStorage['自动备份']
+if(localStorage['自动备份'] == 0)自动备份 = 'no'
 if(自动备份 != 'no')
 {
 	var 记录 = [];

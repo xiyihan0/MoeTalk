@@ -336,7 +336,7 @@ async function 安装应用(time = Date.now())
 	{
 		while(文件列表.length > 0)
 		{
-			let file = 文件列表.shift();
+			let file = 文件列表.pop();
 			await 保存文件(file,await $ajax(file))
 			$('.更新应用').text(`安装应用中，请不要退出或刷新\n剩余文件：${文件列表.length}`)
 		}
@@ -503,18 +503,19 @@ async function 检查数据()
 	{
 		if(!$('.更新数据').length)update()
 		$('.更新数据').text('数据文件下载中……')
-		let data = await getfile('https://api.akams.cn/github#.json')
+		let data = await getfile(MoeTalkURL+'/Moedata/links.json')
 		data = data ? JSON.parse(data).data : []
-		网址列表 = []
-		网址列表.push('https://moetalk.netlify.app')
-		网址列表.push('https://ggg555ttt.github.io/MoeTalk')
-		网址列表.push('https://raw.githubusercontent.com/ggg555ttt/MoeTalk/main')
+		let arr = []
+		arr.push('https://moetalk.xiyihan.cn')
+		arr.push('https://moetalk.netlify.app')
+		arr.push('https://ggg555ttt.github.io/MoeTalk')
+		arr.push('https://raw.githubusercontent.com/ggg555ttt/MoeTalk/main')
 		foreach(data,function(k,v)
 		{
-			网址列表.push(v.url+'/https://raw.githubusercontent.com/ggg555ttt/MoeTalk/main')
+			arr.push(v.url+'/https://raw.githubusercontent.com/ggg555ttt/MoeTalk/main')
 		})
 		文件总数 = 数据列表.length-1
-		foreach(网址列表,function(k,v){下载数据(v)})
+		foreach(arr,function(k,v){下载数据(v)})
 	}
 	else $('.更新数据').text('数据完整')
 }
@@ -525,7 +526,7 @@ async function 下载数据(url)
 		文件总数 = 0
 		return
 	}
-	let filename = 数据列表.shift()//获取下载路径
+	let filename = 数据列表.pop()//获取下载路径
 	if(await file_exists(filename))//本地存在就跳过
 	{
 		$('.更新数据').text('剩余：'+文件总数--)
@@ -542,8 +543,13 @@ async function 下载数据(url)
 		}
 		else
 		{
-			数据列表.unshift(filename)//失败换源
-			下载数据(网址列表[Math.floor(Math.random()*网址列表.length)])
+			let data = await getfile(`https://moetalk.xiyihan.cn/${filename}`)
+			if(data)//下载成功
+			{
+				await 保存文件(filename, data)
+				$('.更新数据').text('剩余：'+文件总数--)
+			}
+			else 数据列表.push(filename)//失败换源
 		}
 	}
 }
