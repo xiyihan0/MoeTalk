@@ -16,7 +16,7 @@ async function IMAGE_error(image,play)
 	let src,url,img,game = mt_settings['选择游戏']
 	src = image.src ? image.getAttribute('src') : image.target.getAttribute('src')
 	url = src.split('/').pop().replace('.webp','')
-	if(本地 && src && game != 'NONE' && src.startsWith('GameData'))
+	if(本地 && src && game != 'NONE' && src.startsWith(href+'GameData'))
 	{
 		img = 'https://moetalk.xiyihan.cn/'+src
 		if(!下载文件[img])
