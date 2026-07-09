@@ -18,7 +18,7 @@ async function IMAGE_error(image,play)
 	url = src.split('/').pop().replace('.webp','')
 	if(本地 && src && game != 'NONE' && src.startsWith(href+'GameData'))
 	{
-		img = 'https://moetalk.xiyihan.cn/'+src
+		img = 'https://moetalk.xiyihan.cn/'+src.replace(href+'GameData','GameData')
 		if(!下载文件[img])
 		{
 			下载文件[img] = 1
