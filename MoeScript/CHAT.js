@@ -114,15 +114,17 @@ function mt_emojis(S,mode)
 	let PageCount = 0
 	if(type === 'origin')
 	{
-		if(mode === 'CharFace' && mt_charface[id])
+		let arr
+		if(角色信息.info[id])arr = 角色信息.info[id][1]
+		if(mode === 'CharFace' && arr)
 		{
-			PageCount = mt_charface[id].length//
+			PageCount = arr.length//
 			if(PageIndex < 0)PageIndex = EMOJI.pages[id][type] = PageCount-1
 			if(isNaN(PageIndex) || PageIndex >= PageCount)PageIndex = EMOJI.pages[id][type] = 0
 
-			let Index = mt_charface.index
-			let CharFace = mt_charface[id][PageIndex]//
-			if(mt_charface[id][PageCount-1][0][3])EMOJI.color = 'green'
+			let Index = 角色信息.charface
+			let CharFace = arr[PageIndex]//
+			if(arr[PageCount-1][0][3])EMOJI.color = 'green'
 			if(typeof CharFace[0][3] == 'number')
 			{
 				EMOJI.color = 'red'
@@ -222,9 +224,10 @@ function mt_emojis(S,mode)
 			if(arr[PageIndex])EMOJI.images = EMOJI.images.concat(arr[PageIndex])
 		}
 	}
+	if(PageIndex > PageCount)PageIndex = 0
 	if(mode === 'CharFace')
 	{
-		if(!mt_charface[id])EMOJI.custom.title = ''
+		if(!角色信息.info[id] || !角色信息.info[id][1])EMOJI.custom.title = ''
 	}
 	else
 	{
@@ -1131,10 +1134,10 @@ $("body").on('click',".INDEX_delete",function()
 		{
 			indexs[i] = i
 		}
-		title = '删除项目'
-		str += `删除当前正在编辑的项目，包括所有分支\n\n`
+		title = '删除消息'
+		str += `删除当前正在编辑所有内容，包括分支\n\n`
 		str += `点击【${mt_text.confirm[mtlang]}】将所有内容全部删除\n`
-		str += '可在<b class="red">项目管理-操作备份</b>中恢复'
+		str += '当前内容将暂存入<b class="red">项目管理-操作备份</b>'
 	}
 	
 	let config = {}

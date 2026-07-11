@@ -438,7 +438,7 @@ async function $ajax(url,text = '',html = null)
 	if(data || !url.includes('http'))return data//重要
 	if(网址列表.length === 0)
 	{
-		let urls = await getfile(MoeTalkURL+'/MoeData/links.json')
+		let urls = await getfile('MoeData/links.json')
 		urls = urls ? JSON.parse(urls).data : []
 		网址列表 = []
 		网址列表.push('https://moetalk.netlify.app')

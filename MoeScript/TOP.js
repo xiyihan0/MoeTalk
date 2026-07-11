@@ -5,9 +5,6 @@ skip = false
 if(mt_settings['调试模式'])var vConsole = new window.VConsole();
 INIT_loading('开始加载')
 
-var mt_charface;
-var id_map = [{},{}]
-var CustomFaceAuthor = {}
 var ALERT = {}
 window.alert = function(text = '',config = {})
 {
@@ -52,14 +49,21 @@ $('body').on('click','.confirm',function()
 	if(ALERT[id])ALERT[id]()
 	$(this).prev().click()
 });
-async function 加载数据()
+async function 加载数据(初始启动 = 0)
 {
+//初始化
+	角色信息 = {info:{},name:{},group:[],charface:[]}
+	CFInfo = {}
+	CustomFaceAuthor = {}
+	let md5
+	let game = mt_settings['选择游戏'] || 'NONE';
 	let head = await 数据操作('Sg','mt-head')
 	if(head)
 	{
 		for(let key in head)await 数据操作('Is',key,head[key])
 		数据操作('Sr','mt-head')
 	}
+//加载消息
 	allChats = await 数据操作('Sg','chats') || []
 	otherChats = []
 	chats = []
@@ -70,10 +74,26 @@ async function 加载数据()
 	})
 	allChats = []
 	refreshMessage(chats)//$('#mt_watermark').click()//显示消息
-
-	club(true)
-	let game = mt_settings['选择游戏'] || 'NONE';
-	let md5 = {}
+//读取角色
+	if(初始启动)
+	{
+		[mt_char,mt_schar,CUSTOM_HEAD] = await Promise.all(
+		[
+			数据操作('Sg','mt-char').then(json => json || {}),
+			数据操作('Tg','临时角色').then(json => json || {}),
+			数据操作('Sg','自定头像').then(json => json || {})
+		]);
+	}
+	if(localStorage[game+'/Char'])
+	{
+		角色信息 = pako.inflate(localStorage[game+'/Char'],{to:'string'})
+		角色信息 = JSON.parse(角色信息)
+		加载角色()
+		club(true)
+		charList(true)//更新角色
+		INIT_loading(false)
+	}
+//获取文件
 	if(game != 'NONE')md5 = JSON.parse(await $ajax(`${href}GameData/${game}/Version/${game}.json?time=${Date.now()}`));
 	if(!md5 || !mt_settings['选择游戏'])
 	{
@@ -81,22 +101,31 @@ async function 加载数据()
 		else selectgame('<span style="color:red;">数据缺失！请重新选择游戏</span>')
 		md5 = {}
 	}
-	[mt_school,mt_club,mt_characters,mt_charface,CFInfo,id_map,CustomFaceAuthor,mt_char,mt_schar,CUSTOM_HEAD] = await Promise.all(
-	[
-		game != 'NONE' ? $ajax(`${href}GameData/${game}/MT-School.json?md5=${md5['MT-School']}`).then(json => JSON.parse(json)) : {},
-		game != 'NONE' ? $ajax(`${href}GameData/${game}/MT-Club.json?md5=${md5['MT-Club']}`).then(json => JSON.parse(json)) : {},
-		game != 'NONE' ? $ajax(`${href}GameData/${game}/MT-Characters.json?md5=${md5['MT-Characters']}`).then(json => JSON.parse(json)) : {},
-		game != 'NONE' ? $ajax(`${href}GameData/${game}/MT-CharFace.json?md5=${md5['MT-CharFace']}`).then(json => JSON.parse(json)) : {},
-		game != 'NONE' ? $ajax(`${href}GameData/${game}/CharFaceInfo.json?md5=${md5['CharFaceInfo']}`).then(json => JSON.parse(json)) : {},
-		game == 'BLDA' ? $ajax(`${href}GameData/${game}/IdMap.json?md5=${md5['IdMap']}`).then(json => JSON.parse(json)) : [{},{}],
-		game == 'BLDA' ? $ajax(`${href}GameData/${game}/CustomFaceAuthor.json?md5=${md5['CustomFaceAuthor']}`).then(json => JSON.parse(json)) : {},
-		数据操作('Sg','mt-char').then(json => json || {}),
-		数据操作('Tg','临时角色').then(json => json || {}),
-		数据操作('Sg','自定头像').then(json => json || {})
-	]);
-	加载角色()
-	charList(true)//更新角色
-	INIT_loading(false)
+	if(game != 'NONE')
+	{
+		let char = await $ajax(`${href}GameData/${game}/Char.json`)
+		if(char)
+		{
+			if(!localStorage[game+'/Char'])
+			{
+				角色信息 = JSON.parse(char)
+				加载角色()
+				club(true)
+				charList(true)//更新角色
+				INIT_loading(false)
+			}
+			localStorage[game+'/Char'] = pako.deflate(char,{to:'string',level:9})
+		}
+	}
+	if(game == 'BLDA')
+	{
+		Promise.all(
+		[
+			$ajax(`${href}GameData/${game}/CharFaceInfo.json?md5=${md5['CharFaceInfo']}`).then(json => JSON.parse(json)),
+			$ajax(`${href}GameData/${game}/IdMap.json?md5=${md5['IdMap']}`).then(json => JSON.parse(json)),
+			$ajax(`${href}GameData/${game}/CustomFaceAuthor.json?md5=${md5['CustomFaceAuthor']}`).then(json => JSON.parse(json))
+		]).then(res => {[CFInfo, id_map, CustomFaceAuthor] = res});
+	}
 }
 
 var FontList = `@font-face{font-family:Blueaka;src:url(./MoeData/Fonts/Blueaka.woff2)}/*默认*/
@@ -228,7 +257,7 @@ $(async function()
 	}
 	$(".消息底座").wait(function()
 	{
-		加载数据()
+		加载数据(1)
 	},".消息底座");
 	/[\u4e00-\u9fff]/.test($("#readme").text()) && $("#readme").css('font-family','moetalk')
 	let text = ''
@@ -642,7 +671,7 @@ $("body").on('click',".MoeProject",async function()
 	config.title = mode+'项目'
 	if(mode == '保存')
 	{
-		str += '将当前正在编辑的项目保存到此项目中\n此项目将在<b class="red">操作备份</b>中备份'
+		str += '当前内容将保存到此项目中\n此项目将暂存入<b class="red">操作备份</b>'
 		config.yes = async function()
 		{
 			let json,newjson
@@ -661,7 +690,7 @@ $("body").on('click',".MoeProject",async function()
 	}
 	if(mode == '删除')
 	{
-		str += '删除此项目\n此项目将在<b class="red">操作备份</b>中备份'
+		str += '删除此项目\n此项目将暂存入<b class="red">操作备份</b>'
 		config.yes = async function()
 		{
 			delete 项目名称[key]
@@ -695,7 +724,7 @@ $("body").on('click',".MoeProject",async function()
 		if(localStorage['自动备份'] > -1)自动备份 = localStorage['自动备份']
 		if(key === '操作备份')str += '<p class="red">读取、删除项目前的自动备份，防止误操作</p>'
 		if(key === '自动备份')str += `<p class="red">每${自动备份}分钟自动备份一次当前项目，可用于数据恢复</p>`
-		str += '确定要读取此项目吗?\n当前正在编辑的内容将存入<b class="red">操作备份</b>'
+		str += '确定要读取此项目吗?\n当前内容将暂存入<b class="red">操作备份</b>'
 		config.yes = async function()
 		{
 			读取存档(await 数据操作('Pg',key))
@@ -709,7 +738,7 @@ $("body").on('click',".MoeProject",async function()
 		let 改名 = `<button class="MoeProject" title="改名"style="background-color:rgb(139,187,233);">改名</button>`
 		let 读取 = `<button class="MoeProject" title="读取"style="background-color:green;color:white;">读取</button>`
 		let button = ` ${读取} ${改名} ${保存} ${删除}`
-		str = '将当前正在编辑的内容保存为新项目\n'
+		str = '当前内容将保存为新项目\n'
 		str += '输入项目名：<input>'
 		config.title = '添加'+mode
 		config.yes = async function()

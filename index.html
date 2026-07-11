@@ -56,7 +56,7 @@ if(sessionStorage['phpwin'])
 	客户端 = 'phpwin'
 }
 //版本信息
-var 本地应用版本 = [260710.00312]//@
+var 本地应用版本 = [260711.231021]//@
 var 网络应用版本,本地数据版本,网络数据版本
 var gamearr = {"BLDA":"碧蓝档案","CBJQ":"尘白禁区","QNZL":"千年之旅","YGST":"犹格索托斯的庭院","DFPJ":"东方Project","NONE":"无"}
 var 本地版本 = 本地应用版本[0]
@@ -65,7 +65,6 @@ function loadjs(link,mode = ''){document.write("<scr"+`ipt src='${link}' ${mode}
 var test = console.log
 var MoeTalkURL = 'https://ggg555ttt.github.io/MoeTalk'//MoeTalk网址
 var GitlabURL = 'https://moetalk-ggg555ttt-57a86c1abdf06b5ebe191f38161beddd1d0768c27e1a2.gitlab.io'
-var mt_characters,mt_school,mt_club,CFInfo = {}//表情差分信息
 var mt_settings = localStorage['设置选项'] ? JSON.parse(localStorage['设置选项']) : {}
 
 //日期和时间
@@ -120,19 +119,19 @@ if(mt_settings['调试模式'])loadjs('./MoeScript/Script/vconsole.min.js')
 		<link rel="shortcut icon" href="./MoeData/Ui/Favor_Schedule_Deco.webp">
 <!-- MoeTalk -->
 		<link rel='stylesheet' href="./MoeData/Style.css?md5=47ac300da5bbc29de24dce9083c2a84e"><!-- @@样式 -->
-		<script src="./MoeScript/INIT.js?md5=2d084d1e7a9041477426901425420bb7" defer></script><!-- @@预定义 -->
+		<script src="./MoeScript/INIT.js?md5=0d8a3ebcaa8bcbcb4f2c20e6a0164b08" defer></script><!-- @@预定义 -->
 		<script src="./MoeScript/EDIT.js?md5=603bc9bd415daaacfb806395baf0e430" defer></script><!-- @@预定义 -->
-		<script src="./MoeScript/CLIENT.js?md5=32c699db1b55095e286971baef8b6d3a" defer></script><!-- @@客户端 -->
-		<script src="./MoeScript/DATA.js?md5=98c4993a9479677e872c0e396a12a3af" defer></script><!-- @@存档 -->
-		<script src="./MoeScript/CHAR.js?md5=e5bf5431cc04bf6c15b1af912150baae" defer></script><!-- @@角色 -->
-		<script src="./MoeScript/IMAGE.js?md5=de922ab98a56567a9c13c5d12eae779c" defer></script><!-- @@截图 -->
-		<script src="./MoeScript/CHAT.js?md5=aad7ebefbc5e87c4f7e8858ec54e4734" defer></script><!-- @@消息 -->
-		<script src="./MoeScript/TOP.js?md5=e5b84dd41f9b0e7b26405925425ba983" defer></script><!-- @@首页 -->
+		<script src="./MoeScript/CLIENT.js?md5=d2c9b828a368ac60ee0445a973edf421" defer></script><!-- @@客户端 -->
+		<script src="./MoeScript/DATA.js?md5=aa9a37c6328ae533a30c90729c7e51b1" defer></script><!-- @@存档 -->
+		<script src="./MoeScript/CHAR.js?md5=0a826ec041cde99840e7cc2a97d8fac2" defer></script><!-- @@角色 -->
+		<script src="./MoeScript/IMAGE.js?md5=24704db99ce3953473875d22d6d08f2a" defer></script><!-- @@截图 -->
+		<script src="./MoeScript/CHAT.js?md5=0b4ba578be8794bec60306937c7681c9" defer></script><!-- @@消息 -->
+		<script src="./MoeScript/TOP.js?md5=a9ec28e792f740ad9d31077bc5351da4" defer></script><!-- @@首页 -->
 <!-- MolluTalk -->
 		<script src="./MoeScript/Mollu/TEXT.js?md5=dc9ac5d2f983567f75da8f0984f7cf4f"></script><!-- @@提示文本 -->
 		<script src="./MoeScript/Mollu/MAIN.js?md5=aac2192e9b2c096f149c1ac5b89996d9" defer></script><!-- @@ -->
 		<script src="./MoeScript/Mollu/APP.js?md5=9476fb8ca2165482a0e9b673f96ed068" defer></script><!-- @@ -->
-		<script src="./MoeScript/Mollu/INDEX.js?md5=2b4274c2f75812c79ada8c26d480ccbc"></script><!-- @@ -->
+		<script src="./MoeScript/Mollu/INDEX.js?md5=3f576f87bea4fb579ff484a4fa8936a4"></script><!-- @@ -->
 		<script src="./MoeScript/Old/OLD.js?md5=9f5710276b10a19bc16bcb9bc288d16a" defer></script><!-- @@旧版脚本 -->
 	</head>
 	<body style="touch-action: none;-webkit-tap-highlight-color: transparent;tap-highlight-color: transparent;"><!-- MikuTap style -->
@@ -141,7 +140,7 @@ if(mt_settings['调试模式'])loadjs('./MoeScript/Script/vconsole.min.js')
 	</body>
 </html>
 <button id="installBtn" style="display: none;">安装PWA应用</button>
-<i>进入<a href='setting.html'target='_blank'style='text-decoration:underline;'>设置页面</a></i>
+<i>崩溃请进入<a href='setting.html'target='_blank'style='text-decoration:underline;'>设置页面</a></i>
 <!-- Default Statcounter code for MoeTalk http://*.* -->
 <script type="text/javascript">
 var sc_project=12996076; 

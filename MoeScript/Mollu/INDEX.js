@@ -191,7 +191,7 @@
 							children: (0, m.jsx)(x,
 							{
 								style: {overflow: "hidden"},
-								children: mt_characters && mt_char ? (0, m.jsx)(HList.Z,
+								children: (0, m.jsx)(HList.Z,
 								{
 									children: (0, m.jsx)(g,
 									{
@@ -217,7 +217,6 @@
 													let name = loadname(no, index)
 													if($$('.编辑界面').hasClass('visible'))
 													{
-														
 														$$('.角色头像').attr(
 														{
 															alt: no,
@@ -242,7 +241,7 @@
 											}, n)
 										})
 									})
-								}) : ''
+								})
 							})
 						}) : (0, m.jsx)("span",
 						{
@@ -2326,9 +2325,29 @@
 												})
 											}), (0, m.jsx)("span",
 											{
+												style: {whiteSpace: 'pre'},
 												className: "bold",
-												children: '上传JSON存档'
+												children: '上传\nJSON存档'
 											})]
+										}), (0, m.jsxs)(eP,
+										{
+											children: (0, m.jsx)('button',
+											{
+												style:
+												{
+													whiteSpace: 'nowrap',
+													width: 'auto',
+													height: 'auto',
+													fontSize: '1.5rem',
+													color: 'rgb(63, 68, 74)'
+												},
+												className :"bold cVRiXh eIEKpg evqKja kwhiZC",
+												children: '项目管理',
+												onClick: function()
+												{
+													$$('#MoeProject').click()
+												}
+											})
 										}), (0, m.jsxs)(eP,
 										{
 											children: [(0, m.jsx)(eI,
@@ -2346,8 +2365,9 @@
 												})
 											}), (0, m.jsx)("span",
 											{
+												style: {whiteSpace: 'pre'},
 												className: "bold",
-												children: '上传图片存档'
+												children: '上传\n图片存档'
 											})]
 										})]
 									}), (0, m.jsx)(eN.HR,
@@ -2546,9 +2566,10 @@
 									{
 										style:
 										{
-											fontSize: "1rem"
+											fontSize: "1rem",
+											color: 'red'
 										},
-										children: '当前内容将存入【项目管理-操作备份】'
+										children: '当前内容将暂存入【项目管理-操作备份】'
 									}), (0, m.jsxs)(ea.$_,
 									{
 										children: [(0, m.jsx)(ea.Lw,
@@ -2952,11 +2973,11 @@
 											children: Array(EMOJI.pagecount).fill(0).map(function(v,k)
 											{
 												v = `${k+1} / ${EMOJI.pagecount}`
-												let color = ''
-												if(mt_charface[EMOJI.id])
+												let color = '',id = EMOJI.id
+												if(角色信息.info[id])
 												{
-													if(typeof mt_charface[EMOJI.id][EMOJI.pagecount-1][0][3] == 'number')color = 'green'
-													if(typeof mt_charface[EMOJI.id][k][0][3] == 'number')color = 'red'
+													if(typeof 角色信息.info[id][1][EMOJI.pagecount-1][0][3] == 'number')color = 'green'
+													if(typeof 角色信息.info[id][1][k][0][3] == 'number')color = 'red'
 												}
 												return (0, m.jsx)('option',
 												{
@@ -3082,7 +3103,7 @@
 														let no = mt_settings['选择角色'].no
 														let index = mt_settings['选择角色'].index
 														let link = EMOJI.path+v+'.webp'
-														let EmojiInfo = mt_settings['表情信息'][v] ? mt_settings['表情信息'][v] : CFInfo[v] ? CFInfo[v] : v
+														let EmojiInfo = mt_settings['表情信息'] && mt_settings['表情信息'][v] ? mt_settings['表情信息'][v] : CFInfo[v] ? CFInfo[v] : v
 														EmojiInfo = EmojiInfo === undefined ? '' : EmojiInfo
 														if(isCusImg(v))link = v
 														return (0, m.jsx)('div',

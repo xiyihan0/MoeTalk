@@ -443,9 +443,9 @@ async function 更新数据(time = Date.now())
 			await 复制目录(Update,'GameData/'+game,files)
 		}
 		$('.更新数据').html('数据更新完毕！文件请通过选择游戏或刷新页面来下载')
+		delete localStorage[game+'/Char']
 	}
 	else $('.更新数据').html('<span style="color:red;">暂未发现更新</span>')
-	
 }
 var 文件总数 = '0'
 var 数据列表 = []
@@ -503,7 +503,7 @@ async function 检查数据()
 	{
 		if(!$('.更新数据').length)update()
 		$('.更新数据').text('数据文件下载中……')
-		let data = await getfile(MoeTalkURL+'/MoeData/links.json')
+		let data = await getfile('MoeData/links.json')
 		data = data ? JSON.parse(data).data : []
 		let arr = []
 		arr.push('https://moetalk.xiyihan.cn')
@@ -529,7 +529,7 @@ async function 下载数据(url)
 	let filename = 数据列表.pop()//获取下载路径
 	if(await file_exists(filename))//本地存在就跳过
 	{
-		$('.更新数据').text('剩余：'+文件总数--)
+		$('.更新数据').text('剩余下载文件：'+文件总数--)
 		下载数据(url)
 	}
 	else
@@ -538,7 +538,7 @@ async function 下载数据(url)
 		if(data)//下载成功
 		{
 			await 保存文件(filename, data)
-			$('.更新数据').text('剩余：'+文件总数--)
+			$('.更新数据').text('剩余下载文件：'+文件总数--)
 			下载数据(url)
 		}
 		else
@@ -547,7 +547,7 @@ async function 下载数据(url)
 			if(data)//下载成功
 			{
 				await 保存文件(filename, data)
-				$('.更新数据').text('剩余：'+文件总数--)
+				$('.更新数据').text('剩余下载文件：'+文件总数--)
 			}
 			else 数据列表.push(filename)//失败换源
 		}

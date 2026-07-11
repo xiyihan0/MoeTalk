@@ -18,18 +18,22 @@ async function IMAGE_error(image,play)
 	url = src.split('/').pop().replace('.webp','')
 	if(本地 && src && game != 'NONE' && src.startsWith(href+'GameData'))
 	{
-		img = 'https://moetalk.xiyihan.cn/'+src.replace(href+'GameData','GameData')
-		if(!下载文件[img])
+		let filename = src.replace(href+'GameData','GameData')
+		let link = 'https://moetalk.xiyihan.cn/'+filename
+		if(!下载文件[link])
 		{
-			下载文件[img] = 1
-			await 保存文件(src, await getfile(img))
-			delete 下载文件[img]
+			下载文件[link] = 1
+			img = await getfile(link)
+			await 保存文件(filename, img)
+			if(img)img = src
+			else img = href+'MoeData/Ui/error.webp'
+			delete 下载文件[link]
 		}
 	}
 	else
 	{
 		img = (play ? await 数据操作('Cg写',url) : await 数据操作('Ig写',url) || await 数据操作('Tg写',url)) || href+'MoeData/Ui/error.webp'
-		if(img[0] === 'G')img = href+img	
+		if(img[0] === 'G')img = href+img
 	}
 	if(image.src)
 	{

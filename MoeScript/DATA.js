@@ -88,11 +88,11 @@ function loaddata(json,play)//识别存档
 function repairChat(data)
 {
 	if(!data.sCharacter)return
-	let id = data.sCharacter.no
-	let head = data.sCharacter.index
+	let id = toString(data.sCharacter.no)
+	let head = toString(data.sCharacter.index)
 	if(id_map[0][id])id = id_map[0][id]
 	if(id_map[1][head])head = id_map[1][head]
-	if(mt_characters && mt_characters[id] && head < 1000)head = mt_characters[id].head.split(',')[0]//旧mollu角色
+	if(角色信息.info[id] && head < 1000)head = 角色信息.info[id][2][0]//旧mollu角色
 	data.sCharacter.no = id
 	data.sCharacter.index = head
 	if(data.heads && (!data.heads.list || !data.heads.list.length))delete data.heads

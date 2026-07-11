@@ -11,28 +11,32 @@ var CHAR_CharList = []
 var CUSTOM_CHAR = {}
 var CUSTOM_HEAD = {}
 var CUSTOM_NAME = {}
+var 角色信息 = {info:{},name:{},group:[],charface:[]}
+var mt_school,mt_club
+var id_map = [{},{}]
+var CustomFaceAuthor = {}
+var CFInfo = {}//表情差分信息
 //读取头像
 function loadhead(id,img)
 {
+	img = img || ''
 	if(id == 0 || img == 1)return `${href}MoeData/Ui/you.webp`;//主角
 	if(isCusImg(img))return loadImg(img)
-	return `${href}GameData/${mt_settings['选择游戏']}/Char/${img.replace('_Collection','_BG')}.webp`;
+	img = img.replace('CharID_','').replace('_Collection','_BG').toLocaleUpperCase()
+	return `${href}GameData/${mt_settings['选择游戏']}/Char/${img}.webp`;
 }
 function loadname(id,index,play)
 {
-	if(!mt_characters)return '<br>';
 	let you = {kr: "주인공",en: "Lead",jp: "主役",zh_cn: "主角",zh_tw: "主角"}
 	let name = id
 	let names = (play ? MMT目录.设置['人物改名'] : mt_settings['人物改名']) || {}
-	
-	if(mt_characters[id])
+
+	if(角色信息.info[id])
 	{
-		if(mt_characters[id].name[mtlang])name = mt_characters[id].name[mtlang]
-		if(mt_characters[id].name.别名)name = mt_characters[id].name.别名
+		name = 角色信息.name[mtlang][角色信息.info[id][0][2]] || id
 		if(name.split(" ")[1])name = name.split(" ")[1]
 		name = name.replaceAll("-", " ").split("·")[0]
 	}
-
 	if(names[id])name = names[id];//@改名
 	if(names[index])name = names[index];//@改名
 
@@ -465,49 +469,75 @@ $("body").on('click',".heads img",function()
 });
 function 加载角色()
 {
+	let lang = ['zh_cn','zh_tw','jp','en','kr','pinyin']
+	mt_school = {}
+	mt_club = {}
 	CHAR_CharList = []
-	$.each(mt_characters,function(k,v)
+	for(let id in 角色信息.info)
 	{
-		let arr = {
-			no:k,
-			school:{
-				zh_cn: mt_school[v.school].zh_cn ? mt_school[v.school].zh_cn : v.school,
-				zh_tw: mt_school[v.school].zh_tw ? mt_school[v.school].zh_tw : v.school,
-				jp: mt_school[v.school].jp ? mt_school[v.school].jp : v.school,
-				en: mt_school[v.school].en ? mt_school[v.school].en : v.school,
-				kr: mt_school[v.school].kr ? mt_school[v.school].kr : v.school,
-				pinyin: mt_school[v.school].pinyin ? mt_school[v.school].pinyin : v.school,
-				id: v.school
-			},
-			club:{
-				zh_cn: mt_club[v.school][v.club].zh_cn ? mt_club[v.school][v.club].zh_cn : v.club,
-				zh_tw: mt_club[v.school][v.club].zh_tw ? mt_club[v.school][v.club].zh_tw : v.club,
-				jp: mt_club[v.school][v.club].jp ? mt_club[v.school][v.club].jp : v.club,
-				en: mt_club[v.school][v.club].en ? mt_club[v.school][v.club].en : v.club,
-				kr: mt_club[v.school][v.club].kr ? mt_club[v.school][v.club].kr : v.club,
-				pinyin: mt_club[v.school][v.club].pinyin ? mt_club[v.school][v.club].pinyin : v.club,
-				id: v.club
-			},
-			name:{
-				zh_cn: v.name.zh_cn ? v.name.zh_cn : k,
-				zh_tw: v.name.zh_tw ? v.name.zh_tw : k,
-				jp: v.name.jp ? v.name.jp : k,
-				en: v.name.en ? v.name.en : k,
-				kr: v.name.kr ? v.name.kr : k,
-				pinyin: v.name.pinyin
-			},
-			index: CHAR_CharList.length,//#改为默认
-			profile: v.head.split(','),
-			open: true,//#改为默认
-			momotalk: true//#改为默认
-		}
-		if(CUSTOM_HEAD[k])
+		let index = 角色信息.info[id][0]
+		let char = {}
+		char.open = 1
+		char.momotalk = 1
+		char.index = CHAR_CharList.length
+		char.no = id
+		char.school = {}
+		char.club = {}
+		char.name = {}
+		char.school.id = 角色信息.group[index[0]]
+		char.club.id = 角色信息.group[index[1]]
+		if(!mt_school[char.school.id])mt_school[char.school.id] = {}
+		if(!mt_club[char.school.id])mt_club[char.school.id] = {}
+		if(!mt_club[char.school.id][char.club.id])mt_club[char.school.id][char.club.id] = {}
+		for(let i=0;i<6;i++)
 		{
-			for(let i=0,l=CUSTOM_HEAD[k].length;i<l;i++)
+			let la = lang[i]
+			char.school[la] = 角色信息.name[la][index[0]] || char.school.id
+			mt_school[char.school.id][la] = 角色信息.name[la][index[0]]
+		}
+		for(let i=0;i<6;i++)
+		{
+			let la = lang[i]
+			char.club[la] = 角色信息.name[la][index[1]] || char.club.id
+			mt_club[char.school.id][char.club.id][la] = 角色信息.name[la][index[1]]
+		}
+		for(let i=0;i<6;i++)
+		{
+			let la = lang[i]
+			char.name[la] = 角色信息.name[la][index[2]] || id
+		}
+		let head = [[],[],[],[],角色信息.info[id][2] || []]
+		if(角色信息.info[id][1] && typeof 角色信息.info[id][1][0][0][3] != 'number')
+		{
+			for(let ai=0,al=角色信息.info[id][1].length;ai<al;ai++)
 			{
-				arr.profile.push(CUSTOM_HEAD[k][i])
+				let page = 角色信息.info[id][1][ai]
+				for(let pi=0,pl=page.length;pi<pl;pi++)
+				{
+					let cf = page[pi][2]
+					let img = page[pi][0]
+					if(typeof cf == 'object')
+					{
+						for(let ci=1,cl=cf.length;ci<cl;ci++)
+						{
+							if(cf[ci] == 1)head[2].push(img+'_L2D_2');
+							if(cf[ci] == 2)head[1].push(img+'_L2D');
+							if(cf[ci] == 3)head[0].push(img+'_BG');
+							if(cf[ci] == 4)head[3].push(img);
+						}
+					}
+				}
 			}
 		}
-		CHAR_CharList.push(arr)
-	})
+		角色信息.info[id][2] = head.flat()
+		char.profile = 角色信息.info[id][2]
+		if(CUSTOM_HEAD[id])
+		{
+			for(let i=0,l=CUSTOM_HEAD[id].length;i<l;i++)
+			{
+				char.profile.push(CUSTOM_HEAD[id][i])
+			}
+		}
+		CHAR_CharList.push(char)
+	}
 }
