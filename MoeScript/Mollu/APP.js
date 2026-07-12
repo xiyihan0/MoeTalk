@@ -6084,7 +6084,18 @@
 							};
 						return (0, O.jsxs)(O.Fragment,
 						{
-							children: [(0, O.jsxs)(M,
+							children: [(0, O.jsx)(D,
+							{
+								style:
+								{
+									opacity: i && n ? 1 : 0,
+									pointerEvents: i && n ? "auto" : "none"
+								},
+								onClick: function()
+								{
+									t((0, w.c1)(!1))
+								}
+							}), (0, O.jsxs)(M,
 							{
 								style: {display: i && n || !i ? "flex" : "none"},
 								children: [(0, O.jsxs)(L,
@@ -6190,17 +6201,6 @@
 										},
 										align: 'center',
 										children: `${mt_text.momotalk[mtlang]}\n${mt_text.library[mtlang]}`
-									}), (0, O.jsx)(D,
-									{
-										style:
-										{
-											opacity: i && n ? 1 : 0,
-											pointerEvents: i && n ? "auto" : "none"
-										},
-										onClick: function()
-										{
-											t((0, w.c1)(!1))
-										}
 									}), (0, O.jsx)(C.Z,
 									{
 										show: s,
@@ -6269,7 +6269,7 @@
 					{
 						displayName: "SideBar__BgDiv",
 						componentId: "sc-v5z5y3-5"
-					})(["position:absolute;margin-top:3.5rem;height:100%;background-color:", ";z-Index:3;opacity:0;transition:opacity 0.25s ease-in-out;"], function(e)
+					})(["position:absolute;margin-top:3.5rem;width:100%;height:100%;background-color:", ";z-Index:3;opacity:0;transition:opacity 0.25s ease-in-out;"], function(e)
 					{
 						return e.theme.color.rgba0_0_0_6
 					}),
