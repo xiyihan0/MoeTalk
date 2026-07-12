@@ -828,7 +828,7 @@ $('body').on('click',"#mt-style",function()
 		html += `<button class='自定样式'id='${id}'>${样式.name || id}</button>`
 	}
 	html += `\n聊天背景颜色：<input class="bgcolor" oninput="RgbToHex(this.value,1)"><input type="color" onchange="$('.bgcolor').val(HexToRgb(this.value))">\n`
-	html += '各类型样式定义：（高级）\n'
+	html += '各类型CSS样式定义：（高级）\n'
 	html += '文字：<textarea title="chat" class="typecss" style="width:80%;height:5rem;line-height:110%;"></textarea>\n'
 	html += '回复：<textarea title="reply" class="typecss" style="width:80%;height:5rem;line-height:110%;"></textarea>\n'
 	html += '羁绊：<textarea title="heart" class="typecss" style="width:80%;height:5rem;line-height:110%;"></textarea>\n'

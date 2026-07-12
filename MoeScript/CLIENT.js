@@ -577,18 +577,19 @@ async function 导出截图(filename,data,num)
 	if(imageZip)
 	{
 		imageZip.file(`${filename}.${ext}`,data);
+		$('.INDEX_CaptureTips').html('<span style="color:red;">打包下载：图片全部生成完毕才会开始下载，【设置选项-下载设置】可更改</span>')
 		if(imageArrL === Object.keys(imageZip.files).length)
 		{
 			imageZip = await imageZip.generateAsync({type:'blob'})
 			imageZip = await 保存文件(filename+'.zip',imageZip,'zip')
-			$('.INDEX_CaptureTips').html(`<span style="color:red;">${imageZip}</span>`)
+			$('.INDEX_CaptureTips').html(`<span style="color:red;">已下载：${imageZip}</span>`)
 			imageZip = null
 		}
 	}
 	else
 	{
 		filename = await 保存文件(`${filename}.${ext}`,data,'image')
-		$('.INDEX_CaptureTips').html(`<span style="color:red;">${filename}</span>`)
+		$('.INDEX_CaptureTips').html(`<span style="color:red;">已下载：${filename}</span>`)
 	}
 	if(!正在截图)
 	{
