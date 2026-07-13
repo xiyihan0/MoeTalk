@@ -1991,7 +1991,7 @@
 											fontSize: "0.9rem",
 											marginBottom: "0.5rem"
 										},
-										children: [L.Z.down_comment1[g],'首张图片自带存档']
+										children: [mt_settings['打包下载'] ? 'MoeTalk打包下载为ZIP。' : L.Z.down_comment1[g],'首张图片自带存档']
 									}), (0, m.jsx)("span",
 									{
 										style:
@@ -2018,6 +2018,28 @@
 											className:'bold red',
 											children: imageArr.length
 										})]
+									}), (0, m.jsx)("span",
+									{
+										style:
+										{
+											textAlign: "center",
+											fontSize: "0.9rem",
+											marginBottom: "0.5rem",
+											cursor: 'pointer'
+										},
+										children: ['格式：', (0, m.jsx)("span",
+										{
+											className: 'bold green',
+											children: (mt_settings['图片格式'] || 'png').split('/').pop().replace('jpeg','jpg')
+										}), '工具：', (0, m.jsx)("span",
+										{
+											className: 'bold green',
+											children: mt_settings['截图工具'] || 'html2canvas'
+										})],
+										onClick: function()
+										{
+											alert('截图下载相关在【设置选项】中切换')
+										}
 									}), (0, m.jsx)("div",
 									{
 										style:

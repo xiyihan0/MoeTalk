@@ -572,7 +572,7 @@ async function 导出存档(filename,json)
 }
 async function 导出截图(filename,data,num)
 {
-	let ext = 'png'
+	let ext = (mt_settings['图片格式'] || 'png').split('/').pop().replace('jpeg','jpg')
 	if(num == 1)ext = ext.toUpperCase()
 	if(imageZip)
 	{
@@ -594,7 +594,7 @@ async function 导出截图(filename,data,num)
 	if(!正在截图)
 	{
 		data = await blobToBase64(data)
-		截图区域.html(`<img src='data:image/png;base64,${data}' style='width:100%;'>`)
+		截图区域.html(`<img src='data:${mt_settings['图片格式'] || 'image/png'};base64,${data}' style='width:100%;'>`)
 	}
 	$('.截图数量').text(imageArr.length)
 }

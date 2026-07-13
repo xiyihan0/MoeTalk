@@ -535,11 +535,17 @@ $("body").on('click',"#虚拟滚动",function()
 $("body").on('click',"#截图设置",function()
 {
 	let option = ''
-	option = `<option value="html2canvas" ${mt_settings['截图工具'] != 'snapdom' ? 'selected' : ''}>html2canvas（默认）</option>`
-	option += `<option value="snapdom" ${mt_settings['截图工具'] == 'snapdom' ? 'selected' : ''}>snapdom（测试）</option>`
+	option += '<option value="html2canvas">html2canvas（默认）</option>'
+	option += '<option value="snapdom">snapdom（测试）</option>'
+	let ext = ''
+	ext += '<option value="image/png">png（默认）</option>'
+	ext += '<option value="image/jpeg">jpg</option>'
+	ext += '<option value="image/webp">webp</option>'
 	let str = ''
 	str += `图片宽度：（默认500，上限需测试）\n<input class='宽度限制' type="number" value="${mt_settings['宽度限制']}">\n`
 	str += `图片最大高度：（默认16384，上限需测试）\n<input class='高度限制' type="number" value="${mt_settings['高度限制']}">\n`
+	str += `图片下载格式：\n`
+	str += `<select class='图片格式' style='font-size: 1.5rem;'>${ext}</select>\n`
 	str += `截图工具：\n`
 	str += `<select class='截图工具' style='font-size: 1.5rem;'>${option}</select>\n`
 	let config = {}
@@ -548,12 +554,15 @@ $("body").on('click',"#截图设置",function()
 	config.id = Math.random().toString().replace('0.','')
 	config.yes = function()
 	{
-		mt_settings['宽度限制'] = $(`.alert_${config.id} .宽度限制`).val() || 500
-		mt_settings['高度限制'] = $(`.alert_${config.id} .高度限制`).val() || 16384
-		mt_settings['截图工具'] = $(`.alert_${config.id} .截图工具`).val()
+		mt_settings['宽度限制'] = $('.宽度限制').val() || 500
+		mt_settings['高度限制'] = $('.高度限制').val() || 16384
+		mt_settings['截图工具'] = $('.截图工具').val()
+		mt_settings['图片格式'] = $('.图片格式').val()
 		saveStorage('设置选项',mt_settings,'local')
 	}
 	alert(str,config)
+	$(`.截图工具 option[value="${mt_settings['截图工具']}"]`).prop('selected', true);
+	$(`.图片格式 option[value="${mt_settings['图片格式']}"]`).prop('selected', true);
 });
 $("body").on('click',"#下载设置",function()
 {

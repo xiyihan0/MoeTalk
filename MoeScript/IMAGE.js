@@ -448,7 +448,7 @@ function mt_capture(清晰度,生成图片,标题)
 				img.toBlob(function(blob)
 				{
 					blob ? func(blob) : callback()
-				})
+				},mt_settings['图片格式'] || 'image/png')
 			}
 			else
 			{
@@ -457,8 +457,8 @@ function mt_capture(清晰度,生成图片,标题)
 					(await img.toCanvas()).toBlob(function(blob)
 					{
 						func(blob)
-					})
-				})
+					},mt_settings['图片格式'] || 'image/png')
+				},mt_settings['图片格式'] || 'image/png')
 			}
 		}
 		catch
