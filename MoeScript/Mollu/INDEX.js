@@ -204,7 +204,6 @@
 										{
 											return (0, m.jsx)('img',
 											{
-												style: {zIndex: 200},
 												alt: String(e.no),
 												title: String(e.index),
 												width: 252,
@@ -259,8 +258,7 @@
 								style:
 								{
 									display: !f || c ? "block" : "none",
-									margin: "0rem",
-									zIndex: 200
+									margin: "0rem"
 								},
 								width: 252,
 								height: 252,
@@ -1653,14 +1651,7 @@
 						F = T[1],
 						D = function()
 						{
-							if(正在截图)
-							{
-								$$('#download_to_image').css({zIndex:'',opacity:0,visibility:'hidden'})
-							}
-							else
-							{
-								C(""), b && (URL.revokeObjectURL(b), j("")), h(!1)
-							}
+							C(""), b && (URL.revokeObjectURL(b), j("")), h(!1)
 						},
 						O = (l = (0, ed.Z)(em().mark(function e()
 						{
@@ -1778,9 +1769,10 @@
 									className: '关闭截图',
 									onClick: function()
 									{
+										if(正在截图)return
 										srceenMode()
 										D()
-										$$('.截图区域').hide()
+										$$('.截图预览').hide()
 										if(虚拟滚动 !== '关闭' && !window.chatList)
 										{
 											window.chatList = new DynamicVirtualScroll('.显示区域', '.元素列表');
@@ -1792,7 +1784,7 @@
 								style: {display: b ? "block" : "none"},
 								children: [(0, m.jsx)('div',
 								{
-									className: '截图区域',
+									className: '截图预览',
 									style:
 									{
 										width: '100%',
@@ -1861,30 +1853,24 @@
 									children: '下载失败'
 								}),'请先查看“提示”',(0, m.jsx)("pre",
 								{
-									style: {whiteSpace: 'pre-wrap',fontFamily:'Blueaka'},
+									style: {whiteSpace: 'pre-wrap'},
 									className: 'INDEX_CaptureTips'
 								}), (0, m.jsx)('div',
 								{
 									className: '图片预览',
 									style: {overflow: 'scroll'}
-								}), (0, m.jsx)('iframe',
+								}), (0, m.jsx)('div',
 								{
-									src: `${href}capture.html?ver=`+本地应用版本[0],
 									style: 
 									{
-										// height: '0px'
-										width: '100%'
+										width: '100%',
+										height: '50%',
+										overflow: 'scroll'
 									},
-									onLoad: function(e)
+									children: (0, m.jsx)('div',
 									{
-										截图区域 = e.target.contentDocument || e.target.contentWindow.document;
-										截图区域.documentElement.style.fontSize = '16px'
-										const style = 截图区域.createElement('style');
-										style.textContent = FontList
-										if(!mt_settings['禁止字体'])截图区域.head.appendChild(style);
-										截图区域 = $$(截图区域).find('.截图区域')
-										截图区域.outerWidth(mt_settings['宽度限制'])
-									}
+										className: "截图区域"
+									})
 								})]
 							}), (0, m.jsxs)(ea.$0,
 							{
@@ -2059,7 +2045,7 @@
 												let option = ''
 												截图区域.html('')
 												$$('.图片预览').html('')
-												$$('.截图区域').show()
+												$$('.截图预览').show()
 												数据操作('Sg','imageArr',function(err, data)
 												{	
 													上次截图 = data
@@ -2067,7 +2053,7 @@
 													{
 														option += `<option value="${k}">第${v.index}/${上次截图.length}段</option>`
 													})
-													$$('.截图区域 select').html(option)
+													$$('.截图预览 select').html(option)
 													let arr = 上次截图[0]
 													let html = ''
 													截图区域.outerWidth(mt_settings['宽度限制']).css('background-color',mt_settings.风格样式.bgColor)
@@ -2974,7 +2960,7 @@
 											{
 												v = `${k+1} / ${EMOJI.pagecount}`
 												let color = '',id = EMOJI.id
-												if(角色信息.info[id])
+												if(角色信息.info[id] && !EMOJI.custom.io)
 												{
 													if(typeof 角色信息.info[id][1][EMOJI.pagecount-1][0][3] == 'number')color = 'green'
 													if(typeof 角色信息.info[id][1][k][0][3] == 'number')color = 'red'
@@ -3676,6 +3662,7 @@
 								},
 								onClick: function()
 								{
+									截图区域 = $$('.截图区域')
 									click('#tool-image')
 								},
 								children: (0, m.jsx)(c.xL,
@@ -3899,9 +3886,7 @@
 										let str = ''
 										str += '	1。自定义表情和差分的ID可以通过img标签来引用，'
 										str += '但标签内一定要加入onerror="IMAGE_error(this)"，'
-										str += '图片尺寸可能会偏大，请设置好宽高属性"。\n'
-										str += '	2。font-family属性可引用的自带字体：'
-										str += 'Blueaka(默认)Jalnan(标题)KaiTi(楷体)。\n'
+										str += '图片尺寸可能会偏大，请设置好宽高属性"。'
 										alert(str)
 									}
 								}), (0, m.jsx)(c.Bx,
@@ -3972,8 +3957,7 @@
 									{
 										style:
 										{
-											pointerEvents: 'none',
-											fontFamily:'Blueaka'
+											pointerEvents: 'none'
 										},
 										className: "预览内容"
 									})
@@ -5230,14 +5214,10 @@
 											alignItems:"center",
 											marginRight:"1rem"
 										},
-										children: (0, m.jsx)('span',
+										children: (0, m.jsx)('i',
 										{
-											className:'mt_watermark',
-											style:
-											{
-												fontSize:"2rem",
-												fontFamily:/[\u4e00-\u9fff]/.test(mt_settings['顶部标题']) ? "Blueaka" : "Jalnan"
-											},
+											className:'mt_watermark bold',
+											style: {fontSize: "2rem"},
 											children: mt_settings['顶部标题']
 										})
 									}),(0, m.jsx)('div',

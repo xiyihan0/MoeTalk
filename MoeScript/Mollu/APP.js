@@ -5902,7 +5902,11 @@
 									{
 										style: {cursor: 'pointer'},
 										id: "readme",
-										children: [MikuTalk ? 'MikuTalk' : mt_settings['顶部标题'], (0, O.jsx)('span',
+										className: 'bold',
+										children: [(0, O.jsx)('i',
+										{
+											children: MikuTalk ? 'MikuTalk' : mt_settings['顶部标题']
+										}), (0, O.jsx)('span',
 										{
 											style: {color: OldTalk ? 'black' : 'blue'},
 											children: 客户端 ? 客户端[0].toUpperCase() : 'B'
@@ -6002,7 +6006,7 @@
 					{
 						displayName: "Header__Title",
 						componentId: "sc-17b1not-2"
-					})(["font-size:2rem;color:", ";font-family:'Jalnan';"], function(e)
+					})(["font-size:2rem;color:"], function(e)
 					{
 						return e.theme.color.rgb255_255_255
 					}),
@@ -7639,7 +7643,7 @@
 					{
 						displayName: "AppWrapper__MainLoading",
 						componentId: "sc-ha7ldy-2"
-					})(["position:fixed;top:0;display:flex;width:100vw;height:100vh;font-family:'Jalnan';background-color:", ";transition:opacity 0.3s ease-in;margin:auto;justify-content:center;align-items:center;span{line-height:2.5rem;font-size:4rem;color:", ';font-family:"Jalnan";}'], function(e)
+					})(["position:fixed;top:0;display:flex;width:100vw;height:100vh;background-color:", ";transition:opacity 0.3s ease-in;margin:auto;justify-content:center;align-items:center;span{line-height:2.5rem;font-size:4rem;color:"], function(e)
 					{
 						return MikuTalk || e.theme.color.rgb139_187_233
 					}, function(e)
@@ -10028,7 +10032,7 @@
 					{
 						displayName: "common__ProfileClick",
 						componentId: "sc-1ojome3-7"
-					})(["filter:brightness(40%);cursor:pointer;margin-right:0.5rem;&:hover{filter:brightness(100%);}&:active{border:2px solid ", ";}&.selected{filter:brightness(100%);border:2px solid ", ";}"], function(e)
+					})(["filter:brightness(60%);cursor:pointer;margin-right:0.5rem;&:hover{filter:brightness(100%);}&:active{border:2px solid ", ";}&.selected{filter:brightness(100%);border:2px solid ", ";}"], function(e)
 					{
 						return e.theme.color.rgb252_199_41
 					}, function(e)

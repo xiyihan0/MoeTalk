@@ -806,6 +806,7 @@ $('body').on('change', ".dels", function() {
 
 // 6. 自动跳到被选位置
 $('body').on('click', ".chatText", function() {
+	$('.fzOyMd.selected')[0].scrollIntoView({inline:'center'})
 	// 直接获取被勾选的第一个消息序号
 	let name = loadname(mt_settings['选择角色'].no, mt_settings['选择角色'].index)
 	let str = mt_text.input_comment[mtlang]

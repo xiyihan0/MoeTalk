@@ -128,12 +128,28 @@ async function 加载数据(初始启动 = 0)
 	}
 }
 
+// var FontList = `@import url(${href}MoeData/Fonts/KURIYAMAKOUCHIFONT_N/KURIYAMAKOUCHIFONT_N.css);
+// @font-face{font-family:Cyrillic;src:local(Arial);unicode-range:U+0400-04FF;}/*匹配西里尔字母*/
+// body,textarea,button{font-family:Cyrillic,KURIYAMAKOUCHIFONT_N;}`
 var FontList = `@font-face{font-family:Blueaka;src:url(./MoeData/Fonts/Blueaka.woff2)}/*默认*/
-@font-face{font-family:Jalnan;src:url(./MoeData/Fonts/Jalnan.ttf)}/*标题*/
-@font-face{font-family:KaiTi;src:url(./MoeData/Fonts/KaiTi.ttf)}/*楷体*/
 @font-face{font-family:Cyrillic;src:local(Arial);unicode-range:U+0400-04FF;}/*匹配西里尔字母*/
 body,textarea,button{font-family:Cyrillic,Blueaka;}`
-if(!mt_settings['禁止字体'])$("head").append("<link rel='stylesheet' href='./MoeData/Fonts/FontList.css' data-n-g='' id='mt-font'>");//加载字体
+async function 加载字体()
+{
+	if(mt_settings['禁止字体'])
+	{
+		// $()
+		return;
+	}
+
+}
+if(!mt_settings['禁止字体'])
+{
+	const style = document.createElement('style');
+	style.textContent = FontList
+	document.head.appendChild(style);
+	// $("head").append(`<link rel='stylesheet' href='./MoeData/Fonts/Fonts.css' data-n-g='' id='mt-font'>`);//加载字体
+}
 //使用说明
 async function clearCache()
 {
@@ -263,14 +279,14 @@ $(async function()
 	let text = ''
 	let config = {}
 	let title = $('#readme').text().slice(0, -1)
-	let span = `<span onclick="$('#readme').click()" style="font-family:Jalnan;background-color:${$('.Header__Navbar-sc-17b1not-0').css('background-color')};color:white;padding:4px;cursor:pointer;">`
-	text += `相关问题请点击${span}${title}</span>标题\n\n`
+	let span = `<i onclick="$('#readme').click()"class="bold"style="background-color:${$('.Header__Navbar-sc-17b1not-0').css('background-color')};color:white;padding:4px;cursor:pointer;">`
+	text += `相关问题请点击${span}${title}</i>标题\n\n`
 	if(!本地)
 	{
 		text += '※浏览器下MoeTalk有网络连接波动以及数据被清理的风险\n'
 		text += '<span style="color:white;background-color:red;">开发者强烈建议您<button style="line-height:112%;" onclick="update()">安装应用或下载客户端</button></span>\n'
 	}
-	config.title = `欢迎使用${span}${title}！</span>`
+	config.title = `欢迎使用MoeTalk！`
 	config.style = 'text-align:center;'
 	if(MikuTalk || mt_settings['顶部标题'] === 'MikuTalk')
 	{
