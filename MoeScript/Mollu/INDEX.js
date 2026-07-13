@@ -2341,7 +2341,7 @@
 												style: {width: 'auto'},
 												onClick: function()
 												{
-													_.current.accept = 'image/png'
+													_.current.accept = 'image/*'
 													var e;
 													null === (e = _.current) || void 0 === e || e.click()
 												},
@@ -7983,7 +7983,7 @@
 									{
 										display: "none"
 									},
-									accept: 'image/png,application/json',
+									accept: 'image/*,application/json',
 									onChange: function(e)
 									{
 										INIT_loading('加载存档')
