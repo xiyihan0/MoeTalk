@@ -5902,12 +5902,13 @@
 									{
 										style: {cursor: 'pointer'},
 										id: "readme",
-										className: 'bold',
 										children: [(0, O.jsx)('i',
 										{
+											className: 'bold',
 											children: MikuTalk ? 'MikuTalk' : mt_settings['顶部标题']
 										}), (0, O.jsx)('span',
 										{
+											className: 'bold',
 											style: {color: OldTalk ? 'black' : 'blue'},
 											children: 客户端 ? 客户端[0].toUpperCase() : 'B'
 										})],

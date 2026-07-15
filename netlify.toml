@@ -1,7 +1,9 @@
 [[headers]]
-  for = "/*" # you can configure the correct paths here
+  for = "/*"
   [headers.values]
-    access-control-allow-origin = "*" # see a list of allowed values here: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Origin
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Headers = "Range"
+    Access-Control-Expose-Headers = "Content-Length, Content-Range, Accept-Ranges"
 [[redirects]]
   from = "/api/*"
   to = "http://frp.freefrp.net:40404/:splat"

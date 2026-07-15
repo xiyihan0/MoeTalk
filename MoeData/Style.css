@@ -1,8 +1,12 @@
 /*@MoeData/Style.css@*/
 @charset "UTF-8";
 @font-face{font-family:Cyrillic;src:local(Arial);unicode-range:U+0400-04FF;}/*匹配西里尔字母*/
-*{margin: 0px;line-height: inherit;}
-body{line-height: 1;}
+*
+{
+	margin: 0px;
+	line-height: inherit;/*body{line-height: 1;}*/
+	font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,sans-serif;
+}
 .tool
 {
 	color:white;
@@ -107,7 +111,7 @@ a
 .imageSave>img{width: 100%;}
 
 .编辑{cursor: pointer;}
-.头像框
+.头像框,.头像框_预览
 {
 	display: flex;
 	height: auto;
@@ -261,7 +265,6 @@ a
 	line-height: 1.5rem;
 	width: 100%;
 	line-height: 141%;
-	cursor: pointer;
 	word-break: break-word;
 }
 .回复
@@ -307,7 +310,6 @@ a
 	box-shadow: rgb(180 188 192) 0rem 0.05rem 0.2rem;
 	border-radius: 0.5rem;
 	background-color: white;
-	cursor: pointer;
 	overflow: hidden;
 	word-break: break-word;
 	overflow-wrap: break-word;

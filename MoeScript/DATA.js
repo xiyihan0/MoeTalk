@@ -298,7 +298,7 @@ async function 读取存档(json)
 	//写入临时数据
 	数据操作('Tc')
 	if(!json.TEMP)json.TEMP = {CHAR:{},IMAGE:{}}
-	mt_schar = json.TEMP.CHAR
+	mt_schar = json.TEMP.CHAR || {}
 	for(let key in json.TEMP.IMAGE)
 	{
 		await 数据操作('Ts',key,json.TEMP.IMAGE[key])

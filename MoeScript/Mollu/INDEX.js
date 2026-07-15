@@ -1725,7 +1725,7 @@
 										str += '建议在“截图设置”中更换截图工具（snapdom）。\n'
 										str += `	2。图片下载失败建议${!客户端 ? '在“下载设置”中开启流式下载，或尝试' : ''}`
 										str += '手动保存图片\n'
-										str += '	※以上选项请在【设置选项】中切换\n'
+										str += '	※以上选项请在【设置选项-截图/下载设置】中切换\n'
 										alert(str)
 									}
 								}), (0, m.jsx)(ea.Dx,
@@ -1840,7 +1840,7 @@
 										onClick: function(e)
 										{
 											imageArr = 上次截图.slice($$('.上次截图').val(),上次截图.length)
-											imageArrL = localStorage['imageArrL'] || imageArr.length
+											imageArrL = imageArr.length
 											if((设备信息.device.isApple || mt_settings['打包下载']) && imageArrL > 1)imageZip = false;
 											if(客户端 === 'phpwin' && !mt_settings['打包下载'])imageZip = null
 											if(imageZip === false)imageZip = new JSZip();
@@ -2038,7 +2038,7 @@
 										})],
 										onClick: function()
 										{
-											alert('截图下载相关在【设置选项】中切换')
+											alert('截图/下载相关在【设置选项】中切换')
 										}
 									}), (0, m.jsx)("div",
 									{
@@ -2272,7 +2272,7 @@
 									children: '💡',
 									onClick:function()
 									{
-										alert(`若下载失败，请${!客户端 ? '在【设置选项】=>“下载设置”中开启流式下载\n或' : ''}向开发者反馈`)
+										alert(`若下载失败，请${!客户端 ? '在【设置选项-截图/下载设置】中开启流式下载\n或' : ''}向开发者反馈`)
 									}
 								}), (0, m.jsx)(ea.Dx,
 								{

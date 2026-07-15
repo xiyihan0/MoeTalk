@@ -128,11 +128,11 @@ async function 加载数据(初始启动 = 0)
 	if(!mt_settings['选择游戏'])selectgame()
 }
 // FontList = `@import url(${href}MoeData/Fonts/KURIYAMAKOUCHIFONT_N/result.css);
-// body,input,button,textarea{font-family:Cyrillic,KURIYAMAKOUCHIFONT_N;}`
+// *{font-family:Cyrillic,KURIYAMAKOUCHIFONT_N;}`
 // FontList = `@font-face{font-family:Blueaka;src:url(./MoeData/Fonts/Blueaka.woff2)}
-// body,input,button,textarea{font-family:Cyrillic,Blueaka;}`
+// *{font-family:Cyrillic,Blueaka;}`
 var FontList = `@import url(https://fontsapi.zeoseven.com/851/main/result.css);
-body,input,button,textarea{font-family:Cyrillic,KURIYAMAKOUCHIFONT_N;}`
+*{font-family:Cyrillic,KURIYAMAKOUCHIFONT_N;}`
 async function 加载字体()
 {
 	if(mt_settings['禁止字体'])return;
@@ -271,7 +271,7 @@ $(async function()
 	let config = {}
 	let title = $('#readme').text().slice(0, -1)
 	let span = `<i onclick="$('#readme').click()"class="bold"style="background-color:${$('.Header__Navbar-sc-17b1not-0').css('background-color')};color:white;padding:4px;cursor:pointer;">`
-	text += `相关问题请点击${span}${title}</i>标题\n\n`
+	text += `相关问题请点击${span}${title}</i>标题\n标题旁大写字母代表设备标识\n`
 	if(!本地)
 	{
 		text += '※浏览器下MoeTalk有网络连接波动以及数据被清理的风险\n'
@@ -424,8 +424,7 @@ $("body").on('click',"#设置选项",function()
 	str += '反馈网址：<a href="https://wj.qq.com/s2/14292312/3ade/">https://wj.qq.com/s2/14292312/3ade/</a>\n\n'
 	str += "<button onclick='语言选项()'>语言选项</button> "
 	str += "<button id='mt-style'>切换风格</button> "
-	str += "<button id='截图设置'>截图设置</button> "
-	str += "<button id='下载设置'>下载设置</button> "
+	str += "<button id='截图设置'>截图/下载设置</button> "
 	str += "<button id='发送方式'>文字发送方式</button> "
 	str += "<button id='使用风格'>软件使用风格</button> "
 	str += "<button id='自动备份设置'>自动备份设置</button> "
@@ -554,34 +553,8 @@ $("body").on('click',"#截图设置",function()
 	ext += '<option value="image/jpeg">jpg</option>'
 	ext += '<option value="image/webp">webp</option>'
 	let str = ''
-	str += `图片宽度：（默认500，上限需测试）\n<input class='宽度限制' type="number" value="${mt_settings['宽度限制']}">\n`
-	str += `图片最大高度：（默认16384，上限需测试）\n<input class='高度限制' type="number" value="${mt_settings['高度限制']}">\n`
-	str += `图片下载格式：\n`
-	str += `<select class='图片格式' style='font-size: 1.5rem;'>${ext}</select>\n`
-	str += `截图工具：\n`
-	str += `<select class='截图工具' style='font-size: 1.5rem;'>${option}</select>\n`
-	let config = {}
-	config.title = '截图设置'
-	config.confirm = '提交'
-	config.id = Math.random().toString().replace('0.','')
-	config.yes = function()
-	{
-		mt_settings['宽度限制'] = $('.宽度限制').val() || 500
-		mt_settings['高度限制'] = $('.高度限制').val() || 16384
-		mt_settings['截图工具'] = $('.截图工具').val()
-		mt_settings['图片格式'] = $('.图片格式').val()
-		saveStorage('设置选项',mt_settings,'local')
-	}
-	alert(str,config)
-	$(`.截图工具 option[value="${mt_settings['截图工具']}"]`).prop('selected', true);
-	$(`.图片格式 option[value="${mt_settings['图片格式']}"]`).prop('selected', true);
-});
-$("body").on('click',"#下载设置",function()
-{
-	let str = ''
-	str += `<input class='隐藏前缀' type='checkbox' ${mt_settings['隐藏前缀'] ? 'checked' : ''}>隐藏下载文件名前缀\n`
-	str += `<input class='打包下载' type='checkbox' ${mt_settings['打包下载'] ? 'checked' : ''}>图片打包下载（多张图片整合为ZIP）\n`
-	if(!客户端)str += `<input class='流式下载' type='checkbox' ${mt_settings['流式下载'] ? 'checked' : ''}>流式下载（目前用于解决部分浏览器无法下载文件的BUG）\n`
+	str += `<input class='隐藏前缀' type='checkbox'>隐藏下载文件名前缀\n`
+	if(!客户端)str += `<input class='流式下载' type='checkbox'}>文件流式下载（目前用于解决部分浏览器无法下载文件的BUG）\n`
 	if(客户端 === 'NW.js')
 	{
 		str += '<input type="file" id="下载位置" nwdirectory hidden/>'
@@ -590,18 +563,49 @@ $("body").on('click',"#下载设置",function()
 		str += `<p><button class='下载位置'>图片下载位置</button></p>`
 		if(localStorage['图片下载位置'])str += `<p id='图片下载位置'>${localStorage['图片下载位置']}<button class='默认下载位置' onclick='$("#图片下载位置").remove()'>恢复默认</button></p>`
 	}
+	str += '\n'
+	str += `<input class='打包下载' type='checkbox' ${mt_settings['打包下载'] ? 'checked' : ''}>图片打包下载（多张图片整合为ZIP）\n`
+	str += `图片宽度：（默认500，上限需测试）\n<input class='宽度限制' type="number" value="${mt_settings['宽度限制']}">\n`
+	str += `图片最大高度：（默认16384，上限需测试）\n<input class='高度限制' type="number" value="${mt_settings['高度限制']}">\n`
+	str += `图片下载格式：\n<select class='图片格式' style='font-size: 1.5rem;'>${ext}</select>\n`
+	str += `截图工具：\n<select class='截图工具' style='font-size: 1.5rem;'>${option}</select>\n`
+
+	let config = {}
+	config.title = '截图/下载设置'
+	config.confirm = '提交'
+	config.id = Math.random().toString().replace('0.','')
+	config.yes = function()
+	{
+		mt_settings['打包下载'] = $('.打包下载').prop('checked')
+		mt_settings['宽度限制'] = $('.宽度限制').val() || 500
+		mt_settings['高度限制'] = $('.高度限制').val() || 16384
+		mt_settings['截图工具'] = $('.截图工具').val()
+		mt_settings['图片格式'] = $('.图片格式').val()
+		mt_settings['隐藏前缀'] = $('.隐藏前缀').prop('checked')
+		mt_settings['流式下载'] = $('.流式下载').prop('checked')
+		$('.默认下载位置').remove()
+		localStorage['存档下载位置'] = $('#存档下载位置').text()
+		localStorage['图片下载位置'] = $('#图片下载位置').text()
+		saveStorage('设置选项',mt_settings,'local')
+	}
+	alert(str,config)
+	$('.隐藏前缀').prop('checked',mt_settings['隐藏前缀'])
+	$('.流式下载').prop('checked',mt_settings['流式下载'])
+	$(`.截图工具 option[value="${mt_settings['截图工具']}"]`).prop('selected', true);
+	$(`.图片格式 option[value="${mt_settings['图片格式']}"]`).prop('selected', true);
+});
+$("body").on('click',"#下载设置",function()
+{
+	let str = ''
+
 	let config = {}
 	config.title = '下载设置'
 	config.confirm = '提交'
 	config.id = Math.random().toString().replace('0.','')
 	config.yes = function()
 	{
-		mt_settings['隐藏前缀'] = $$(`.alert_${config.id} .隐藏前缀`).prop('checked')
-		mt_settings['打包下载'] = $$(`.alert_${config.id} .打包下载`).prop('checked')
-		mt_settings['流式下载'] = $$(`.alert_${config.id} .流式下载`).prop('checked')
-		$('.默认下载位置').remove()
-		localStorage['存档下载位置'] = $('#存档下载位置').text()
-		localStorage['图片下载位置'] = $('#图片下载位置').text()
+		
+		
 		saveStorage('设置选项',mt_settings,'local')
 	}
 	alert(str,config)

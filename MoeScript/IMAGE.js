@@ -377,7 +377,7 @@ async function 内容预览()
 }
 function mt_capture(清晰度,生成图片,标题)
 {
-	let html = 正在截图 || imageArr[0].index != 1 ? '' : $('#mt_watermark')[0].outerHTML
+	let html = imageArr[0].index != 1 ? '' : $('#mt_watermark')[0].outerHTML
 	let filename = ''
 	let title = 标题 || '无题'
 	imgArea = imageArr.shift()
@@ -387,7 +387,7 @@ function mt_capture(清晰度,生成图片,标题)
 	let index = num.toString().length
 	if(index < l1)index = '0'.repeat(l1-index)+num
 	else index = num
-	$(".图片预览").html(`<div class='imageSave'><h1>已生成<span class='red'>${num}</span>/${imageArrL}张图片：</h1></div>`)
+	$(".图片预览").html(`<div class='imageSave'><h1 style="text-align: center;"class='blod'><span class='red'>${num}</span> / ${localStorage['imageArrL']}</h1></div>`)
 	正在截图 = true
 	截图区域.outerWidth(mt_settings['宽度限制']).css('background-color',mt_settings.风格样式.bgColor)
 	$('.上次截图').val(num-1)
@@ -423,11 +423,15 @@ function mt_capture(清晰度,生成图片,标题)
 				filename += DATA_NowTime+'_'
 				if(mt_settings['隐藏前缀'])filename = ''
 				filename += `${title}_${index}`
-				INIT_loading(false)
+				
 				if(!首次截图 && 截屏工具 === 'snapdom')imageArr.unshift(imgArea)
 				else 首次截图 = true
 				if(imageArr.length > 0)mt_capture(清晰度,生成图片,标题)//$('.mt_capture').click()
-				else 正在截图 = false
+				else
+				{
+					正在截图 = false
+					INIT_loading(false)
+				}
 
 				if(首次截图)
 				{
