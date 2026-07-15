@@ -1,4 +1,0 @@
-/*@MoeData/Fonts/Fonts.css@*/
-@import url(KURIYAMAKOUCHIFONT_N/KURIYAMAKOUCHIFONT_N.css);
-@font-face{font-family:Cyrillic;src:local(Arial);unicode-range:U+0400-04FF;}/*匹配西里尔字母*/
-body,textarea,button{font-family:Cyrillic,KURIYAMAKOUCHIFONT_N;}

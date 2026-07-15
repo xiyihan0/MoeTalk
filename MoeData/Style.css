@@ -1,5 +1,6 @@
 /*@MoeData/Style.css@*/
 @charset "UTF-8";
+@font-face{font-family:Cyrillic;src:local(Arial);unicode-range:U+0400-04FF;}/*匹配西里尔字母*/
 *{margin: 0px;line-height: inherit;}
 body{line-height: 1;}
 .tool

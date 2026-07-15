@@ -492,19 +492,20 @@ function 加载角色()
 		for(let i=0;i<6;i++)
 		{
 			let la = lang[i]
-			char.school[la] = 角色信息.name[la][index[0]] || char.school.id
-			mt_school[char.school.id][la] = 角色信息.name[la][index[0]]
+			char.school[la] = 角色信息.name[la][index[0]] || 角色信息.name.zh_cn[index[0]] || char.school.id
+			mt_school[char.school.id][la] = char.school[la]
+		}
+		mt_school[char.school.id].img = 角色信息.name.en[index[0]] || 'none'
+		for(let i=0;i<6;i++)
+		{
+			let la = lang[i]
+			char.club[la] = 角色信息.name[la][index[1]] || 角色信息.name.zh_cn[index[1]] || char.club.id
+			mt_club[char.school.id][char.club.id][la] = char.club[la]
 		}
 		for(let i=0;i<6;i++)
 		{
 			let la = lang[i]
-			char.club[la] = 角色信息.name[la][index[1]] || char.club.id
-			mt_club[char.school.id][char.club.id][la] = 角色信息.name[la][index[1]]
-		}
-		for(let i=0;i<6;i++)
-		{
-			let la = lang[i]
-			char.name[la] = 角色信息.name[la][index[2]] || id
+			char.name[la] = 角色信息.name[la][index[2]] || 角色信息.name.zh_cn[index[2]] || id
 		}
 		let head = [[],[],[],[],角色信息.info[id][2] || []]
 		if(角色信息.info[id][1] && typeof 角色信息.info[id][1][0][0][3] != 'number')

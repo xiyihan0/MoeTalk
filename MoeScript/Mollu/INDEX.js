@@ -518,7 +518,7 @@
 								{
 									width: 252,
 									height: 252,
-									src: href+"MoeData/Ui/School/"+(!mt_school[n.school.id] ? n.club['zh_cn'] === '临时角色' ? 'RECYCLE' : 'CUSTOM' : mt_school[n.school.id].en || 'none')+'.webp',//#学校图标
+									src: href+"MoeData/Ui/School/"+(!mt_school[n.school.id] ? n.club['zh_cn'] === '临时角色' ? 'RECYCLE' : 'CUSTOM' : mt_school[n.school.id].img)+'.webp',//#学校图标
 									onError: function(e){IMAGE_error(e)},
 									onClick: function()
 									{
@@ -5496,23 +5496,17 @@
 								}),'移除角色']
 							}), (0, m.jsx)(c.Bx,
 							{
-								className: "selected medium",
+								className: "selected bold",
 								style:
 								{
 									width: 'auto',
 									height: 'auto',
-									fontSize: "1.1rem"
+									fontSize: "1.5rem"
 								},
-								children: 'click to change language',
+								children: 'Click to select the language',
 								onClick: function()
 								{
-									let language = prompt("Please enter the language\nzh_cn（简体中文）\nzh_tw（繁體中文）\njp（日本語）\nen（English）\nkr（한국어）",mtlang);
-									if (langarr.includes(language))
-									{
-										mt_settings['语言选项'] = language
-										saveStorage('设置选项',mt_settings,'local')
-										location.reload(true)
-									}
+									语言选项()
 								}
 							})]
 						})]

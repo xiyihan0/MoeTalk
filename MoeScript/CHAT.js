@@ -130,10 +130,16 @@ function mt_emojis(S,mode)
 				EMOJI.color = 'red'
 				EMOJI.plugin = CustomFaceAuthor[`CFID_${CharFace[0][3]}`]
 			}
+			let charid = 角色信息.info[id][0][3]
 			foreach(CharFace,function(k,v)
 			{
 				let path = v[0]
-				if(typeof v[3] == 'number')path = `CFID_${v[3]}/CharID_${path}`;//拓展差分
+				if(typeof v[3] == 'number')
+				{
+					if(typeof path == 'number')path = '-'+path
+					else if(path != '')path = '_'+path
+					path = `CFID_${v[3]}/CharID_${charid}${path}`;//拓展差分
+				}
 				if(typeof v[3] == 'object')//错误文件
 				{
 					foreach(v[3],function(k,index)

@@ -74,7 +74,7 @@ async function 加载数据(初始启动 = 0)
 	})
 	allChats = []
 	refreshMessage(chats)//$('#mt_watermark').click()//显示消息
-//读取角色
+//读取数据
 	if(初始启动)
 	{
 		[mt_char,mt_schar,CUSTOM_HEAD] = await Promise.all(
@@ -93,17 +93,16 @@ async function 加载数据(初始启动 = 0)
 		charList(true)//更新角色
 		INIT_loading(false)
 	}
-//获取文件
-	if(game != 'NONE')md5 = JSON.parse(await $ajax(`${href}GameData/${game}/Version/${game}.json?time=${Date.now()}`));
-	if(!md5 || !mt_settings['选择游戏'])
-	{
-		if(!mt_settings['选择游戏'])selectgame()
-		else selectgame('<span style="color:red;">数据缺失！请重新选择游戏</span>')
-		md5 = {}
-	}
+//加载文件
 	if(game != 'NONE')
 	{
-		let char = await $ajax(`${href}GameData/${game}/Char.json`)
+		md5 = JSON.parse(await $ajax(`${href}GameData/${game}/Version/${game}.json?time=${Date.now()}`));
+		if(!md5)
+		{
+			selectgame('<span style="color:red;">数据缺失！请重新选择游戏</span>')
+			md5 = {}
+		}
+		let char = await $ajax(`${href}GameData/${game}/Char.json?md5=${md5['Char'] || Date.now()}`)
 		if(char)
 		{
 			if(!localStorage[game+'/Char'])
@@ -116,40 +115,32 @@ async function 加载数据(初始启动 = 0)
 			}
 			localStorage[game+'/Char'] = pako.deflate(char,{to:'string',level:9})
 		}
+		if(game == 'BLDA')
+		{
+			[CFInfo, id_map, CustomFaceAuthor] = await Promise.all(
+			[
+				$ajax(`${href}GameData/${game}/CharFaceInfo.json?md5=${md5['CharFaceInfo']}`).then(json => JSON.parse(json)),
+				$ajax(`${href}GameData/${game}/IdMap.json?md5=${md5['IdMap']}`).then(json => JSON.parse(json)),
+				$ajax(`${href}GameData/${game}/CustomFaceAuthor.json?md5=${md5['CustomFaceAuthor']}`).then(json => JSON.parse(json))
+			]);
+		}
 	}
-	if(game == 'BLDA')
-	{
-		Promise.all(
-		[
-			$ajax(`${href}GameData/${game}/CharFaceInfo.json?md5=${md5['CharFaceInfo']}`).then(json => JSON.parse(json)),
-			$ajax(`${href}GameData/${game}/IdMap.json?md5=${md5['IdMap']}`).then(json => JSON.parse(json)),
-			$ajax(`${href}GameData/${game}/CustomFaceAuthor.json?md5=${md5['CustomFaceAuthor']}`).then(json => JSON.parse(json))
-		]).then(res => {[CFInfo, id_map, CustomFaceAuthor] = res});
-	}
+	if(!mt_settings['选择游戏'])selectgame()
 }
-
-// var FontList = `@import url(${href}MoeData/Fonts/KURIYAMAKOUCHIFONT_N/KURIYAMAKOUCHIFONT_N.css);
-// @font-face{font-family:Cyrillic;src:local(Arial);unicode-range:U+0400-04FF;}/*匹配西里尔字母*/
-// body,textarea,button{font-family:Cyrillic,KURIYAMAKOUCHIFONT_N;}`
-var FontList = `@font-face{font-family:Blueaka;src:url(./MoeData/Fonts/Blueaka.woff2)}/*默认*/
-@font-face{font-family:Cyrillic;src:local(Arial);unicode-range:U+0400-04FF;}/*匹配西里尔字母*/
-body,textarea,button{font-family:Cyrillic,Blueaka;}`
+// FontList = `@import url(${href}MoeData/Fonts/KURIYAMAKOUCHIFONT_N/result.css);
+// body,input,button,textarea{font-family:Cyrillic,KURIYAMAKOUCHIFONT_N;}`
+// FontList = `@font-face{font-family:Blueaka;src:url(./MoeData/Fonts/Blueaka.woff2)}
+// body,input,button,textarea{font-family:Cyrillic,Blueaka;}`
+var FontList = `@import url(https://fontsapi.zeoseven.com/851/main/result.css);
+body,input,button,textarea{font-family:Cyrillic,KURIYAMAKOUCHIFONT_N;}`
 async function 加载字体()
 {
-	if(mt_settings['禁止字体'])
-	{
-		// $()
-		return;
-	}
-
-}
-if(!mt_settings['禁止字体'])
-{
+	if(mt_settings['禁止字体'])return;
 	const style = document.createElement('style');
 	style.textContent = FontList
 	document.head.appendChild(style);
-	// $("head").append(`<link rel='stylesheet' href='./MoeData/Fonts/Fonts.css' data-n-g='' id='mt-font'>`);//加载字体
 }
+加载字体()
 //使用说明
 async function clearCache()
 {
@@ -431,6 +422,7 @@ $("body").on('click',"#设置选项",function()
 	let str = '',config = {}
 	config.title = '设置选项'
 	str += '反馈网址：<a href="https://wj.qq.com/s2/14292312/3ade/">https://wj.qq.com/s2/14292312/3ade/</a>\n\n'
+	str += "<button onclick='语言选项()'>语言选项</button> "
 	str += "<button id='mt-style'>切换风格</button> "
 	str += "<button id='截图设置'>截图设置</button> "
 	str += "<button id='下载设置'>下载设置</button> "
@@ -444,6 +436,26 @@ $("body").on('click',"#设置选项",function()
 	str += "<div style='display:flex;justify-content:center;'><h1><a class='bold'style='text-decoration:underline;'href='setting.html'>更多设置</a></h1></div>\n"
 	alert(str,config)
 });
+function 语言选项()
+{
+	let str = '<select class="语言选项" style="font-size:1.5rem;">'
+	str += '<option value="zh_cn">简体中文</option>'
+	str += '<option value="zh_tw">繁體中文</option>'
+	str += '<option value="jp">日本語</option>'
+	str += '<option value="en">English</option>'
+	str += '<option value="kr">한국어</option>'
+	str += '</select>'
+	let config = {}
+	config.title = '请选择语言'
+	config.yes = function()
+	{
+		mt_settings['语言选项'] = $('.语言选项').val()
+		saveStorage('设置选项',mt_settings,'local')
+		location.reload(true)
+	}
+	alert('Please select the language：'+str,config)
+	$('.语言选项').val(mt_settings['语言选项'])
+}
 $("body").on('click',"#自动备份设置",function()
 {
 	let 自动备份 = 10
