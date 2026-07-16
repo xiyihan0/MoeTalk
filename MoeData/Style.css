@@ -4,7 +4,7 @@
 *
 {
 	margin: 0px;
-	line-height: inherit;/*body{line-height: 1;}*/
+	line-height: 1;/*body{line-height: 1;}inherit*/
 	font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,sans-serif;
 }
 .tool

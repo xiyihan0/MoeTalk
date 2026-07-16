@@ -127,20 +127,33 @@ async function 加载数据(初始启动 = 0)
 	}
 	if(!mt_settings['选择游戏'])selectgame()
 }
-// FontList = `@import url(${href}MoeData/Fonts/KURIYAMAKOUCHIFONT_N/result.css);
-// *{font-family:Cyrillic,KURIYAMAKOUCHIFONT_N;}`
-// FontList = `@font-face{font-family:Blueaka;src:url(./MoeData/Fonts/Blueaka.woff2)}
-// *{font-family:Cyrillic,Blueaka;}`
-var FontList = `@import url(https://fontsapi.zeoseven.com/851/main/result.css);
-*{font-family:Cyrillic,KURIYAMAKOUCHIFONT_N;}`
-async function 加载字体()
+async function 加载字体(FontCss)
 {
 	if(mt_settings['禁止字体'])return;
+	await waitPlus()
+	let WebFont = `@import url(https://moetalk.xiyihan.cn/MoeData/Fonts/Blueaka/Blueaka.css);*{font-family:Cyrillic,Blueaka;}`
+	let LocFont = `@font-face{font-family:Blueaka;src:url(./MoeData/Fonts/Blueaka.woff2)}*{font-family:Cyrillic,Blueaka;}`
+	let FontUrl = 'https://moetalk.xiyihan.cn/MoeData/Fonts/Blueaka.woff2'
+	if(本地)
+	{
+		if(await file_exists('MoeData/Fonts/Blueaka.woff2'))FontCss = LocFont
+		else
+		{
+			FontCss = WebFont
+			$ajax(FontUrl).then(function(data)
+			{
+				if(data)保存文件('MoeData/Fonts/Blueaka.woff2',data)
+			})
+		}
+		
+	}
+	$('#MoeFont').remove()
 	const style = document.createElement('style');
-	style.textContent = FontList
+	style.textContent = FontCss
+	style.id = 'MoeFont'
 	document.head.appendChild(style);
 }
-加载字体()
+加载字体(`@import url(./MoeData/Fonts/Blueaka/Blueaka.css);*{font-family:Cyrillic,Blueaka;}`)
 //使用说明
 async function clearCache()
 {
@@ -389,21 +402,21 @@ $('body').on('click',"input",function()
 $(".frVjsk").wait(function()
 {
 	let div = `<div style='display:flex;flex-direction:column;align-items:center;'align='center'>`
-	let button = `${div}<button class='mvcff kNOatn bold'`
-	$(".frVjsk").append(`${button}id='支持作者'><b class='red'>支</b></button><p class='white'>支持作者</p></button></div>`);
-	$(".frVjsk").append(`${button}onclick='update()'><b class='blue'>應</b></button><p class='white'>${本地?'更新':'安装'}应用</p></button></div>`);
-	$(".frVjsk").append(`${button}onclick='selectgame()'><b class='blue'>遊</b></button><p class='white'>选择游戏</p></button></div>`);
-	$(".frVjsk").append(`${button}id='MoeProject'><b class='blue'>項</b></button><p class='white'>项目管理</p></button></div>`);
-	$(".frVjsk").append(`${button}id='设置选项'><b class='green'>設</b></button><p class='white'>设置选项</p></button></div>`);
+	let button = `${div}<button class='mvcff kNOatn'`
+	$(".frVjsk").append(`${button}id='支持作者'><b class='red bold'>支</b></button><p class='white'>支持作者</p></button></div>`);
+	$(".frVjsk").append(`${button}onclick='update()'><b class='blue bold'>應</b></button><p class='white'>${本地?'更新':'安装'}应用</p></button></div>`);
+	$(".frVjsk").append(`${button}onclick='selectgame()'><b class='blue bold'>遊</b></button><p class='white'>选择游戏</p></button></div>`);
+	$(".frVjsk").append(`${button}id='MoeProject'><b class='blue bold'>項</b></button><p class='white'>项目管理</p></button></div>`);
+	$(".frVjsk").append(`${button}id='设置选项'><b class='green bold'>設</b></button><p class='white'>设置选项</p></button></div>`);
 	if(OldTalk)
 	{
 		let click = `onclick="delete localStorage['OldTalk'],location.reload(true)"`
-		$(".frVjsk").append(`<span ${click}>${button}><b class='black'>新</b></button><p class='white'>回到新版</p></button></div></span>`);
+		$(".frVjsk").append(`<span ${click}>${button}><b class='black bold'>新</b></button><p class='white'>回到新版</p></button></div></span>`);
 	}
 	else
 	{
 		let click = `onclick="localStorage['OldTalk'] = '旧版MoeTalk',location.reload(true)"`
-		$(".frVjsk").append(`<span ${click}>${button}><b class='black'>舊</b></button><p class='white'>访问旧版</p></button></div></span>`);
+		$(".frVjsk").append(`<span ${click}>${button}><b class='black bold'>舊</b></button><p class='white'>访问旧版</p></button></div></span>`);
 	}
 },".frVjsk")
 $("body").on('click',"#支持作者",function()
