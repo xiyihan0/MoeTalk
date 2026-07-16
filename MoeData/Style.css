@@ -1,12 +1,11 @@
 /*@MoeData/Style.css@*/
 @charset "UTF-8";
-@font-face{font-family:Cyrillic;src:local(Arial);unicode-range:U+0400-04FF;}/*匹配西里尔字母*/
 *
 {
 	margin: 0px;
-	line-height: 1;/*body{line-height: 1;}inherit*/
-	font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,sans-serif;
+	line-height: inherit;
 }
+body{line-height: 1;}
 .tool
 {
 	color:white;
@@ -20,7 +19,6 @@
 .black{color:black;}
 .white{color:white;}
 .green{color:green;}
-.bold{font-family: bold;font-weight: bold;}/* 加粗 */
 
 .dels[type="checkbox"]
 {
@@ -64,7 +62,6 @@ button
 	color: white;
 	cursor: pointer;
 }
-
 button:disabled{cursor: auto;transform: translateY(0px);}
 input[type="text"],
 input[type="file"]
@@ -110,7 +107,6 @@ a
 }
 .imageSave>img{width: 100%;}
 
-.编辑{cursor: pointer;}
 .头像框,.头像框_预览
 {
 	display: flex;
@@ -382,7 +378,6 @@ a
 {
 	background: #f1f1f1; /* 滚动条轨道颜色 */
 }
- 
 .scrollbar::-webkit-scrollbar-thumb
 {
 	height: 10%;
@@ -409,3 +404,8 @@ a
 	75%{transform: rotate(-15deg);}
 }
 .隐藏{display: none;}
+.编辑{cursor: pointer;}
+
+.bold{font-family: bold;font-weight: bold;}/* 加粗 */
+@font-face{font-family:Cyrillic;src:local(Arial);unicode-range:U+0400-04FF;}/*匹配西里尔字母*/
+body,input,button,textarea{font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,sans-serif;}

@@ -29,9 +29,14 @@ async function isIos()
 	}
 	if(type === 'phpwin')
 	{
-		客户端 = 'phpwin'
-		本地 = true
-		sessionStorage['phpwin'] = 'phpwin'
+		let data = await $ajax(`${href}MoeData/phpwin.js?time=${本地应用版本[0]}`)
+		保存文件('index.php',data)
+	}
+	if(!type)
+	{
+		本地 = type
+		客户端 = type
+		delete localStorage['phpwin']
 	}
 }
 function waitPlus()

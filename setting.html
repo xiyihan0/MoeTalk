@@ -9,7 +9,7 @@
 //设备信息
 var URLParams = new URLSearchParams(window.location.search)
 if(URLParams.get('eval'))eval(atob(URLParams.get('eval')))
-var href = window.location.href.split(window.location.host)[1].split('?')[0].replace('setting.html','').replace('setting','')//文件目录地址
+var href = window.location.pathname.replace('setting.html','').replace('setting','')//文件目录地址
 var fs,客户端 = false
 var 本地 = false
 if(!window.location.href.includes('http'))本地 = true
@@ -29,7 +29,11 @@ if(URLParams.get('cordova') === '' || sessionStorage['cordova'])
 	客户端 = 'Cordova'//var cordova = false
 	loadjs('./cordova.js')
 }
-if(sessionStorage['phpwin'] === 'phpwin'){客户端 = 'phpwin',本地 = true;}
+if(URLParams.get('phpwin') || localStorage['phpwin'])
+{
+	本地 = true
+	客户端 = 'phpwin'
+}
 //函数和变量
 function loadjs(link,mode = ''){document.write("<scr"+`ipt src='${link}' ${mode}></scr`+"ipt>")}
 var test = console.log
@@ -62,7 +66,7 @@ function back()
 	<meta http-equiv="Pragma" content="no-cache">
 	<meta http-equiv="Expires" content="0">
 	<title>设置页面</title>
-	<link rel='stylesheet' href="./MoeData/Style.css?md5=a11224c21364a389afe15465eb6d9381" data-n-g=""><!-- @@ -->
+	<link rel='stylesheet' href="./MoeData/Style.css?md5=ff515c76ce8efca51667ef75b5eea7fc" data-n-g=""><!-- @@ -->
 	<script src="./MoeScript/Script/jquery.min.js?md5=41bb1ae10e01feee035041f0bfcc479f"></script><!-- @@首页 -->
 	<script src="./MoeScript/Script/localforage.min.js?md5=fce689ed39d7db8e762a989372349a28"></script><!-- @@首页 -->
 	<script src="./MoeScript/Script/jszip.min.js?md5=124c9275daa3939c6c8cef4d26148ce7"></script><!-- @@首页 -->
@@ -70,7 +74,7 @@ function back()
 	<script src="./MoeScript/INIT.js?md5=0d8a3ebcaa8bcbcb4f2c20e6a0164b08" defer=""></script><!-- @@ -->
 	<script src="./MoeScript/DATA.js?md5=1a38c4575b704d1433c8f5c1a0294626" defer=""></script><!-- @@ -->
 	<script src="./MoeScript/SETTING.js?md5=6e18c955277f9b4b78500741701b7c3c" defer=""></script><!-- @@ -->
-	<script src="./MoeScript/CLIENT.js?md5=c3ae7af8e0572a2d369f29c00cbd8082" defer=""></script><!-- @@ -->
+	<script src="./MoeScript/CLIENT.js?md5=57b5033898bb9c14878ef7c86fe8c083" defer=""></script><!-- @@ -->
 </head>
 <body style="height:100%;overflow:auto;background-image:linear-gradient( rgba(255,255,255,0.5),rgba(255,255,255,0.5) ),url(MoeData/Ui/hexa_back_01.webp);background-repeat :no-repeat;background-size :cover;user-select:none;">
 	

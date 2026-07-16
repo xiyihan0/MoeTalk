@@ -91,7 +91,6 @@ async function 加载数据(初始启动 = 0)
 		加载角色()
 		club(true)
 		charList(true)//更新角色
-		INIT_loading(false)
 	}
 //加载文件
 	if(game != 'NONE')
@@ -111,7 +110,6 @@ async function 加载数据(初始启动 = 0)
 				加载角色()
 				club(true)
 				charList(true)//更新角色
-				INIT_loading(false)
 			}
 			localStorage[game+'/Char'] = pako.deflate(char,{to:'string',level:9})
 		}
@@ -125,35 +123,45 @@ async function 加载数据(初始启动 = 0)
 			]);
 		}
 	}
+	else
+	{
+		加载角色()
+		club(true)
+		charList(true)//更新角色
+	}
+	INIT_loading(false)
 	if(!mt_settings['选择游戏'])selectgame()
 }
-async function 加载字体(FontCss)
+
+var 字体链接 = 'https://moetalk.xiyihan.cn/MoeData/Fonts/Blueaka.woff2'
+var 网络字体 = `@import url(https://moetalk.xiyihan.cn/MoeData/Fonts/Blueaka/Blueaka.css);body,input,button,textarea{font-family:Cyrillic,Blueaka;}`
+var 本地字体 = `@font-face{font-family:Blueaka;src:url(./MoeData/Fonts/Blueaka.woff2)}body,input,button,textarea{font-family:Cyrillic,Blueaka;}`
+async function 加载字体(FontCss = `@import url(./MoeData/Fonts/Blueaka/Blueaka.css);body,input,button,textarea{font-family:Cyrillic,Blueaka;}`)
 {
-	if(mt_settings['禁止字体'])return;
-	await waitPlus()
-	let WebFont = `@import url(https://moetalk.xiyihan.cn/MoeData/Fonts/Blueaka/Blueaka.css);*{font-family:Cyrillic,Blueaka;}`
-	let LocFont = `@font-face{font-family:Blueaka;src:url(./MoeData/Fonts/Blueaka.woff2)}*{font-family:Cyrillic,Blueaka;}`
-	let FontUrl = 'https://moetalk.xiyihan.cn/MoeData/Fonts/Blueaka.woff2'
+	if(mt_settings['禁止字体'])
+	{
+		$('#MoeFont').remove()
+		return;
+	}
 	if(本地)
 	{
-		if(await file_exists('MoeData/Fonts/Blueaka.woff2'))FontCss = LocFont
+		if(await file_exists('MoeData/Fonts/Blueaka.woff2'))FontCss = 本地字体
 		else
 		{
-			FontCss = WebFont
-			$ajax(FontUrl).then(function(data)
+			FontCss = 网络字体
+			$ajax(字体链接).then(function(data)
 			{
 				if(data)保存文件('MoeData/Fonts/Blueaka.woff2',data)
 			})
 		}
-		
 	}
-	$('#MoeFont').remove()
+	
 	const style = document.createElement('style');
 	style.textContent = FontCss
 	style.id = 'MoeFont'
 	document.head.appendChild(style);
 }
-加载字体(`@import url(./MoeData/Fonts/Blueaka/Blueaka.css);*{font-family:Cyrillic,Blueaka;}`)
+
 //使用说明
 async function clearCache()
 {
@@ -259,7 +267,7 @@ async function update(str = '')
 var 通知文档 = ''
 $(async function()
 {
-	if(设备信息.device.isApple && location.host == 'localhost' && !sessionStorage['phpwin'])await isIos()
+	if((设备信息.device.isApple && window.location.protocol == 'http:') || localStorage['phpwin'])await isIos()
 	if(本地)
 	{
 		if(客户端 === 'HTML5+')
@@ -275,9 +283,10 @@ $(async function()
 		}
 		检查数据()
 	}
+	加载字体()
 	$(".消息底座").wait(function()
 	{
-		加载数据(1)
+		加载数据('初始加载')
 	},".消息底座");
 	/[\u4e00-\u9fff]/.test($("#readme").text()) && $("#readme").css('font-family','moetalk')
 	let text = ''
@@ -436,7 +445,8 @@ $("body").on('click',"#设置选项",function()
 	config.title = '设置选项'
 	str += '反馈网址：<a href="https://wj.qq.com/s2/14292312/3ade/">https://wj.qq.com/s2/14292312/3ade/</a>\n\n'
 	str += "<button onclick='语言选项()'>语言选项</button> "
-	str += "<button id='mt-style'>切换风格</button> "
+	str += "<button id='mt-style'>MMT风格切换</button> "
+	str += "<button id='字体设置'>字体设置</button> "
 	str += "<button id='截图设置'>截图/下载设置</button> "
 	str += "<button id='发送方式'>文字发送方式</button> "
 	str += "<button id='使用风格'>软件使用风格</button> "
@@ -861,15 +871,33 @@ $("body").on('click',".operate",function()
 	}
 });
 //切换风格
+$('body').on('click',".mt-style",function()
+{
+	let str = ''
+	$(".mt-style").css("color","black")
+	this.style.color="red"
+	if(this.innerText == "MomoTalk")
+	{
+		str += 'background-color:rgb(220,229,232)\n'
+		str += 'font-size:1.2rem'
+		$(".bgcolor").val("rgb(255,255,255)").next().val("#FFFFFF")
+		$(".typecss").val("").eq(3).val(str)
+	}
+	else
+	{
+		str += 'font-family:bold\n'
+		str += 'font-weight:bold\n'
+		str += 'font-size:1.2rem'
+		$(".bgcolor").val("rgb(255,247,225)").next().val("#FFF7E1")
+		$(".typecss").val("").eq(3).val(str)
+	}
+	$(".自定样式").css("color","white").attr("alt","")
+	$("#编辑方案").hide()
+})
 $('body').on('click',"#mt-style",function()
 {
-	let onclick = "onclick='"
-	onclick += '$(".mt-style").css("color","black"),this.style.color="red",'
-	onclick += '$(".bgcolor").val(this.innerText=="MomoTalk"?"rgb(255,255,255)":"rgb(255,247,225)").next().val(this.innerText=="MomoTalk"?"#FFFFFF":"#FFF7E1"),'
-	onclick += '$(".typecss").val("").eq(3).val(""+(this.innerText=="MomoTalk"?"background-color:rgb(220,229,232)":"")),'
-	onclick += `$(".自定样式").css("color","white").attr("alt",""),$("#编辑方案").hide()'`
 	let style = 'style="width: auto;height: auto;font-size: 1rem;color: black;padding: 0.5rem;margin-bottom: 0.5rem;"'
-	let button = `<button class="cVRiXh eIEKpg evqKja kwhiZC mt-style" ${style} ${onclick}>`
+	let button = `<button class="cVRiXh eIEKpg evqKja kwhiZC mt-style" ${style}>`
 	let html = ''
 	html += `预设方案：${button}MomoTalk</button> ${button}YuzuTalk</button>`
 	html += `<button class='自定样式'id='添加方案'style="background-color:rgb(139,187,233);">添加方案</button>`
@@ -881,15 +909,16 @@ $('body').on('click',"#mt-style",function()
 		let 样式 = mt_settings.自定样式[id]
 		html += `<button class='自定样式'id='${id}'>${样式.name || id}</button>`
 	}
+	let str = 'class="typecss"style="width:80%;height:5rem;line-height:110%;"placeholder="范例：font-size:1rem（字体大小1rem）"'
 	html += `\n聊天背景颜色：<input class="bgcolor" oninput="RgbToHex(this.value,1)"><input type="color" onchange="$('.bgcolor').val(HexToRgb(this.value))">\n`
 	html += '各类型CSS样式定义：（高级）\n'
-	html += '文字：<textarea title="chat" class="typecss" style="width:80%;height:5rem;line-height:110%;"></textarea>\n'
-	html += '回复：<textarea title="reply" class="typecss" style="width:80%;height:5rem;line-height:110%;"></textarea>\n'
-	html += '羁绊：<textarea title="heart" class="typecss" style="width:80%;height:5rem;line-height:110%;"></textarea>\n'
-	html += '旁白：<textarea title="info" class="typecss" style="width:80%;height:5rem;line-height:110%;"></textarea>\n'
-	html += '图片：<textarea title="image" class="typecss" style="width:80%;height:5rem;line-height:110%;"></textarea>\n'
+	html += `文字：<textarea title="chat"${str}></textarea>\n`
+	html += `回复：<textarea title="reply"${str}></textarea>\n`
+	html += `羁绊：<textarea title="heart"${str}></textarea>\n`
+	html += `旁白：<textarea title="info"${str}></textarea>\n`
+	html += `图片：<textarea title="image"${str}></textarea>\n`
 	let config = {}
-	config.title = '风格样式'
+	config.title = 'MMT风格切换'
 	config.confirm = '提交设置'
 	config.show = true
 	config.yes = function()
@@ -998,6 +1027,23 @@ $('body').on('click',".自定样式",function()
 		}
 	}
 })
+//操作栏
+$("body").on('click',"#字体设置",function()
+{
+	let str = '<input type="checkbox"class="加载字体">加载字体\n'
+	str += '字体大小请在【MMT风格切换】中修改'
+	let config = {}
+	config.title = '字体设置'
+	config.yes = function()
+	{
+		mt_settings['禁止字体'] = true
+		if($('.加载字体').prop('checked'))delete mt_settings['禁止字体']
+		saveStorage('设置选项',mt_settings,'local')
+		加载字体()
+	}
+	alert(str,config)
+	if(!mt_settings.禁止字体)$('.加载字体').prop('checked',true)
+});
 
 function replyDepth(str,mode)
 {

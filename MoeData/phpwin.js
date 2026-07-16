@@ -6,15 +6,6 @@ ini_set("memory_limit",-1);
 ini_set('precision', -1);
 ini_set('serialize_precision', -1);
 set_time_limit(0);
-$host = 'localhost';
-$browser = 'Safari';
-if($_SERVER['HTTP_HOST'] !== $host || !strpos($_SERVER['HTTP_USER_AGENT'], $browser))
-{
-	echo "<h1 style='word-wrap: break-word;text-indent: 2em;'>在【phpwin】界面点击左上角【三】横杠，点击【Settings】进入设置页面：</h1>";
-	if($_SERVER['HTTP_HOST'] !== $host)echo "<h2 style='word-wrap: break-word;text-indent: 2em;'>在【Default host】一栏将【127.0.0.1】改为【localhost】</h2>";
-	if(!strpos($_SERVER['HTTP_USER_AGENT'], $browser))echo "<h2 style='word-wrap: break-word;text-indent: 2em;'>将【Use in-App Safari】选项改为开启状态</h2>";
-	exit;
-}
 if(isset($_POST['backDown']))exit('phpwin');
 if(isset($_POST['checkfiles']))
 {

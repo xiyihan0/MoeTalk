@@ -29,7 +29,7 @@ var OldTalk = localStorage['OldTalk'] ? true : false
 //设备信息
 var URLParams = new URLSearchParams(window.location.search)
 if(URLParams.get('eval'))eval(atob(URLParams.get('eval')))
-var href = window.location.href.split(window.location.host)[1].split('?')[0].replace('index.html','')//文件目录地址
+var href = window.location.pathname.replace('index.html','')//文件目录地址
 var fs,客户端 = false
 var 本地 = false
 if(!window.location.href.includes('http'))本地 = true
@@ -50,13 +50,14 @@ if(window.location.href.includes('cordova') || localStorage['cordova'])
 	localStorage['cordova'] = 客户端
 	loadjs('./cordova.js')
 }
-if(sessionStorage['phpwin'])
+if(URLParams.get('phpwin') || localStorage['phpwin'])
 {
 	本地 = true
 	客户端 = 'phpwin'
+	localStorage['phpwin'] = 客户端
 }
 //版本信息
-var 本地应用版本 = [260716.132205]//@
+var 本地应用版本 = [260717.012502]//@
 var 网络应用版本,本地数据版本,网络数据版本
 var gamearr = {"BLDA":"碧蓝档案","CBJQ":"尘白禁区","QNZL":"千年之旅","YGST":"犹格索托斯的庭院","DFPJ":"东方Project","NONE":"无"}
 var 本地版本 = 本地应用版本[0]
@@ -78,7 +79,6 @@ day = (day < 10 ? '0'+day : day).toString()
 
 //缺省游戏
 mt_settings['选择游戏'] = mt_settings['选择游戏'] || ''//#
-if(location.href.includes('?'))location.replace(location.href.split('?')[0])
 
 //加载文件
 var MikuTalk = false;
@@ -118,18 +118,18 @@ if(mt_settings['调试模式'])loadjs('./MoeScript/Script/vconsole.min.js')
 		<meta name="application-name" content="MoeTalk">
 		<link rel="shortcut icon" href="./MoeData/Ui/Favor_Schedule_Deco.webp">
 <!-- MoeTalk -->
-		<link rel='stylesheet' href="./MoeData/Style.css?md5=a11224c21364a389afe15465eb6d9381"><!-- @@样式 -->
+		<link rel='stylesheet' href="./MoeData/Style.css?md5=ff515c76ce8efca51667ef75b5eea7fc"><!-- @@样式 -->
 		<script src="./MoeScript/INIT.js?md5=0d8a3ebcaa8bcbcb4f2c20e6a0164b08" defer></script><!-- @@预定义 -->
 		<script src="./MoeScript/EDIT.js?md5=342d07ac06578a2f6963afb1af47717e" defer></script><!-- @@预定义 -->
-		<script src="./MoeScript/CLIENT.js?md5=c3ae7af8e0572a2d369f29c00cbd8082" defer></script><!-- @@客户端 -->
+		<script src="./MoeScript/CLIENT.js?md5=57b5033898bb9c14878ef7c86fe8c083" defer></script><!-- @@客户端 -->
 		<script src="./MoeScript/DATA.js?md5=1a38c4575b704d1433c8f5c1a0294626" defer></script><!-- @@存档 -->
 		<script src="./MoeScript/CHAR.js?md5=d143e132ba3acccb17c6afca29476e8b" defer></script><!-- @@角色 -->
 		<script src="./MoeScript/IMAGE.js?md5=3e17eafdb0203a30910849731bfa0a9f" defer></script><!-- @@截图 -->
 		<script src="./MoeScript/CHAT.js?md5=d5a53434d5a6ab064256f94a5c345721" defer></script><!-- @@消息 -->
-		<script src="./MoeScript/TOP.js?md5=764532ffc429c5642e8f7337d7fd4040" defer></script><!-- @@首页 -->
+		<script src="./MoeScript/TOP.js?md5=ac247445ee1833bc45127011969c9dd7" defer></script><!-- @@首页 -->
 <!-- MolluTalk -->
 		<script src="./MoeScript/Mollu/TEXT.js?md5=dc9ac5d2f983567f75da8f0984f7cf4f"></script><!-- @@提示文本 -->
-		<script src="./MoeScript/Mollu/MAIN.js?md5=aac2192e9b2c096f149c1ac5b89996d9" defer></script><!-- @@ -->
+		<script src="./MoeScript/Mollu/MAIN.js?md5=5e787f41392fd44a81b8793322745a85" defer></script><!-- @@ -->
 		<script src="./MoeScript/Mollu/APP.js?md5=4b0c491a4fbc1b6e58f939eb5f50655e" defer></script><!-- @@ -->
 		<script src="./MoeScript/Mollu/INDEX.js?md5=ffedd0e2799fee27e79bb9d5f6e6f8f9"></script><!-- @@ -->
 		<script src="./MoeScript/Old/OLD.js?md5=9f5710276b10a19bc16bcb9bc288d16a" defer></script><!-- @@旧版脚本 -->
