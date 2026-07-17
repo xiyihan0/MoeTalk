@@ -346,15 +346,11 @@ function INIT_loading(loading = '加载')
 	}
 	else
 	{
-		if($ && $(className) && $(className).wait)
+		$(className).wait(function()
 		{
-			$(className).wait(function()
-			{
-				if($(className+':visible').length || !loading)$(className).hide()
-				else $(className).show()
-			},className)
-		}
-		
+			if($(className+':visible').length || !loading)$(className).hide()
+			else $(className).show()
+		},className)
 	}
 }
 function INIT_waiting(callback,arr)//等待变量加载
