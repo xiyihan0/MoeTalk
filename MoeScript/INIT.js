@@ -181,7 +181,7 @@ function setting(SETTING)
 		else if(['zh-tw','zh-hk'].includes(lang))localStorage['语言选项'] = 'zh_tw'
 		else localStorage['语言选项'] = 'zh_cn'
 	}
-	if(!['zh_cn','zh_tw','en','jp','kr'].includes(localStorage['语言选项']))localStorage['语言选项'] = 'zh_cn'
+	if(!['zh_cn','zh_tw','en','jp','kr'].includes(SETTING['语言选项']))SETTING['语言选项'] = 'zh_cn'
 	SETTING['当前网址'] = window.location.href
 	SETTING['设备信息'] = window.navigator.userAgent
 	if(!SETTING.文字样式)SETTING.文字样式 = {}
@@ -212,7 +212,7 @@ function setting(SETTING)
 	return SETTING
 }
 mt_settings = setting(mt_settings)
-var mtlang = localStorage['语言选项']
+var mtlang = mt_settings['语言选项']
 saveStorage('设置选项',mt_settings,'local')
 //元素出现后执行代码
 jQuery.fn.wait = function (func,cls,times,interval)
@@ -346,11 +346,15 @@ function INIT_loading(loading = '加载')
 	}
 	else
 	{
-		$(className).wait(function()
+		if($ && $(className) && $(className).wait)
 		{
-			if($(className+':visible').length || !loading)$(className).hide()
-			else $(className).show()
-		},className)
+			$(className).wait(function()
+			{
+				if($(className+':visible').length || !loading)$(className).hide()
+				else $(className).show()
+			},className)
+		}
+		
 	}
 }
 function INIT_waiting(callback,arr)//等待变量加载
