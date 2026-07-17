@@ -880,7 +880,7 @@ $('body').on('click',".mt-style",function()
 		str += 'font-size:1.2rem;\n'
 		str += 'background-color:rgb(220,229,232);\n'
 		$(".bgcolor").val("rgb(255,255,255)").next().val("#FFFFFF")
-		$(".typecss").val("").eq(3).val(str)
+		$(".typecss").val("").eq(5).val(str)
 	}
 	else
 	{
@@ -888,7 +888,7 @@ $('body').on('click',".mt-style",function()
 		str += 'font-family:bold;\n'
 		str += 'font-weight:bold;\n'
 		$(".bgcolor").val("rgb(255,247,225)").next().val("#FFF7E1")
-		$(".typecss").val("").eq(3).val(str)
+		$(".typecss").val("").eq(5).val(str)
 	}
 	$(".自定样式").css("color","white").attr("alt","")
 	$("#编辑方案").hide()

@@ -1595,7 +1595,7 @@
 											let type = $$('.开关.selected').val()
 											if(type == 'info' && $$('.透明旁白背景').prop('checked'))
 											{
-												data.style = [["background-color","transparent"]]
+												data.style = "background-color:transparent;"
 											}
 											sendMessage(data,type)
 											y()
