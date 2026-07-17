@@ -317,8 +317,7 @@ async function 读取存档(json)
 		await 数据操作('Ss','mt-char',mt_char)
 		await 数据操作('Ss','DB_EMOJI',CUSTOM_EMOJI)
 	}
-	if(json.SETTING)mt_settings = json.SETTING
-	setting()
+	if(json.SETTING)mt_settings = setting(json.SETTING)
 	加载数据()
 	log(true)//清除历史记录
 	replyDepth(0,'home')//清除跳转记录

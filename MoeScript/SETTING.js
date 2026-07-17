@@ -138,56 +138,7 @@ $('body').on('change',"#loaddatafile",async function(e)
 	$('body').html(`<h1><a href='#' onclick="back()"><i style='color: red; font-weight: bold;'>返回MoeTalk</i></a></h1>`)
 	alert('数据恢复成功！\n请返回MoeTalk确认')
 });
-//更改语言
-$('body').on('click',"#language",function()
-{
-	let lang = prompt("请输入想更改的语言：\nkr(韩语)\njp(日语)\nen(英语)\nzh_cn(简体中文)\nzh_tw(繁体中文)", mt_settings['语言选项']);
-	if (lang != null)
-	{
-		mt_settings['语言选项'] = lang;
-		saveStorage('设置选项',mt_settings,'local')
-		alert('更改完成，请返回页面!');
-	}
-})
-//发送方式
-$('body').on('click',"#send",function()
-{
-	if(mt_settings['发送方式'] === '回车')
-	{
-		if(confirm('当前发送方式为回车发送，是否换为点击按钮发送？'))
-		{
-			mt_settings['发送方式'] = '点击'
-		}
-	}
-	else
-	{
-		if(confirm('当前发送方式为点击按钮发送，是否换为回车发送？'))
-		{
-			mt_settings['发送方式'] = '回车'
-		}
-	}
-	alert('当前文字发送方式为：'+mt_settings['发送方式'])
-	saveStorage('设置选项',mt_settings,'local')
-})
-//字体加载
-$('body').on('click',"#font",function()
-{
-	if(mt_settings['禁止字体'])
-	{
-		if(confirm('是否恢复加载字体文件？恢复可以使页面布局更美观\n确认后请返回页面'))
-		{
-			mt_settings['禁止字体'] = false
-		}
-	}
-	else
-	{
-		if(confirm('是否取消加载字体文件？取消可以优化页面加载时间\n确认后请返回页面'))
-		{
-			mt_settings['禁止字体'] = true;
-		}
-	}
-	saveStorage('设置选项',mt_settings,'local')
-})
+
 //头像质量
 $('body').on('click',"#hnum",function()
 {
@@ -218,28 +169,6 @@ $("body").on('click','#clean',async function()
 	else
 	{
 		alert('已放弃操作')
-	}
-})
-//设置整体上传的图片宽高百分比
-$("body").on('click','#mt-size',function()
-{
-	let size = mt_settings['图片比例'];
-	let msg = prompt("请输入整体上传的图片宽高百分比，数字后一定要带百分号，当前数值为：",size);
-	if(msg)
-	{
-		mt_settings['图片比例'] = msg;
-		saveStorage('设置选项',mt_settings,'local')
-	}
-})
-//设置独立的差分表情宽高百分比
-$("body").on('click','#mt-cfsize',function()
-{
-	let size = mt_settings['差分比例'];
-	let msg = prompt("请输入独立的差分表情宽高百分比，数字后一定要带百分号，当前数值为：",size);
-	if(msg)
-	{
-		mt_settings['差分比例'] = msg;
-		saveStorage('设置选项',mt_settings,'local')
 	}
 })
 //设置标题

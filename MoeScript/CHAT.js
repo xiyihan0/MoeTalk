@@ -440,19 +440,10 @@ function makeMessage(type,data,chatIndex,mode)
 	if(data.is_breaking === true)color = 'red';
 	//data.time = data.time ? data.time : ''
 
-	let style = '';
+	let style = mt_settings.风格样式[type] || '';
+	style += data.style || ''
 	let 对话角颜色 = '';
-	let title = `title="${no},${index}"`
-	if(data.name)title = ''
-	if(mt_settings['文字样式'] && mt_settings['文字样式'][type])
-	{
-		style = `font-size:${mt_settings['文字样式'][type]['font-size']};`
-	}
-	foreach([...mt_settings.风格样式[type] || [],...data.style || []],function(k,v)
-	{
-		style += `${v[0]}:${v[1]};`
-		if(v[0] == 'background-color')对话角颜色 = v[1]
-	})
+	let title = data.name ? `title="${no},${index}"` : ''
 	if(data.heads && (!data.heads.list || data.heads.list.length < 1))delete data.heads
 	if(type === 'chat' || type === 'image')
 	{
@@ -473,15 +464,9 @@ function makeMessage(type,data,chatIndex,mode)
 		}
 		if(type === 'image')
 		{
-			let width = ''
-			let maxwidth = mt_settings['图片比例'] || '90%'
-			if(data.content === 'CharFace')
-			{//如果是差分表情
-				width = 'max-height:360px;'
-				maxwidth = mt_settings['差分比例'] || '90%'
-			}
-			maxwidth = `max-width:${maxwidth};`
-			图片 = `<img src='${data.file.startsWith('data:') ? data.file : loadImg(data.file)}' style="${width}${maxwidth};${style}" class="图片${编辑}" onerror="IMAGE_error(this)">`
+			if(data.content === 'CharFace' && mt_settings.风格样式['charface'])style += mt_settings.风格样式['charface']
+			if(data.content === 'Emoji' && mt_settings.风格样式['emoji'])style += mt_settings.风格样式['emoji']
+			图片 = `<img src='${data.file.startsWith('data:') ? data.file : loadImg(data.file)}' style="${style}" class="图片${编辑}" onerror="IMAGE_error(this)">`
 		}
 		if(no != 0 && !data.isRight)
 		{//左侧对话
@@ -975,31 +960,11 @@ $("body").on('click',".定义样式",function()
 	config.title = '内容样式'
 	config.yes = function()
 	{
-		CHAT_Style = []
-		let css = $('.css').val().split("\n");
-		foreach(css,function(k,v)
-		{
-			v = v.replace(';','').replace('；','').replace('：',':')
-			v = v.split(':')
-			if(v.length === 2 && v[0].trim() !== '')
-			{
-				v[0] = v[0].trim()
-				v[1] = v[1].trim()
-				CHAT_Style.push(v)
-			}
-		})
-		$('.定义样式').css('color',CHAT_Style.length || checked > 1 ? 'red' : 'rgb(75, 105, 137)')
+		CHAT_Style = $('.css').val()
+		$('.定义样式').css('color',CHAT_Style || checked > 1 ? 'red' : 'rgb(75, 105, 137)')
 	}
 	alert(text,config)
-	if(CHAT_Style.length)
-	{
-		let str = ''
-		foreach(CHAT_Style,function(k,v)
-		{
-			if(v.length === 2)str += `${v[0]}: ${v[1]}\n`
-		})
-		$('.css').val(str).attr('placeholder',str)
-	}
+	if(CHAT_Style)$('.css').val(CHAT_Style).attr('placeholder',CHAT_Style)
 });
 $("body").on('click',".操作模式",function()
 {
@@ -1103,7 +1068,7 @@ function 编辑消息(index)
 	$('.时间信息').val(toString(chat.time)).attr('placeholder',chat.time || '').click();
 
 	if(chat.heads)CHAT_HeadList = {...chat.heads,...{}}	
-	if(chat.style)CHAT_Style = [...chat.style,...[]]
+	if(chat.style)CHAT_Style = chat.style
 }
 $("body").on('click',".编辑",function(e){编辑消息(获取索引(e.target))});
 $("body").on('click',".头像框",function()

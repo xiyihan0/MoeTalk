@@ -67,7 +67,7 @@ if(isset($_FILES['file']))
 	move_uploaded_file($_FILES['file']['tmp_name'],$filename);
 	exit("$filename 已创建");//移动文件
 }
-if(file_exists('phpwin.txt'))exit("<script>location.replace('index.html')</script>");
+if(file_exists('phpwin.txt'))exit("<script>location.replace('index.html?phpwin=phpwin')</script>");
 ?>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <h1 class='更新应用'>安装应用中，长时间无响应请刷新</h1>
@@ -226,7 +226,7 @@ async function 安装应用()
 	$('.更新应用').html('应用安装完成！<br>即将刷新页面！')
 	await 复制目录(更新补丁,'')
 	await 保存文件('phpwin.txt','moetalk')
-	location.replace('index.html')
+	location.replace('index.html?phpwin=phpwin')
 }
 安装应用()
 </script>

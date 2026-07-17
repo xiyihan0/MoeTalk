@@ -412,7 +412,7 @@ $(".frVjsk").wait(function()
 {
 	let div = `<div style='display:flex;flex-direction:column;align-items:center;'align='center'>`
 	let button = `${div}<button class='mvcff kNOatn'`
-	$(".frVjsk").append(`${button}id='支持作者'><b class='red bold'>支</b></button><p class='white'>支持作者</p></button></div>`);
+	$(".frVjsk").append(`${button}id='支持作者'><b class='red bold'>$</b></button><p class='white'>支持作者</p></button></div>`);
 	$(".frVjsk").append(`${button}onclick='update()'><b class='blue bold'>應</b></button><p class='white'>${本地?'更新':'安装'}应用</p></button></div>`);
 	$(".frVjsk").append(`${button}onclick='selectgame()'><b class='blue bold'>遊</b></button><p class='white'>选择游戏</p></button></div>`);
 	$(".frVjsk").append(`${button}id='MoeProject'><b class='blue bold'>項</b></button><p class='white'>项目管理</p></button></div>`);
@@ -445,7 +445,7 @@ $("body").on('click',"#设置选项",function()
 	config.title = '设置选项'
 	str += '反馈网址：<a href="https://wj.qq.com/s2/14292312/3ade/">https://wj.qq.com/s2/14292312/3ade/</a>\n\n'
 	str += "<button onclick='语言选项()'>语言选项</button> "
-	str += "<button id='mt-style'>MMT风格切换</button> "
+	str += "<button id='mt-style'>自定义css样式</button> "
 	str += "<button id='字体设置'>字体设置</button> "
 	str += "<button id='截图设置'>截图/下载设置</button> "
 	str += "<button id='发送方式'>文字发送方式</button> "
@@ -471,12 +471,11 @@ function 语言选项()
 	config.title = '请选择语言'
 	config.yes = function()
 	{
-		mt_settings['语言选项'] = $('.语言选项').val()
-		saveStorage('设置选项',mt_settings,'local')
+		localStorage['语言选项'] = $('.语言选项').val()
 		location.reload(true)
 	}
 	alert('Please select the language：'+str,config)
-	$('.语言选项').val(mt_settings['语言选项'])
+	$('.语言选项').val(localStorage['语言选项'])
 }
 $("body").on('click',"#自动备份设置",function()
 {
@@ -878,21 +877,33 @@ $('body').on('click',".mt-style",function()
 	this.style.color="red"
 	if(this.innerText == "MomoTalk")
 	{
-		str += 'background-color:rgb(220,229,232)\n'
-		str += 'font-size:1.2rem'
+		str += 'font-size:1.2rem;\n'
+		str += 'background-color:rgb(220,229,232);\n'
 		$(".bgcolor").val("rgb(255,255,255)").next().val("#FFFFFF")
 		$(".typecss").val("").eq(3).val(str)
 	}
 	else
 	{
-		str += 'font-family:bold\n'
-		str += 'font-weight:bold\n'
-		str += 'font-size:1.2rem'
+		str += 'font-size:1.2rem;\n'
+		str += 'font-family:bold;\n'
+		str += 'font-weight:bold;\n'
 		$(".bgcolor").val("rgb(255,247,225)").next().val("#FFF7E1")
 		$(".typecss").val("").eq(3).val(str)
 	}
 	$(".自定样式").css("color","white").attr("alt","")
 	$("#编辑方案").hide()
+})
+$('body').on('click',".CSS教程",function()
+{
+	let red = '<i class="bold red">'
+	let blue = '<i class="bold blue">'
+	let green = '<i class="bold green">'
+	let 教程 = 'https://www.runoob.com/css/css-tutorial.html'
+	let str = '代码规范：（每条一行）\n'
+	str += `${red}属性</i>:${blue}值</i>;/*${green}注释</i>*/\n`
+	str += `${red}属性</i>:${blue}值</i>;/*${green}注释</i>*/\n`
+	str += `${red}属性</i>:${blue}值</i>;/*${green}注释</i>*/\n`
+	alert(`<span class="black">${str}</span>教程网站：<a href="${教程}">${教程}</a>`)
 })
 $('body').on('click',"#mt-style",function()
 {
@@ -909,16 +920,18 @@ $('body').on('click',"#mt-style",function()
 		let 样式 = mt_settings.自定样式[id]
 		html += `<button class='自定样式'id='${id}'>${样式.name || id}</button>`
 	}
-	let str = 'class="typecss"style="width:80%;height:5rem;line-height:110%;"placeholder="范例：font-size:1rem（字体大小1rem）"'
+	let str = 'class="typecss"style="width:100%;height:5rem;line-height:110%;"'
 	html += `\n聊天背景颜色：<input class="bgcolor" oninput="RgbToHex(this.value,1)"><input type="color" onchange="$('.bgcolor').val(HexToRgb(this.value))">\n`
-	html += '各类型CSS样式定义：（高级）\n'
-	html += `文字：<textarea title="chat"${str}></textarea>\n`
-	html += `回复：<textarea title="reply"${str}></textarea>\n`
-	html += `羁绊：<textarea title="heart"${str}></textarea>\n`
-	html += `旁白：<textarea title="info"${str}></textarea>\n`
-	html += `图片：<textarea title="image"${str}></textarea>\n`
+	html += '各类型css样式定义：（高级）<button class="CSS教程 bold red">规范和教程</button>\n'
+	html += `<i class="bold blue">图片（角色表情）：</i><br><textarea title="charface"${str}></textarea>\n`
+	html += `<i class="bold blue">图片（图片表情）：</i><br><textarea title="emoji"${str}></textarea>\n`
+	html += `<i class="bold blue">文字：</i><br><textarea title="chat"${str}></textarea>\n`
+	html += `<i class="bold blue">回复：</i><br><textarea title="reply"${str}></textarea>\n`
+	html += `<i class="bold blue">羁绊：</i><br><textarea title="heart"${str}></textarea>\n`
+	html += `<i class="bold blue">旁白：</i><br><textarea title="info"${str}></textarea>\n`
+	html += `<i class="bold blue">图片：</i><br><textarea title="image"${str}></textarea>\n`
 	let config = {}
-	config.title = 'MMT风格切换'
+	config.title = '自定义css样式'
 	config.confirm = '提交设置'
 	config.show = true
 	config.yes = function()
@@ -939,42 +952,64 @@ $('body').on('click',"#mt-style",function()
 function 读取样式(mode,id)
 {
 	let 风格样式 = {}
-	if(mode == 'html')
+	if(mode == 'html')//写入CSS
 	{
 		风格样式.bgColor = HexToRgb($('.bgcolor').val())
 		$('.typecss').each(function()
 		{
-			let css = []
-			foreach(this.value.split("\n"),function(k,v)
-			{
-				v = v.replace(';','').replace('；','').replace('：',':')
-				v = v.split(':')
-				if(v.length === 2 && v[0].trim() !== '')
-				{
-					v[0] = v[0].trim()
-					v[1] = v[1].trim()
-					css.push(v)
-				}
-			})
-			if(css.length)风格样式[this.title] = css
-			else delete 风格样式[this.title]
+			let type = this.title
+			let val = this.value
+			if(val)风格样式[type] = val
+			else delete 风格样式[type]
 		})
 		return 风格样式
 	}
-	if(mode == 'json')
+	if(mode == 'json')//读取CSS
 	{
 		if(id)风格样式 = mt_settings.自定样式[id].style || {}
 		else 风格样式 = mt_settings.风格样式
 		$('.bgcolor').val(HexToRgb(风格样式.bgColor)).next().val(RgbToHex(风格样式.bgColor))
 		$('.typecss').each(function()
 		{
+			let type = this.title
 			let style = ''
-			foreach(风格样式[this.title] || [],function(k,v)
+			if(typeof 风格样式[type] == 'object')
 			{
-				style += `${v[0]}: ${v[1]}\n`
-			})
+				foreach(风格样式[type],function(k,v)
+				{
+					style += `${v[0]}:${v[1]};\n`
+				})
+			}
+			else style = 风格样式[type] || ''
+			if(type == 'charface')this.placeholder = 'max-width:90%;/*角色表情宽高百分比*/'
+			else if(type == 'emoji')this.placeholder = 'max-width:90%;/*图片表情宽高百分比*/'
+			else if(type == 'image')this.placeholder = 'max-width:90%;/*上传图片宽高百分比*/'
+			else this.placeholder = 'font-size:1.1rem;/*字体大小*/'
 			this.value = style
 		})
+	}
+	if(mode == 'str')//CSS数组转字符串
+	{
+		let style = ''
+		foreach(id,function(k,v)
+		{
+			style += `${v[0]}:${v[1]};\n`
+		})
+		return style
+	}
+	if(mode == 'obj')//CSS字符串转对象
+	{
+		let style = {}
+		let css = id.split('\n');
+		foreach(css,function(k,v)
+		{
+			v = ''.split(';')[0].split(':')
+			if(v.length === 2 && v[0].trim() !== '')
+			{
+				style[v[0].trim()] = v[1].trim()
+			}
+		})
+		return style
 	}
 }
 $('body').on('click',".自定样式",function()
@@ -1031,7 +1066,7 @@ $('body').on('click',".自定样式",function()
 $("body").on('click',"#字体设置",function()
 {
 	let str = '<input type="checkbox"class="加载字体">加载字体\n'
-	str += '字体大小请在【MMT风格切换】中修改'
+	str += '字体大小请在【自定义css样式】中修改'
 	let config = {}
 	config.title = '字体设置'
 	config.yes = function()

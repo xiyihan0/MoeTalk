@@ -149,46 +149,70 @@ var MMT目录 = false//目录
 var $$ = $;//jquery转义
 var winHeight = window.innerHeight
 var 元素尺寸;
-function setting()
+function setting(SETTING)
 {
-	if(!mt_settings['图片比例'])mt_settings['图片比例'] = '90%'
-	if(!mt_settings['差分比例'])mt_settings['差分比例'] = '90%'
-	if(!mt_settings['排序方式'])mt_settings['排序方式'] = 'name'
-	if(!mt_settings['顶部标题'])mt_settings['顶部标题'] = 'MoeTalk'
-	if(!mt_settings['高度限制'])mt_settings['高度限制'] = 16384
-	if(!mt_settings['宽度限制'])mt_settings['宽度限制'] = 500
-	if(!mt_settings['人物改名'])mt_settings['人物改名'] = {}
-	if(!mt_settings['社团列表'])mt_settings['社团列表'] = {}
-	if(!mt_settings['截图选项'])mt_settings['截图选项'] = {}
-	if(!mt_settings['右侧发言'])mt_settings['右侧发言'] = {}
-	if(!mt_settings['选择角色'])
+	if(!SETTING['排序方式'])SETTING['排序方式'] = 'name'
+	if(!SETTING['顶部标题'])SETTING['顶部标题'] = 'MoeTalk'
+	if(!SETTING['高度限制'])SETTING['高度限制'] = 16384
+	if(!SETTING['宽度限制'])SETTING['宽度限制'] = 500
+	if(!SETTING['人物改名'])SETTING['人物改名'] = {}
+	if(!SETTING['社团列表'])SETTING['社团列表'] = {}
+	if(!SETTING['截图选项'])SETTING['截图选项'] = {}
+	if(!SETTING['右侧发言'])SETTING['右侧发言'] = {}
+	if(!SETTING['选择角色'])
 	{
-		mt_settings['选择角色'] = {}
-		mt_settings['选择角色'].no = 0
-		mt_settings['选择角色'].index = 1
-		mt_settings['选择角色'].list = []
+		SETTING['选择角色'] = {}
+		SETTING['选择角色'].no = 0
+		SETTING['选择角色'].index = 1
+		SETTING['选择角色'].list = []
 	}
-	if(!mt_settings.风格样式 || mt_settings.风格样式[0])
+	if(!SETTING.风格样式 || SETTING.风格样式[0])
 	{
-		mt_settings.风格样式 = {}
-		mt_settings.风格样式.bgColor = 'transparent'
-		mt_settings.风格样式.info = [['background-color','rgb(220, 229, 232)']]
+		SETTING.风格样式 = {}
+		SETTING.风格样式.bgColor = 'transparent'
+		SETTING.风格样式.info = 'background-color:rgb(220, 229, 232);'
 	}
-	if(!mt_settings['语言选项'])
+	if(!localStorage['语言选项'])
 	{
 		let lang = window.navigator.language.toLowerCase()
-		if(lang.includes('en'))mt_settings['语言选项'] = 'en'
-		else if(['ja','ja-jp'].includes(lang))mt_settings['语言选项'] = 'jp'
-		else if(['ko','ko-kr'].includes(lang))mt_settings['语言选项'] = 'kr'
-		else if(['zh-tw','zh-hk'].includes(lang))mt_settings['语言选项'] = 'zh_tw'
-		else mt_settings['语言选项'] = 'zh_cn'
+		if(lang.includes('en'))localStorage['语言选项'] = 'en'
+		else if(['ja','ja-jp'].includes(lang))localStorage['语言选项'] = 'jp'
+		else if(['ko','ko-kr'].includes(lang))localStorage['语言选项'] = 'kr'
+		else if(['zh-tw','zh-hk'].includes(lang))localStorage['语言选项'] = 'zh_tw'
+		else localStorage['语言选项'] = 'zh_cn'
 	}
-	if(!['zh_cn','zh_tw','en','jp','kr'].includes(mt_settings['语言选项']))mt_settings['语言选项'] = 'zh_cn'
-	mt_settings['当前网址'] = window.location.href
-	mt_settings['设备信息'] = window.navigator.userAgent
+	if(!['zh_cn','zh_tw','en','jp','kr'].includes(localStorage['语言选项']))localStorage['语言选项'] = 'zh_cn'
+	SETTING['当前网址'] = window.location.href
+	SETTING['设备信息'] = window.navigator.userAgent
+	if(!SETTING.文字样式)SETTING.文字样式 = {}
+	for(let type in SETTING.风格样式)
+	{
+		let style = SETTING.风格样式[type]
+		if(typeof style == 'object')SETTING.风格样式[type] = 读取样式('str',style)
+	}
+	if(SETTING.图片比例)
+	{
+		if(!SETTING.风格样式.image)SETTING.风格样式.image = ''
+		SETTING.风格样式.image += `max-width:${SETTING.图片比例};/*上传图片宽高百分比*/\n`
+	}
+	if(SETTING.差分比例)
+	{
+		if(!SETTING.风格样式.charface)SETTING.风格样式.charface = ''
+		SETTING.风格样式.charface += `max-width:${SETTING.差分比例};/*角色表情宽高百分比*/\n`
+	}
+	for(let type in SETTING.文字样式)
+	{
+		let fontSize = SETTING.文字样式[type]['font-size']
+		if(!SETTING.风格样式[type])SETTING.风格样式[type] = ''
+		if(fontSize)SETTING.风格样式[type] += `font-size:${fontSize};/*字体大小*/`
+	}
+	delete SETTING.差分比例
+	delete SETTING.图片比例
+	delete SETTING.文字样式
+	return SETTING
 }
-setting()
-var mtlang = mt_settings['语言选项']
+mt_settings = setting(mt_settings)
+var mtlang = localStorage['语言选项']
 saveStorage('设置选项',mt_settings,'local')
 //元素出现后执行代码
 jQuery.fn.wait = function (func,cls,times,interval)

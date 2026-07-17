@@ -66,15 +66,15 @@ function back()
 	<meta http-equiv="Pragma" content="no-cache">
 	<meta http-equiv="Expires" content="0">
 	<title>设置页面</title>
-	<link rel='stylesheet' href="./MoeData/Style.css?md5=ff515c76ce8efca51667ef75b5eea7fc" data-n-g=""><!-- @@ -->
+	<link rel='stylesheet' href="./MoeData/Style.css?md5=ea985dbb5bebb4d3cbfed1926495360d" data-n-g=""><!-- @@ -->
 	<script src="./MoeScript/Script/jquery.min.js?md5=41bb1ae10e01feee035041f0bfcc479f"></script><!-- @@首页 -->
 	<script src="./MoeScript/Script/localforage.min.js?md5=fce689ed39d7db8e762a989372349a28"></script><!-- @@首页 -->
 	<script src="./MoeScript/Script/jszip.min.js?md5=124c9275daa3939c6c8cef4d26148ce7"></script><!-- @@首页 -->
 	<script src="./MoeScript/Script/download.js?md5=370c0360e43fadda3bdd5dccee7d5e95"></script><!-- @@首页 -->
-	<script src="./MoeScript/INIT.js?md5=0d8a3ebcaa8bcbcb4f2c20e6a0164b08" defer=""></script><!-- @@ -->
-	<script src="./MoeScript/DATA.js?md5=1a38c4575b704d1433c8f5c1a0294626" defer=""></script><!-- @@ -->
-	<script src="./MoeScript/SETTING.js?md5=6e18c955277f9b4b78500741701b7c3c" defer=""></script><!-- @@ -->
-	<script src="./MoeScript/CLIENT.js?md5=57b5033898bb9c14878ef7c86fe8c083" defer=""></script><!-- @@ -->
+	<script src="./MoeScript/INIT.js?md5=4eb1459c3af0595e2a76d6e9e971e892" defer=""></script><!-- @@ -->
+	<script src="./MoeScript/DATA.js?md5=a80613497f45a3a1bed5f7ba206e87c5" defer=""></script><!-- @@ -->
+	<script src="./MoeScript/SETTING.js?md5=b2cb3782b88c1ece99ccb45e21985bc0" defer=""></script><!-- @@ -->
+	<script src="./MoeScript/CLIENT.js?md5=ce4a0df6771f5d741d43bbce5da10689" defer=""></script><!-- @@ -->
 </head>
 <body style="height:100%;overflow:auto;background-image:linear-gradient( rgba(255,255,255,0.5),rgba(255,255,255,0.5) ),url(MoeData/Ui/hexa_back_01.webp);background-repeat :no-repeat;background-size :cover;user-select:none;">
 	
@@ -82,7 +82,7 @@ function back()
 <pre style='white-space: pre-wrap; font-family: "Microsoft YaHei", Arial, sans-serif;font-weight: bold;background-color: #FF8FBF;font-size: 1.25rem;'>
 如果您<span style='color:red;'>长时间</span>卡在了主页面，建议您按照以下方案操作：
     1。先<span style='color:white;'>备份所有数据</span>
-    2。<span style='color:green;'>清除ServiceWorker缓存和浏览器缓存</span>后重新访问MoeTalk
+    2。<span style='color:yellow;'>清除ServiceWorker缓存和浏览器缓存</span>后重新访问MoeTalk
     3。以上无效方法请进入<span style='color:white;'>反馈页面</span>向我提供您的备份数据并描述您遇到的问题
 ※提交存档和图片可以帮助开发者更顺利的排查错误
 ※过程中发现数据丢失可以通过之前的备份文件恢复
@@ -94,18 +94,13 @@ function back()
 	<h2><a>数据相关：</a></h2>
 	<button class="button-container" id='savedata'><b style='color:white'>备份所有数据</b></button>
 	<button class="button-container" id='loaddata'><b style='color:white;'>恢复备份数据</b></button>
-	<button class="button-container" id='cleancache'><b style='color:green;'>清除ServiceWorker缓存</b></button>
+	<button class="button-container" id='cleancache'><b style='color:yellow;'>清除ServiceWorker缓存</b></button>
 
 	<h2><a>图片相关：</a></h2>
 	<button class="button-container" id='hnum'><b style='color:blue;'>设置自定义头像质量</b></button>
-	<button class="button-container" id='mt-size'><b style='color:blue;'>设置整体图片宽高百分比</b></button>
-	<button class="button-container" id='mt-cfsize'><b style='color:blue;'>设置差分表情宽高百分比</b></button>
 	<h2><a>编辑界面相关：</a></h2>
 	<button class="button-container" id='mt-fontSizepc'><b style='color:green;'>设置桌面端元素尺寸</b></button>
 	<button class="button-container" id='mt-fontSize'><b style='color:green;'>设置移动端元素尺寸</b></button>
-	<button class="button-container" id='language'><b style='color:green;'>更改语言</b></button>
-	<button class="button-container" id='send'><b style='color:green;'>文字发送方式</b></button>
-	<button class="button-container" id='font'><b style='color:green;'>字体加载选项</b></button>
 	<button class="button-container" id='mt-title'><b style='color:green;'>设置标题文字</b></button>
 	<button class="button-container" id='SETTING_隐藏差分'><b style='color:green;'>隐藏表情差分按钮</b></button>
 	<div style="border:1px solid var(--m-3-sys-light-outline, #79747E)">

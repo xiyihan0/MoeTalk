@@ -481,7 +481,7 @@
 								children: [(0, m.jsxs)(S,
 								{
 									style:{height:'auto'},
-									children: [(0, m.jsx)('img',
+									children: [mt_settings.右侧发言[n.no] ? '' : (0, m.jsx)('img',
 									{
 										className: 'eLaCqa',
 										width: 252,
@@ -513,7 +513,15 @@
 												}
 											})]
 										})]
-									})]
+									}), mt_settings.右侧发言[n.no] ? (0, m.jsx)('img',
+									{
+										className: 'eLaCqa',
+										width: 252,
+										height: 252,
+										src: loadhead(n.no,n.profile[0]),//#左方选择框
+										onError: function(e){IMAGE_error(e)},
+										alt: n.profile[0]
+									}) : '']
 								}), (0, m.jsx)(B,
 								{
 									width: 252,
@@ -1276,13 +1284,19 @@
 									},
 									children: (0, m.jsx)(c.j4,{})
 								})]
+							}), (0, m.jsx)('span',
+							{
+								className: "charid"
 							}), (0, m.jsx)('input',
 							{
 								type: 'checkbox',
+								style:{width: '1.5rem',height:'1.5rem'},
 								className: 'rightSend'
-							}), '默认右侧发言', (0, m.jsx)('span',
+							}), (0, m.jsx)('i',
 							{
-								className: "charid"
+								className: "bold blue",
+								style:{fontSize: '1.5rem'},
+								children: '默认右侧发言'
 							}), (0, m.jsxs)(ea.$0,
 							{
 								style:{padding: '0.5rem'},
@@ -7055,6 +7069,7 @@
 												DATA = loaddata(await 数据操作('Pg',l.MD5),'player')
 												MMT目录.角色 = DATA.TEMP.CHAR
 												MMT目录.设置 = DATA.SETTING || mt_settings
+												MMT目录.设置 = setting(MMT目录.设置)
 												for(let id in DATA.TEMP.IMAGE)
 												{
 													let img = DATA.TEMP.IMAGE[id]
@@ -7081,6 +7096,7 @@
 													DATA = loaddata(await ZipToJson(`${href}${filename}.zip`),'custom')
 													MMT目录.角色 = DATA.TEMP.CHAR
 													MMT目录.设置 = DATA.SETTING || mt_settings
+													MMT目录.设置 = setting(MMT目录.设置)
 													for(let id in DATA.TEMP.IMAGE)
 													{
 														let img = DATA.TEMP.IMAGE[id]
@@ -8315,6 +8331,7 @@
 									MMT目录.当前 = false
 									MMT目录.角色 = z.TEMP.CHAR
 									MMT目录.设置 = z.SETTING || mt_settings
+									MMT目录.设置 = setting(MMT目录.设置)
 									for(let id in z.TEMP.IMAGE)
 									{
 										let img = z.TEMP.IMAGE[id]
@@ -8757,14 +8774,9 @@
 						};
 					let isFirst = isfirst(n.chats.indexOf(t),n.chats,'player')
 					let isCenter = t.isCenter && t.type === 'image'
-					let style = {}
-					if(MMT目录.设置['文字样式'] && MMT目录.设置['文字样式'][t.type])style = MMT目录.设置['文字样式'][t.type]
-					delete style.textAlign
-					style = {...style,...{}}//防止连带修改设置属性
-					foreach([...MMT目录.设置.风格样式[t.type] || [],...t.style || []],function(k,v)
-					{
-						style[v[0]] = v[1]
-					})
+					let style = MMT目录.设置.风格样式[t.type] || ''
+					if(typeof t.style == 'object')t.style = 读取样式('str',t.style)
+					style = 读取样式('obj',style+(t.style || ''))
 					if(t.heads && (!t.heads.list || t.heads.list.length < 1))delete t.heads
 					if(!t.content)t.content = ''
 					if(!t.file)t.file = ''
@@ -9030,19 +9042,9 @@
 						}, [r]);
 					let isFirst = isfirst(c.chats.indexOf(t),c.chats,'player')
 					let isCenter = t.isCenter && t.type === 'image'
-					let style = {}
-					if(MMT目录.设置['文字样式'] && MMT目录.设置['文字样式'][t.type])style = MMT目录.设置['文字样式'][t.type]
-					delete style.textAlign
-					style = {...style,...{}}//防止连带修改设置属性
-					foreach([...MMT目录.设置.风格样式[t.type] || [],...t.style || []],function(k,v)
-					{
-						style[v[0]] = v[1]
-					})
-					if(t.type === 'info')
-					{
-						t.isLeft ? style.textAlign = 'left' : ''
-						t.isRight ? style.textAlign = 'right' : ''
-					}
+					let style = MMT目录.设置.风格样式[t.type] || ''
+					if(typeof t.style == 'object')t.style = 读取样式('str',t.style)
+					style = 读取样式('obj',style+(t.style || ''))
 					if(t.heads && (!t.heads.list || t.heads.list.length < 1))delete t.heads
 					if(!t.content)t.content = ''
 					if(!t.file)t.file = ''
@@ -9715,7 +9717,7 @@
 				{
 					displayName: "talk__ImgBox",
 					componentId: "sc-eq7cqw-3"
-				})([`max-width:${mt_settings['图片比例']};border:2px solid ", ";background-color:rgb(255,255,255);padding:0.5rem;border-radius:10px;`], function(e)
+				})(['max-width:90%;border:2px solid ", ";background-color:rgb(255,255,255);padding:0.5rem;border-radius:10px;'], function(e)
 				{
 					return e.theme.color.rgb255_255_255
 				}),
