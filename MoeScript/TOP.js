@@ -949,69 +949,6 @@ $('body').on('click',"#mt-style",function()
 	alert(html,config)
 	读取样式('json')
 })
-function 读取样式(mode,id)
-{
-	let 风格样式 = {}
-	if(mode == 'html')//写入CSS
-	{
-		风格样式.bgColor = HexToRgb($('.bgcolor').val())
-		$('.typecss').each(function()
-		{
-			let type = this.title
-			let val = this.value
-			if(val)风格样式[type] = val
-			else delete 风格样式[type]
-		})
-		return 风格样式
-	}
-	if(mode == 'json')//读取CSS
-	{
-		if(id)风格样式 = mt_settings.自定样式[id].style || {}
-		else 风格样式 = mt_settings.风格样式
-		$('.bgcolor').val(HexToRgb(风格样式.bgColor)).next().val(RgbToHex(风格样式.bgColor))
-		$('.typecss').each(function()
-		{
-			let type = this.title
-			let style = ''
-			if(typeof 风格样式[type] == 'object')
-			{
-				foreach(风格样式[type],function(k,v)
-				{
-					style += `${v[0]}:${v[1]};\n`
-				})
-			}
-			else style = 风格样式[type] || ''
-			if(type == 'charface')this.placeholder = 'max-width:90%;/*角色表情宽高百分比*/'
-			else if(type == 'emoji')this.placeholder = 'max-width:90%;/*图片表情宽高百分比*/'
-			else if(type == 'image')this.placeholder = 'max-width:90%;/*上传图片宽高百分比*/'
-			else this.placeholder = 'font-size:1.1rem;/*字体大小*/'
-			this.value = style
-		})
-	}
-	if(mode == 'str')//CSS数组转字符串
-	{
-		let style = ''
-		foreach(id,function(k,v)
-		{
-			style += `${v[0]}:${v[1]};\n`
-		})
-		return style
-	}
-	if(mode == 'obj')//CSS字符串转对象
-	{
-		let style = {}
-		let css = id.split('\n');
-		foreach(css,function(k,v)
-		{
-			v = ''.split(';')[0].split(':')
-			if(v.length === 2 && v[0].trim() !== '')
-			{
-				style[v[0].trim()] = v[1].trim()
-			}
-		})
-		return style
-	}
-}
 $('body').on('click',".自定样式",function()
 {
 	let id = this.id
