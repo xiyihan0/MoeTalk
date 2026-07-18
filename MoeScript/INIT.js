@@ -211,7 +211,10 @@ var MMT目录 = false//目录
 
 var $$ = $;//jquery转义
 var winHeight = window.innerHeight
-var 元素尺寸;
+var 原始比例 = null;
+var 缩放比例 = parseInt(mt_settings['元素尺寸'])
+if(缩放比例 >= 10 && 缩放比例 <= 20)缩放比例 += 'px'
+else 缩放比例 = null;
 function setting(SETTING)
 {
 	if(!SETTING['排序方式'])SETTING['排序方式'] = 'name'

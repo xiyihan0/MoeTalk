@@ -74,6 +74,7 @@ async function 加载数据(初始启动 = 0)
 	})
 	allChats = []
 	refreshMessage(chats)//$('#mt_watermark').click()//显示消息
+	INIT_loading(false)
 //读取数据
 	if(初始启动)
 	{
@@ -129,7 +130,6 @@ async function 加载数据(初始启动 = 0)
 		club(true)
 		charList(true)//更新角色
 	}
-	INIT_loading(false)
 	if(!mt_settings['选择游戏'])selectgame()
 }
 
@@ -233,9 +233,9 @@ async function update(str = '')
 			readme += '为了持久保存数据，请点击底部共享图标<img src="MoeData/Ui/share.webp"style="width:1.5rem;">，选择“添加到主屏幕”\n\n'
 		}
 	}
-	let bdwp = 'https://pan.baidu.com/s/1Cc-Us0FM_ehP9h5SDWhrVg?pwd=blda'
+	let bdwp = 'https://pan.baidu.com/s/19TBLCa1ammOPV7LAXma7MA?pwd=bwsm'
 	let link = `<a class="INIT_href bold" title="${bdwp}" style="text-decoration:underline;">${bdwp}</a>`
-	readme += `本地MoeTalk客户端下载地址：\n${link}\n提取码：BLDA\n`
+	readme += `本地MoeTalk客户端下载地址：\n${link}\n提取码：${bdwp.split('=')[1]}\n`
 	let config = {}
 	config.title = 本地 ? '更新应用' : '安装应用'
 	config.id = '安装应用'
@@ -444,20 +444,68 @@ $("body").on('click',"#设置选项",function()
 	let str = '',config = {}
 	config.title = '设置选项'
 	str += '反馈网址：<a href="https://wj.qq.com/s2/14292312/3ade/">https://wj.qq.com/s2/14292312/3ade/</a>\n\n'
-	str += "<button onclick='语言选项()'>语言选项</button> "
-	str += "<button id='mt-style'>自定义css样式</button> "
-	str += "<button id='字体设置'>字体设置</button> "
+	
+	str += "<button id='mt-style'>MMT风格自定义</button> "
+	str += "<button id='字体设置'>字体/图片设置</button> "
 	str += "<button id='截图设置'>截图/下载设置</button> "
-	str += "<button id='发送方式'>文字发送方式</button> "
-	str += "<button id='使用风格'>软件使用风格</button> "
+	str += "<button id='布局设置'>标题/布局设置</button> "
+	str += "<button id='操作设置'>软件操作设置</button> "
+
+	str += "<br><br><button onclick='语言选项()'>语言选项</button> "
+	str += "<button id='虚拟滚动'>虚拟滚动（测试）</button> "
 	str += "<button id='自动备份设置'>自动备份设置</button> "
-	str += "<button id='虚拟滚动'>虚拟滚动（测试）</button><br><br>"
-	str += "<button id='实验选项'>实验性选项（测试）</button> "
 	str += "<button id='清除缓存'>清除缓存</button> "
-	str += "<button id='快捷键说明'>快捷键说明</button> "
+	str += "<button id='实验选项'>开发者选项</button> "
 	str += "<div style='display:flex;justify-content:center;'><h1><a class='bold'style='text-decoration:underline;'href='setting.html'>更多设置</a></h1></div>\n"
 	alert(str,config)
 });
+$("body").on('click',"#字体设置",function()
+{
+	let str = '<input type="checkbox"class="加载字体">加载字体\n'
+	str += '字体和图片大小请在【MMT风格自定义】中修改'
+	let config = {}
+	config.title = '字体设置'
+	config.yes = function()
+	{
+		mt_settings['禁止字体'] = true
+		if($('.加载字体').prop('checked'))delete mt_settings['禁止字体']
+		saveStorage('设置选项',mt_settings,'local')
+		加载字体()
+	}
+	alert(str,config)
+	if(!mt_settings.禁止字体)$('.加载字体').prop('checked',true)
+});
+$("body").on('click',"#布局设置",function()
+{
+	let str = '<button class="selectColor" style="padding: 8px 24px;background-color: '
+	let html = '标题文字设置：<input placeholder="MoeTalk"id="titleText">（设为MikuTalk刷新后有惊喜）\n'
+	html += '标题颜色设置：'
+	html += `${str}#8BBBE9;"></button>`
+	html += `${str}#FFDC42;"></button>`
+	html += `${str}#E599FF;"></button>`
+	html += `${str}#8FFFCD;"></button>`
+	html += '自定义：<input type="color" id="titleColor">\n'
+	html += '布局缩放尺寸：<input placeholder="10-20"id="布局缩放">'
+	let config = {}
+	config.title = '标题/布局设置'
+	config.yes = function()
+	{
+		mt_settings['顶部标题'] = $('#titleText').val() || 'MoeTalk'
+		mt_settings['标题颜色'] = $('#titleColor').val()
+		if($('#布局缩放').val())mt_settings['元素尺寸'] = $('#布局缩放').val()
+		else delete mt_settings['元素尺寸']
+		saveStorage('设置选项',mt_settings,'local')
+		location.reload(true)
+	}
+	alert(html,config)
+	$('#titleText').val(mt_settings['顶部标题'] ? mt_settings['顶部标题'] : '#8BBBE9')
+	$('#titleColor').val(mt_settings['标题颜色'] ? mt_settings['标题颜色'] : '#8BBBE9')
+	if(mt_settings['元素尺寸'])$('#布局缩放').val(mt_settings['元素尺寸'])
+});
+$('body').on('click',".selectColor",function()
+{
+	$('#titleColor').val(RgbToHex($(this).css('background-color')))
+})
 function 语言选项()
 {
 	let str = '<select class="语言选项" style="font-size:1.5rem;">'
@@ -495,44 +543,31 @@ $("body").on('click',"#自动备份设置",function()
 	}
 	alert(str,config)
 });
-$("body").on('click',"#使用风格",function()
+$("body").on('click',"#操作设置",function()
 {
-
+	mt_settings['发送方式'] = mt_settings['发送方式'] || '点击'
+	let 焦点锁定 = localStorage['焦点锁定'] ? 'checked' : ''
+	let str = ''
 	let option = ''
 	option = `<option value="MoeTalk" ${mt_settings['使用风格'] != 'MomoToki' ? 'selected' : ''}>MoeTalk（默认）</option>`
 	option += `<option value="MomoToki" ${mt_settings['使用风格'] == 'MomoToki' ? 'selected' : ''}>MomoToki（待完善）</option>`
-	let str = ''
-	str += `请选择：<select class='使用风格' style='font-size: 1.5rem;'>${option}</select>\n`
+	str += `文字发送方式：<button class="发送方式"onclick="innerText=innerText=='回车'?'点击':'回车'">${mt_settings['发送方式']}</button>\n`
+	str += `软件使用风格：<select class='使用风格' style='font-size: 1.5rem;'>${option}</select>\n`
+	str += `<input class="焦点锁定" ${焦点锁定} type="checkbox"/>输入框焦点锁定（桌面端专用，刷新页面生效）\n`
+	str += "\n快捷键说明：\n文本换行：Shift+Enter\n发送文本：Ctrl+Enter\n发送回复：Ctrl+R\n发送旁白：Ctrl+I\n发送羁绊：Ctrl+H\n前一角色：Ctrl+<\n后一角色：Ctrl+>\n主要角色：Ctrl+?\n"
 	let config = {}
-	config.title = '软件使用风格'
+	config.title = '软件操作设置'
+	config.confirm = '提交'
 	config.yes = function()
 	{
 		let v = $('.使用风格').val()
 		if(v == 'MomoToki')mt_settings['使用风格'] = v
 		else delete mt_settings['使用风格']
+		mt_settings['发送方式'] = $('.发送方式').text()
+		if($('.焦点锁定').prop('checked'))localStorage['焦点锁定'] = true
+		else delete localStorage['焦点锁定']
 		saveStorage('设置选项',mt_settings,'local')
 		refreshMessage(chats)
-	}
-	alert(str,config)
-});
-$("body").on('click',"#快捷键说明",function()
-{
-	let str = "文本换行：Shift+Enter\n发送文本：Ctrl+Enter\n发送回复：Ctrl+R\n发送旁白：Ctrl+I\n发送羁绊：Ctrl+H\n前一角色：Ctrl+<\n后一角色：Ctrl+>\n主要角色：Ctrl+?\n"
-	let config = {}
-	config.title = '快捷键说明'
-	alert(str,config)
-});
-$("body").on('click',"#发送方式",function()
-{
-	mt_settings['发送方式'] = mt_settings['发送方式'] || '点击'
-	let str = `当前文字发送方式：<button class="发送方式"onclick="innerText=innerText=='回车'?'点击':'回车'">${mt_settings['发送方式']}</button>\n\n`
-	let config = {}
-	config.title = '文字发送方式'
-	config.confirm = '提交'
-	config.yes = function()
-	{
-		mt_settings['发送方式'] = $('.发送方式').text()
-		saveStorage('设置选项',mt_settings,'local')
 	}
 	alert(str,config)
 });
@@ -576,7 +611,7 @@ $("body").on('click',"#截图设置",function()
 	ext += '<option value="image/webp">webp</option>'
 	let str = ''
 	str += `<input class='隐藏前缀' type='checkbox'>隐藏下载文件名前缀\n`
-	if(!客户端)str += `<input class='流式下载' type='checkbox'}>文件流式下载（目前用于解决部分浏览器无法下载文件的BUG）\n`
+	if(!客户端)str += `<input class='流式下载' type='checkbox'}>文件流式下载（此功有问题未解决，不建议开启）\n`
 	if(客户端 === 'NW.js')
 	{
 		str += '<input type="file" id="下载位置" nwdirectory hidden/>'
@@ -664,25 +699,19 @@ $("body").on('click',"#清除缓存",function()
 });
 $("body").on('click',"#实验选项",function()
 {
-	let 调试模式 = mt_settings['调试模式'] ? 'checked' : ''
-	let 桌面模式 = mt_settings['桌面模式'] ? 'checked' : ''
+	let 调试模式 = localStorage['调试模式'] ? 'checked' : ''
 	let str = ''
 	str += `开启调试模式（测试）：<input class="调试模式" ${调试模式} type="checkbox"/>\n`
-	str += `开启桌面模式（测试）：<input class="桌面模式" ${桌面模式} type="checkbox"/>\n`
 	str += '提交后请刷新页面\n'
 	str += '代码注入（测试）：<textarea style="width:100%;height:20rem;line-height:1.42;"></textarea>\n'
 	let config = {}
 	config.id = Math.random().toString().replace('0.','')
-	config.title = '实验性选项'
-	config.confirm = '提交设置'
+	config.title = '开发者选项'
 	config.yes = function()
 	{
-		if($('.调试模式').prop('checked'))mt_settings['调试模式'] = true
-		else delete mt_settings['调试模式']
-		if($('.桌面模式').prop('checked'))mt_settings['桌面模式'] = true
-		else delete mt_settings['桌面模式']
+		if($('.调试模式').prop('checked'))localStorage['调试模式'] = true
+		else delete localStorage['调试模式']
 		if($(`.alert_${config.id} textarea`).val())eval($(`.alert_${config.id} textarea`).val())
-		saveStorage('设置选项',mt_settings,'local')
 	}
 	alert(str,config)
 });
@@ -899,7 +928,7 @@ $('body').on('click',".CSS教程",function()
 	let blue = '<i class="bold blue">'
 	let green = '<i class="bold green">'
 	let 教程 = 'https://www.runoob.com/css/css-tutorial.html'
-	let str = '代码规范：（每条一行）\n'
+	let str = '代码规范：（每行一条）\n'
 	str += `${red}属性</i>:${blue}值</i>;/*${green}注释</i>*/\n`
 	str += `${red}属性</i>:${blue}值</i>;/*${green}注释</i>*/\n`
 	str += `${red}属性</i>:${blue}值</i>;/*${green}注释</i>*/\n`
@@ -922,7 +951,7 @@ $('body').on('click',"#mt-style",function()
 	}
 	let str = 'class="typecss"style="width:100%;height:5rem;line-height:110%;"'
 	html += `\n聊天背景颜色：<input class="bgcolor" oninput="RgbToHex(this.value,1)"><input type="color" onchange="$('.bgcolor').val(HexToRgb(this.value))">\n`
-	html += '各类型css样式定义：（高级）<button class="CSS教程 bold red">规范和教程</button>\n'
+	html += '各类型CSS样式定义：（高级）<button class="CSS教程 bold red">规范和教程</button>\n'
 	html += `<i class="bold blue">图片（角色表情）：</i><br><textarea title="charface"${str}></textarea>\n`
 	html += `<i class="bold blue">图片（图片表情）：</i><br><textarea title="emoji"${str}></textarea>\n`
 	html += `<i class="bold blue">文字：</i><br><textarea title="chat"${str}></textarea>\n`
@@ -931,7 +960,7 @@ $('body').on('click',"#mt-style",function()
 	html += `<i class="bold blue">旁白：</i><br><textarea title="info"${str}></textarea>\n`
 	html += `<i class="bold blue">图片：</i><br><textarea title="image"${str}></textarea>\n`
 	let config = {}
-	config.title = '自定义css样式'
+	config.title = 'MMT风格自定义'
 	config.confirm = '提交设置'
 	config.show = true
 	config.yes = function()
@@ -999,23 +1028,6 @@ $('body').on('click',".自定样式",function()
 		}
 	}
 })
-//操作栏
-$("body").on('click',"#字体设置",function()
-{
-	let str = '<input type="checkbox"class="加载字体">加载字体\n'
-	str += '字体大小请在【自定义css样式】中修改'
-	let config = {}
-	config.title = '字体设置'
-	config.yes = function()
-	{
-		mt_settings['禁止字体'] = true
-		if($('.加载字体').prop('checked'))delete mt_settings['禁止字体']
-		saveStorage('设置选项',mt_settings,'local')
-		加载字体()
-	}
-	alert(str,config)
-	if(!mt_settings.禁止字体)$('.加载字体').prop('checked',true)
-});
 
 function replyDepth(str,mode)
 {
@@ -1270,7 +1282,7 @@ if(自动备份 != 'no')
 		});
 	},自动备份*60*1000)
 }
-if(mt_settings['桌面模式'])
+if(localStorage['焦点锁定'])
 {
 	// 使用事件委托，监听全局 blur
 	document.addEventListener('blur',(event)=>

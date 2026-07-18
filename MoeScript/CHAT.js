@@ -955,7 +955,7 @@ $("body").on('click',".切换角色",function()
 $("body").on('click',".定义样式",function()
 {
 	let checked = 选择列表.length
-	let text = `<textarea class="bold css scrollbar" style="font-size:1rem;width:100%;height:${$('body').height()*0.7};"></textarea>`
+	let text = `<button class="CSS教程 bold red">规范和教程</button>\n<textarea class="bold css scrollbar" style="font-size:1rem;width:100%;height:${$('body').height()*0.7};"></textarea>`
 	let config = {}
 	config.title = '内容样式'
 	config.yes = function()

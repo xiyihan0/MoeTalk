@@ -254,12 +254,12 @@ function mt_title()
 	}
 	$(".dels").hide()
 	$("#size").hide()
-	if(!元素尺寸)元素尺寸 = document.documentElement.style.fontSize
+	原始比例 = document.documentElement.style.fontSize
 	document.documentElement.style.fontSize = '16px'
 }
 function srceenMode()//取消截图
 {
-	if(元素尺寸)document.documentElement.style.fontSize = 元素尺寸
+	if(原始比例)document.documentElement.style.fontSize = 原始比例
 	$('#mt_watermark').hide()
 	$('.消息').show()
 	$(".dels").show()
@@ -471,6 +471,22 @@ function mt_capture(清晰度,生成图片,标题)
 		}
 	}
 	callback()
+}
+async function 测试截图()
+{
+	let img = await html2canvas($('.元素列表')[0],
+	{
+		logging: !1,
+		allowTaint: !0,
+		useCORS: !0,
+		scale: 1.1,
+		compress: true,
+		embedFonts: true//snapdom
+	})
+	img.toBlob(function(blob)
+	{
+		导出截图('test',blob,1)
+	},mt_settings['图片格式'] || 'image/png')
 }
 if(客户端 === 'HTML5+' || 客户端 === 'Cordova' || 客户端 === 'NW.js')
 {
