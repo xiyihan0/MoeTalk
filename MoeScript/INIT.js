@@ -53,7 +53,7 @@ function 读取样式(mode,id)
 		let css = id.split('\n');
 		foreach(css,function(k,v)
 		{
-			v = ''.split(';')[0].split(':')
+			v = v.split(';')[0].split(':')
 			if(v.length === 2 && v[0].trim() !== '')
 			{
 				style[v[0].trim()] = v[1].trim()

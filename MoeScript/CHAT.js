@@ -442,7 +442,7 @@ function makeMessage(type,data,chatIndex,mode)
 
 	let style = mt_settings.风格样式[type] || '';
 	style += data.style || ''
-	let 对话角颜色 = '';
+	let 对话角颜色 = 读取样式('obj',style)['background-color'] || '';
 	let title = data.name ? '' : `title="${no},${index}"`
 	if(data.heads && (!data.heads.list || data.heads.list.length < 1))delete data.heads
 	if(type === 'chat' || type === 'image')

@@ -96,6 +96,7 @@ function repairChat(data)
 	data.sCharacter.no = id
 	data.sCharacter.index = head
 	if(data.heads && (!data.heads.list || !data.heads.list.length))delete data.heads
+	if(typeof data.style == 'object')data.style = 读取样式('str',data.style)
 	if(data.type === 'image')
 	{
 		data.content = data.content || ''
