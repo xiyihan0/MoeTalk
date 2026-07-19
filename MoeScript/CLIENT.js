@@ -204,7 +204,7 @@ async function 保存文件(filename, data, type = 2)
 	{
 		if(mt_settings['流式下载'])
 		{
-			streamSaver.mitm = 'plugins/streamsaver/mitm.html';
+			// streamSaver.mitm = 'plugins/streamsaver/mitm.html';
 			const fileStream = streamSaver.createWriteStream(filename,{size: data.size});
 			const readableStream = data.stream();
 			// 现代浏览器支持直接使用 pipeTo
