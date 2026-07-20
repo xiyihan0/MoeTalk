@@ -6127,7 +6127,7 @@
 											INIT_loading('开始加载')
 											$$('.cgldhY').hide()
 											let num = `?num=${Math.random()}`
-											let filename = `GameData/${mt_settings['选择游戏']}/Library.json`
+											let filename = `GameData/${GAME}/Library.json`
 											MMT目录 = JSON.parse(await $ajax(`${href}${filename}${num}`))
 											if(本地 && 客户端 && MMT目录)
 											{
@@ -6146,7 +6146,7 @@
 													}
 													if(gengxin)
 													{
-														filename = `GameData/${mt_settings['选择游戏']}/Library/${i}`
+														filename = `GameData/${GAME}/Library/${i}`
 														let zip = await $ajax(`${MoeTalkURL}/${filename}.zip${num}`)
 														保存文件(`${filename}.zip`,zip)
 														for(let n=0;n<=data.作品[i].章节;n++)
@@ -6205,7 +6205,7 @@
 											color: 'white'
 										},
 										align: 'center',
-										children: `${mt_text.momotalk[mtlang]}\n${mt_text.library[mtlang]}`
+										children: `${mt_text.momotalk[LANG]}\n${mt_text.library[LANG]}`
 									}), (0, O.jsx)(C.Z,
 									{
 										show: s,
@@ -6453,7 +6453,7 @@
 					ec = n(1248),
 					el = function()
 					{
-						var e = mtlang
+						var e = LANG
 					},
 					ef = function()
 					{
@@ -8823,7 +8823,7 @@
 							isLogin: !1,
 							isMenu: !1,
 							isRight: !1,
-							lang: mtlang,//#读取设置语言
+							lang: LANG,//#读取设置语言
 							gameName: ""
 						},
 						reducers:

@@ -23,7 +23,7 @@ function loadhead(id,img)
 	if(id == 0 || img == 1)return `${href}MoeData/Ui/you.webp`;//主角
 	if(isCusImg(img))return loadImg(img)
 	img = img.replace('CharID_','').replace('_Collection','_BG').toLocaleUpperCase()
-	return `${href}GameData/${mt_settings['选择游戏']}/Char/${img}.webp`;
+	return `${href}GameData/${GAME}/Char/${img}.webp`;
 }
 function loadname(id,index,play)
 {
@@ -33,7 +33,7 @@ function loadname(id,index,play)
 
 	if(角色信息.info[id])
 	{
-		name = 角色信息.name[mtlang][角色信息.info[id][0][2]] || id
+		name = 角色信息.name[LANG][角色信息.info[id][0][2]] || id
 		if(name.split(" ")[1])name = name.split(" ")[1]
 		name = name.replaceAll("-", " ").split("·")[0]
 	}
@@ -58,7 +58,7 @@ function loadname(id,index,play)
 			if(mt_char[id].names && mt_char[id].names[index])name = mt_char[id].names[index]
 		}
 	}
-	if(id == 0)name = you[mtlang]
+	if(id == 0)name = you[LANG]
 	return name
 }
 function club(clear = false)
@@ -188,9 +188,9 @@ function custom_char(info)
 	$('#custom-char .rightSend').prop('checked',false).prop('checked',mt_settings['右侧发言'][char_info.no])
 	$('#custom-char .typeTitle').text('修改角色')
 	$('#custom-char .yes').removeAttr('disabled')
-	$('#custom-char .charid').html(`<span class='red'>ID：${char_info.no}</span>${mt_text.school[mtlang]}：${char_info.make ? '自定义' : char_info.school[mtlang]}<br>`)
-	$('.charname').val(toString(names[char_info.no])).attr('placeholder',`${char_info.make ? '' : char_info.name[mtlang]}`)
-	$('.clubname').val(`${char_info.make ? '自定义角色' : char_info.club[mtlang].replace('#','')}`).removeAttr('disabled')
+	$('#custom-char .charid').html(`<span class='red'>ID：${char_info.no}</span>${mt_text.school[LANG]}：${char_info.make ? '自定义' : char_info.school[LANG]}<br>`)
+	$('.charname').val(toString(names[char_info.no])).attr('placeholder',`${char_info.make ? '' : char_info.name[LANG]}`)
+	$('.clubname').val(`${char_info.make ? '自定义角色' : char_info.club[LANG].replace('#','')}`).removeAttr('disabled')
 	if(mt_char[char_info.no])
 	{
 		if(!mt_char[char_info.no].club)$('.clubname').val('自定义角色')
@@ -211,7 +211,7 @@ function custom_char(info)
 		$('#custom-char .typeTitle').text('临时角色（无法修改）')
 		$('#custom-char .yes').attr('disabled','disabled')
 	}
-	if(char_info.school && char_info.school[mtlang] !== '自定义')
+	if(char_info.school && char_info.school[LANG] !== '自定义')
 	{
 		$('.edithead').hide()
 		$('.添加头像').show()

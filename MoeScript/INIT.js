@@ -1,4 +1,5 @@
 /*@MoeScript/INIT.js@*/
+var TempImg = new Set()
 function 读取样式(mode,id)
 {
 	let 风格样式 = {}
@@ -239,16 +240,7 @@ function setting(SETTING)
 		SETTING.风格样式.bgColor = 'transparent'
 		SETTING.风格样式.info = 'background-color:rgb(220, 229, 232);'
 	}
-	if(!localStorage['语言选项'])
-	{
-		let lang = window.navigator.language.toLowerCase()
-		if(lang.includes('en'))localStorage['语言选项'] = 'en'
-		else if(['ja','ja-jp'].includes(lang))localStorage['语言选项'] = 'jp'
-		else if(['ko','ko-kr'].includes(lang))localStorage['语言选项'] = 'kr'
-		else if(['zh-tw','zh-hk'].includes(lang))localStorage['语言选项'] = 'zh_tw'
-		else localStorage['语言选项'] = 'zh_cn'
-	}
-	if(!['zh_cn','zh_tw','en','jp','kr'].includes(SETTING['语言选项']))SETTING['语言选项'] = 'zh_cn'
+
 	SETTING['当前网址'] = window.location.href
 	SETTING['设备信息'] = window.navigator.userAgent
 	if(!SETTING.文字样式)SETTING.文字样式 = {}
@@ -279,8 +271,21 @@ function setting(SETTING)
 	return SETTING
 }
 mt_settings = setting(mt_settings)
-var mtlang = mt_settings['语言选项']
 saveStorage('设置选项',mt_settings,'local')
+
+var LANG = localStorage['语言选项'] || 'zh_cn'
+if(!localStorage['语言选项'])
+{
+	let lang = window.navigator.language.toLowerCase()
+	if(lang.includes('en'))LANG = 'en'
+	else if(['ja','ja-jp'].includes(lang))LANG = 'jp'
+	else if(['ko','ko-kr'].includes(lang))LANG = 'kr'
+	else if(['zh-tw','zh-hk'].includes(lang))LANG = 'zh_tw'
+	else LANG = 'zh_cn'
+}
+if(!['zh_cn','zh_tw','en','jp','kr'].includes(LANG))LANG = 'zh_cn'
+localStorage['语言选项'] = LANG
+
 //元素出现后执行代码
 jQuery.fn.wait = function (func,cls,times,interval)
 {
@@ -374,8 +379,8 @@ function localization(str)
 }
 function Translator(str)
 {
-	if(!mt_text[str] || !mt_text[str][mtlang])return str;
-	return mt_text[str][mtlang];
+	if(!mt_text[str] || !mt_text[str][LANG])return str;
+	return mt_text[str][LANG];
 }
 //警告
 function INIT_state(num)
@@ -683,6 +688,26 @@ function 数据操作(C,K = null,V = null)
 					C[0] = D._config.name
 					C[1] = new URL(K, window.location.href).href;
 					缓存文件(C,e)
+				}
+			}
+			if(本地 && window.保存文件 && window.删除文件)
+			{
+				if(C[1] === 's')
+				{
+					if(C === 'Ts')TempImg.add(K)
+					let file = `${D._config.name}/${K}`
+					if(typeof V === 'object')保存文件(file+'.json',V)
+					if(typeof V === 'string')保存文件(file+'.webp',Base64Utils.toBlob(V))
+				}
+				if(C[1] === 'c' || C[1] === 'r')
+				{
+					if(C === 'Tc')TempImg.clear()
+					if(C === 'Tr')TempImg.delete(K)
+					let file = `${D._config.name}`
+					if(K)file += `${D._config.name}/${K}`
+					if(typeof V === 'object')file += '.json'
+					if(typeof V === 'string')file += '.webp'
+					删除文件(file)
 				}
 			}
 			resolve(e)

@@ -67,7 +67,7 @@ function mt_emojis(S,mode)
 	EMOJI.custom = {}//自设表情
 	EMOJI.custom.io = false//自设开关
 	EMOJI.custom.title = '自定'//按钮标题
-	EMOJI.path = `GameData/${mt_settings['选择游戏']}/${mode}/`//表情路径
+	EMOJI.path = `GameData/${GAME}/${mode}/`//表情路径
 	EMOJI.pages.type = mode
 	EMOJI.color = 'rgb(45, 70, 100)'
 	EMOJI.plugin = ''
@@ -167,20 +167,20 @@ function mt_emojis(S,mode)
 		if(mode === 'Emoji')
 		{
 			PageCount = 0
-			if(mt_settings['选择游戏'] === 'BLDA')
+			if(GAME === 'BLDA')
 			{
 				PageCount = 4//
 				if(PageIndex < 0)PageIndex = EMOJI.pages[id][type] = 3
 				if(isNaN(PageIndex) || PageIndex >= PageCount)PageIndex = EMOJI.pages[id][type] = 0
 
-				let lang = mtlang === 'zh_cn' ? 'zh_tw' : mtlang
+				let lang = LANG === 'zh_cn' ? 'zh_tw' : LANG
 				let path = PageIndex === 3 ? 4 : PageIndex+1+lang
 				for(let i = 1;i <= [40,40,64,43][PageIndex];i++)
 				{
 					EMOJI.images.push(`${path}${i}`)
 				}
 			}
-			else if(mt_settings['选择游戏'] === 'CBJQ')
+			else if(GAME === 'CBJQ')
 			{
 				PageIndex = 0
 				PageCount = 1
@@ -237,7 +237,7 @@ function mt_emojis(S,mode)
 	}
 	else
 	{
-		if(['QNZL','YGST'].includes(mt_settings['选择游戏']))EMOJI.custom.title = ''
+		if(['QNZL','YGST'].includes(GAME))EMOJI.custom.title = ''
 	}
 
 	let str = toString(EMOJI.images[0])
@@ -466,7 +466,7 @@ function makeMessage(type,data,chatIndex,mode)
 		{
 			if(data.content === 'CharFace' && mt_settings.风格样式['charface'])style += mt_settings.风格样式['charface']
 			if(data.content === 'Emoji' && mt_settings.风格样式['emoji'])style += mt_settings.风格样式['emoji']
-			图片 = `<img src='${data.file.startsWith('data:') ? data.file : loadImg(data.file)}' style="${style}" class="图片${编辑}" onerror="IMAGE_error(this)">`
+			图片 = `<img src='${isBase64(data.file) ? data.file : loadImg(data.file)}' style="${style}" class="图片${编辑}" onerror="IMAGE_error(this)">`
 		}
 		if(no != 0 && !data.isRight)
 		{//左侧对话
@@ -517,10 +517,10 @@ function makeMessage(type,data,chatIndex,mode)
 		<div class="羁绊" style='background-image: url(${羁绊背景});'>
 			<div class="消息标题">
 				<div class="竖线" style='border-left: 2px solid rgb(255, 142, 155);'></div>
-				<span class="bold">${mt_text['relationship_event'][mtlang]}</span>
+				<span class="bold">${mt_text['relationship_event'][LANG]}</span>
 			</div>
 			<hr class="横线">
-			<button class="羁绊按钮${编辑}${title ? ' 名字' : ''}"${title}style='${style}'>${data.content || ((data.name || loadname(no,index))+mt_text['go_relationship_event'][mtlang])}</button>
+			<button class="羁绊按钮${编辑}${title ? ' 名字' : ''}"${title}style='${style}'>${data.content || ((data.name || loadname(no,index))+mt_text['go_relationship_event'][LANG])}</button>
 		</div>`
 	}
 	if(type === 'info')
@@ -543,7 +543,7 @@ function makeMessage(type,data,chatIndex,mode)
 		<div class="回复" style='background-image: url(${回复背景});'>
 			<div class="消息标题">
 				<div class="竖线" style='border-left: 2px solid rgb(39, 153, 228)'></div>
-				<span class="bold">${mt_text['reply'][mtlang]}</span>
+				<span class="bold">${mt_text['reply'][LANG]}</span>
 			</div>
 			<hr class="横线">
 			${选择肢}
@@ -714,7 +714,7 @@ $("body").on('click',".内容类型_列表",function()
 {
 	let type = this.title
 	$('.内容类型').html('类型：'+this.innerHTML).attr('title',type)
-	$('.内容类型_说明').text(mt_text[type][mtlang])
+	$('.内容类型_说明').text(mt_text[type][LANG])
 	if(type == 'image')$('.图片信息').show().next().hide()
 	else $('.内容信息').show().prev().hide()
 
@@ -828,7 +828,7 @@ function 生成消息(内容类型,length)
 			data.file = 图片链接
 			if(图片链接.includes('CharFace'))data.content = 'CharFace'
 			if(图片链接 === 'CharFace' || 图片链接 === 'Emoji')图片链接 = ''
-			if(!图片链接)data.file = 图片文件.startsWith('data:') ? 图片文件 : 图片文件.replace(href,'')	
+			if(!图片链接)data.file = isBase64(图片文件) ? 图片文件 : 图片文件.replace(href,'')	
 		}
 		if(时间信息 !== '')data.content = 时间信息 === ' ' ? '' : 时间信息
 
@@ -853,7 +853,7 @@ function 生成消息(内容类型,length)
 		data.file = 图片链接
 		if(图片链接.includes('CharFace'))data.content = 'CharFace'
 		if(图片链接 === 'CharFace' || 图片链接 === 'Emoji')图片链接 = ''
-		if(!图片链接)data.file = 图片文件.startsWith('data:') ? 图片文件 : 图片文件.replace(href,'')	
+		if(!图片链接)data.file = isBase64(图片文件) ? 图片文件 : 图片文件.replace(href,'')	
 	}
 	
 	data.time = 时间信息
@@ -1063,7 +1063,7 @@ function 编辑消息(index)
 
 	$('.内容信息').val(chat.content).attr('placeholder',chat.content || '').click();
 	let file = chat.file || ''
-	if(!file.startsWith('data:'))$('.图片文件').attr({src: loadImg(file),title: file})
+	if(!isBase64(file))$('.图片文件').attr({src: loadImg(file),title: file})
 	else $('.图片文件').attr({src: file,title: chat.content})
 	$('.时间信息').val(toString(chat.time)).attr('placeholder',chat.time || '').click();
 
@@ -1100,7 +1100,7 @@ $("body").on('click',".INDEX_delete",function()
 	{
 		indexs = 选择列表
 		title = '批量删除'
-		str += `已选中数据：${选择列表.length}\n\n点击【${mt_text.confirm[mtlang]}】将删除\n`
+		str += `已选中数据：${选择列表.length}\n\n点击【${mt_text.confirm[LANG]}】将删除\n`
 		str += '操作可撤销'
 	}
 	else
@@ -1113,7 +1113,7 @@ $("body").on('click',".INDEX_delete",function()
 		}
 		title = '删除消息'
 		str += `删除当前正在编辑所有内容，包括分支\n\n`
-		str += `点击【${mt_text.confirm[mtlang]}】将所有内容全部删除\n`
+		str += `点击【${mt_text.confirm[LANG]}】将所有内容全部删除\n`
 		str += '当前内容将暂存入<b class="red">项目管理-操作备份</b>'
 	}
 	

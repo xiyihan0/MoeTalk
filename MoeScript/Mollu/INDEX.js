@@ -248,7 +248,7 @@
 							{
 								fontSize: '1.5rem'
 							},
-							children:L.Z.select_char[mtlang]+'<'
+							children:L.Z.select_char[LANG]+'<'
 						}), (0, m.jsxs)(g,
 						{
 							className: '锁定焦点',
@@ -462,7 +462,7 @@
 						}),
 						a = (0, i.C)(function(e)
 						{
-							return mtlang//#e.global.lang
+							return LANG//#e.global.lang
 						});
 					return (0, m.jsxs)(N,
 					{
@@ -654,7 +654,7 @@
 						a = e.setSearch,
 						l = (0, i.C)(function(e)
 						{
-							return mtlang//#e.global.lang
+							return LANG//#e.global.lang
 						}),
 						s = (0, r.useState)(o),
 						u = s[0],
@@ -712,7 +712,7 @@
 									children: [(0, m.jsx)(G,
 									{
 										className: "bold",
-										children: mt_text['select'][mtlang]+mt_text['club'][mtlang]+"："
+										children: mt_text['select'][LANG]+mt_text['club'][LANG]+"："
 									}), (0, m.jsx)(c.Bx,
 									{
 										className:"bold",
@@ -724,7 +724,7 @@
 										{
 											club(true)
 										},
-										children: mt_text['clear'][mtlang]+mt_text['select'][mtlang]
+										children: mt_text['clear'][LANG]+mt_text['select'][LANG]
 									})]
 								}), 
 								(0, m.jsx)('dl',
@@ -782,7 +782,7 @@
 											}), (0, m.jsx)('span',
 											{
 												className: "hida",
-												children: mt_school[v][mtlang] ? mt_school[v][mtlang] : v
+												children: mt_school[v][LANG] ? mt_school[v][LANG] : v
 											})]
 										}), (0, m.jsx)('ul',
 										{
@@ -797,7 +797,7 @@
 														className: "club",
 														school: v,
 														value: value
-													}),mt_club[v][value][mtlang] ? mt_club[v][value][mtlang] : value]
+													}),mt_club[v][value][LANG] ? mt_club[v][value][LANG] : value]
 												})
 											})
 										})]
@@ -898,7 +898,7 @@
 						s = a[1],
 						u = (0, i.C)(function(e)
 						{
-							return mtlang//#e.global.lang
+							return LANG//#e.global.lang
 						});
 					return (0, m.jsxs)(Y,
 					{
@@ -1096,7 +1096,7 @@
 						}),
 						t = (0, i.C)(function(e)
 						{
-							return mtlang//#e.global.lang
+							return LANG//#e.global.lang
 						}),
 						o = (0, r.useState)(
 						{
@@ -1221,7 +1221,7 @@
 						s = a[1],
 						u = (0, i.C)(function(e)
 						{
-							return mtlang//#e.global.lang
+							return LANG//#e.global.lang
 						}),
 						d = function()
 						{
@@ -1302,7 +1302,7 @@
 								style:{padding: '0.5rem'},
 								children: [(0, m.jsx)('div',
 								{
-									children: [mt_text.student[mtlang], mt_text.name[mtlang], (0, m.jsx)('input',
+									children: [mt_text.student[LANG], mt_text.name[LANG], (0, m.jsx)('input',
 									{
 										className:"charname bold",
 										onChange: function(e)
@@ -1333,7 +1333,7 @@
 										{
 											$$("#custom").attr('title','head').attr('alt','add').click()
 										}
-									}), (0, m.jsx)('br',{}), mt_text.club[mtlang], (0, m.jsx)('input',
+									}), (0, m.jsx)('br',{}), mt_text.club[LANG], (0, m.jsx)('input',
 									{
 										className:"clubname bold",
 										onChange: function(e)
@@ -1424,7 +1424,7 @@
 											char_info = []
 											$$('#custom-char').removeClass('visible')//S()
 										},
-										children: mt_text.cancel[mtlang]
+										children: mt_text.cancel[LANG]
 									}), (0, m.jsx)(ea.AZ,
 									{
 										className: "bold yes",
@@ -1432,7 +1432,7 @@
 										{
 											edit_char()
 										},
-										children: mt_text.confirm[mtlang]
+										children: mt_text.confirm[LANG]
 									})]
 								})]
 							})]
@@ -1455,7 +1455,7 @@
 						}),
 						g = (0, i.C)(function(e)
 						{
-							return mtlang//#e.global.lang
+							return LANG//#e.global.lang
 						}),
 						x = (0, i.T)(),
 						y = function()
@@ -1643,7 +1643,7 @@
 						p = (0, i.T)(),
 						g = (0, i.C)(function(e)
 						{
-							return mtlang//#e.global.lang
+							return LANG//#e.global.lang
 						}),
 						x = (0, i.C)(function(e)
 						{
@@ -1915,7 +1915,7 @@
 												onChange: function(e)
 												{
 													if(!$$(".截图选项").eq(1).prop('checked'))$$(".截图选项").eq(1).click()
-													$$('#mt_title').text(mt_text.title[mtlang]+" : "+(e.currentTarget.value ? e.currentTarget.value : mt_text.noTitle[mtlang]))
+													$$('#mt_title').text(mt_text.title[LANG]+" : "+(e.currentTarget.value ? e.currentTarget.value : mt_text.noTitle[LANG]))
 													mt_settings['截图选项'].titleStr = $$('#mt_title').text()
 													$$('.INDEX_imageLength').text(INIT_state(S))
 												}
@@ -1931,7 +1931,7 @@
 												onChange: function(e)
 												{
 													if(!$$(".截图选项").eq(2).prop('checked'))$$(".截图选项").eq(2).click()
-													$$('#mt_writer').text(mt_text.writer[mtlang]+" : "+(e.currentTarget.value ? e.currentTarget.value : mt_text.noName[mtlang]))
+													$$('#mt_writer').text(mt_text.writer[LANG]+" : "+(e.currentTarget.value ? e.currentTarget.value : mt_text.noName[LANG]))
 													mt_settings['截图选项'].writerStr = $$('#mt_writer').text()
 													$$('.INDEX_imageLength').text(INIT_state(S))
 												}
@@ -2170,7 +2170,7 @@
 						}),
 						d = (0, i.C)(function(e)
 						{
-							return mtlang//#e.global.lang
+							return LANG//#e.global.lang
 						}),
 						h = (0, r.useState)(""),
 						f = h[0],
@@ -2673,7 +2673,7 @@
 						});
 					(0, i.C)(function(e)
 					{
-						return mtlang//#e.global.lang
+						return LANG//#e.global.lang
 					});
 					var f = (0, ex.vC)(
 						{
@@ -2822,7 +2822,7 @@
 						}),
 						l = (0, i.C)(function(e)
 						{
-							return mtlang//#e.global.lang
+							return LANG//#e.global.lang
 						}),
 						s = function()
 						{
@@ -3465,7 +3465,7 @@
 						}),
 						h = (0, i.C)(function(e)
 						{
-							return mtlang//#e.global.lang
+							return LANG//#e.global.lang
 						}),
 						f = (0, r.useState)(!1),
 						p = f[0],
@@ -3826,7 +3826,7 @@
 						}),
 						f = (0, i.C)(function(e)
 						{
-							return mtlang//#e.global.lang
+							return LANG//#e.global.lang
 						}),
 						p = (0, i.C)(function(e)
 						{
@@ -4339,7 +4339,7 @@
 						}),
 						f = (0, i.C)(function(e)
 						{
-							return mtlang//#e.global.lang
+							return LANG//#e.global.lang
 						}),
 						p = (0, i.C)(function(e)
 						{
@@ -4805,7 +4805,7 @@
 													data.file = 图片链接
 													if(图片链接.includes('CharFace'))data.content = 'CharFace'
 													if(图片链接 === 'CharFace' || 图片链接 === 'Emoji')图片链接 = ''
-													if(!图片链接)data.file = 图片文件.startsWith('data:') ? 图片文件 : 图片文件.replace(href,'')
+													if(!图片链接)data.file = isBase64(图片文件) ? 图片文件 : 图片文件.replace(href,'')
 												}
 
 												if($$('.editTalk').prop('checked'))
@@ -4827,7 +4827,7 @@
 													data.isLeft = data.isFirst
 													sendMessage(data,type,'edit',选择列表)
 												}
-												let str = `※注意!!!\n只输入一个空格会判断为清空该内容\n图片转为其它类型时会清除文件\n发言人为空时则不修改发言人\n点击【${mt_text.confirm[mtlang]}】开始批量修改`
+												let str = `※注意!!!\n只输入一个空格会判断为清空该内容\n图片转为其它类型时会清除文件\n发言人为空时则不修改发言人\n点击【${mt_text.confirm[LANG]}】开始批量修改`
 												alert(str,config)
 											}
 											else
@@ -4852,7 +4852,7 @@
 													data.file = 图片链接
 													if(图片链接.includes('CharFace'))data.content = 'CharFace'
 													if(图片链接 === 'CharFace' || 图片链接 === 'Emoji')图片链接 = ''
-													if(!图片链接)data.file = 图片文件.startsWith('data:') ? 图片文件 : 图片文件.replace(href,'')
+													if(!图片链接)data.file = isBase64(图片文件) ? 图片文件 : 图片文件.replace(href,'')
 												}
 												data.isLeft = data.isFirst
 												sendMessage(data,type,$$('.addChat').prop('checked') ? 'add' : 'edit',[chatIndex])
@@ -4998,7 +4998,7 @@
 								className: "bold INDEX_delete",
 								children: (0, m.jsx)(X,
 								{
-									children: L.Z['delete'][mtlang]
+									children: L.Z['delete'][LANG]
 								})
 							})]
 						}), (0, m.jsxs)('div',
@@ -5361,7 +5361,7 @@
 				{
 					var e = (0, i.C)(function(e)
 						{
-							return mtlang//#e.global.lang
+							return LANG//#e.global.lang
 						}),
 						n = (0, i.C)(function(e)
 						{
@@ -7079,7 +7079,7 @@
 											}
 											else
 											{
-												let filename = `GameData/${mt_settings['选择游戏']}/Library/${l.ID}`
+												let filename = `GameData/${GAME}/Library/${l.ID}`
 												if(本地 && 客户端 && !await file_exists(`${filename}.zip`))
 												{//下载数据文件
 													let zip = await $ajax(`${MoeTalkURL}/${filename}.zip?md5=${l.MD5}`)
@@ -8905,7 +8905,7 @@
 								{}), (0, m.jsx)("span",
 								{
 									className: "bold",
-									children: r.Z.go_reply[mtlang]
+									children: r.Z.go_reply[LANG]
 								})]
 							}), (0, m.jsx)(s.HR,
 							{}), t.content.split('\n').map(function(v,k)
@@ -9160,7 +9160,7 @@
 													maxHeight: t.content === 'CharFace' ? '360px' : "",
 													maxWidth: t.content === 'CharFace' ? MMT目录.设置['差分比例'] : MMT目录.设置['图片比例']
 												},//@差分表情宽高百分比
-												src: t.file.startsWith('data:') ? t.file : href+t.file,
+												src: isBase64(t.file) ? t.file : href+t.file,
 												onError: function(e){IMAGE_error(e,'palyer')},
 											}), t.time ? (0, m.jsx)(s.i9,
 											{//右侧时间戳

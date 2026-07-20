@@ -565,7 +565,7 @@ function updateFirstCheckedBorder() {
 	}
 	$('.delsNum').text(选择列表.length)
 	let name = loadname(mt_settings['选择角色'].no,mt_settings['选择角色'].index)
-	let str = 选择列表.length ? '在上方插入' : mt_text.input_comment[mtlang]
+	let str = 选择列表.length ? '在上方插入' : mt_text.input_comment[LANG]
 	$('.chatText').attr('placeholder',name+'：'+str)
 }
 function 取消选择()
@@ -809,7 +809,7 @@ $('body').on('click', ".chatText", function() {
 	$('.fzOyMd.selected')[0].scrollIntoView({inline:'center'})
 	// 直接获取被勾选的第一个消息序号
 	let name = loadname(mt_settings['选择角色'].no, mt_settings['选择角色'].index)
-	let str = mt_text.input_comment[mtlang]
+	let str = mt_text.input_comment[LANG]
 	if (选择列表.length > 0) {
 		str = '在上方插入'
 		const firstChatIndex = 选择列表[0];
@@ -831,7 +831,7 @@ function updateAllNames() {
 			let id = name[0]
 			let img = name[1]
 			name = loadname(id,img)
-			if(this.nodeName === 'BUTTON')name += mt_text['go_relationship_event'][mtlang]
+			if(this.nodeName === 'BUTTON')name += mt_text['go_relationship_event'][LANG]
 			$(this).html(name)
 		})
 		return
@@ -857,7 +857,7 @@ function updateAllNames() {
 			
 			// 原生 nodeName 永远是大写，直接判断
 			if (nameEl.nodeName === 'BUTTON') {
-				name += mt_text['go_relationship_event'][mtlang];
+				name += mt_text['go_relationship_event'][LANG];
 			}
 			
 			// 3. 性能优化：直接操作原生的 innerHTML 

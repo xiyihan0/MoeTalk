@@ -13,10 +13,10 @@ var 错误图片 = href+'MoeData/Ui/error.webp'
 var 下载文件 = {}
 async function IMAGE_error(image,play)
 {
-	let src,url,img,game = mt_settings['选择游戏']
+	let src,url,img
 	src = image.src ? image.getAttribute('src') : image.target.getAttribute('src')
 	url = src.split('/').pop().replace('.webp','')
-	if(本地 && src && game != 'NONE' && src.startsWith(href+'GameData'))
+	if(本地 && src && GAME != 'NONE' && src.startsWith(href+'GameData'))
 	{
 		let filename = src.replace(href+'GameData','GameData')
 		let link = 'https://moetalk.xiyihan.cn/'+filename
@@ -47,6 +47,11 @@ async function IMAGE_error(image,play)
 	}
 	return
 }
+function isBase64(str)
+{
+	if(typeof str != 'string')str = ''
+	return str.startsWith('data:')
+}
 function isCusImg(src)
 {
 	if(typeof src != 'string')src = ''
@@ -54,11 +59,11 @@ function isCusImg(src)
 	src.startsWith('CharFace-') ||
 	src.startsWith('Emoji-') ||
 	src.startsWith('Image-') ||
-	(mt_settings['选择游戏'] == 'BLDA' && src > 999) 
+	(GAME == 'BLDA' && src > 999) 
 }
 function loadImg(src)
 {
-	if(isCusImg(src))return href+`CusImg/${src}.webp`
+	if(isCusImg(src))return href+`${TempImg.has(src) ? 'MoeTemp' : 'MoeImage'}/${src}.webp`
 	return href+src
 }
 function 加载图片(images)
@@ -77,7 +82,7 @@ function 加载图片(images)
 
 		// 跳过已加载、Base64、重复
 		if(img.complete && img.naturalWidth > 0)continue;
-		if(src.startsWith('data:'))continue;
+		if(isBase64(src))continue;
 		if(seenSrcs.has(src))continue;
 		seenSrcs.add(src);
 		pendingImages.push(img);
@@ -105,7 +110,7 @@ async function 等待图片(imgs)
 	{
 		let img = imgs[i];
 		let src = img.getAttribute('src') || '';
-		if(!src.startsWith('data:'))
+		if(!isBase64(src))
 		{//只选择链接图片
 			let url = src.split('/').pop().replace('.webp','')
 			if(isCusImg(url))
@@ -527,7 +532,7 @@ if(客户端 === 'HTML5+' || 客户端 === 'Cordova' || 客户端 === 'NW.js')
 			config.yes = async function()
 			{
 				let ext,data
-				if(src.startsWith('data:'))
+				if(isBase64(src))
 				{//base64转blob
 					ext = src.match(/:image\/(\S*);base64/)[1]
 					data = atob(src.split(',').pop())

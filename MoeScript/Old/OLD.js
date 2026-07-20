@@ -36,7 +36,7 @@ if(OldTalk)
 		}
 		else
 		{
-			$('.typeTitle').text(mt_text[chat.type][mtlang])
+			$('.typeTitle').text(mt_text[chat.type][LANG])
 
 			$('.edit_button button').show()
 			
@@ -57,7 +57,7 @@ if(OldTalk)
 				$('.图片选项').show()
 				$('.edit_3').hide()
 				let file = chat.file || ''
-				if(!file.startsWith('data:'))$('.图片文件').attr({src: file,title: file})
+				if(!isBase64(file))$('.图片文件').attr({src: file,title: file})
 				else $('.图片文件').attr({src: file,title: chat.content})
 			}
 			if(chat.type === 'info')

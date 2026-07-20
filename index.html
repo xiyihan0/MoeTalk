@@ -57,7 +57,7 @@ if(URLParams.get('phpwin') || localStorage['phpwin'])
 	localStorage['phpwin'] = 客户端
 }
 //版本信息
-var 本地应用版本 = [260720.132805]//@
+var 本地应用版本 = [260721.004022]//@
 var 网络应用版本,本地数据版本,网络数据版本
 var gamearr = {"BLDA":"碧蓝档案","CBJQ":"尘白禁区","QNZL":"千年之旅","YGST":"犹格索托斯的庭院","DFPJ":"东方Project","NONE":"无"}
 var 本地版本 = 本地应用版本[0]
@@ -66,7 +66,8 @@ function loadjs(link,mode = ''){document.write("<scr"+`ipt src='${link}' ${mode}
 var test = console.log
 var MoeTalkURL = 'https://ggg555ttt.github.io/MoeTalk'//MoeTalk网址
 var GitlabURL = 'https://moetalk-ggg555ttt-57a86c1abdf06b5ebe191f38161beddd1d0768c27e1a2.gitlab.io'
-var mt_settings = localStorage['设置选项'] ? JSON.parse(localStorage['设置选项']) : {}
+var mt_settings = {}
+try{mt_settings = JSON.parse(localStorage['设置选项'])}catch{}
 
 //日期和时间
 var date = new Date();
@@ -78,7 +79,7 @@ month = (month < 10 ? '0'+month : month).toString()
 day = (day < 10 ? '0'+day : day).toString()
 
 //缺省游戏
-mt_settings['选择游戏'] = mt_settings['选择游戏'] || ''//#
+var GAME = mt_settings['选择游戏'] || 'NONE'
 
 //加载文件
 var MikuTalk = false;
@@ -93,7 +94,7 @@ if((month == '04' && day == '01') || mt_settings['顶部标题'] === 'MikuTalk')
 		loadjs('./MoeScript/MikuTap/common-2.min.js')
 	}
 }
-if(mt_settings['调试模式'])loadjs('./MoeScript/Script/vconsole.min.js')
+if(localStorage['调试模式'])loadjs('./MoeScript/Script/vconsole.min.js')
 		</script>
 		<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 		<meta http-equiv="Pragma" content="no-cache">
@@ -119,20 +120,20 @@ if(mt_settings['调试模式'])loadjs('./MoeScript/Script/vconsole.min.js')
 		<link rel="shortcut icon" href="./MoeData/Ui/Favor_Schedule_Deco.webp">
 <!-- MoeTalk -->
 		<link rel='stylesheet' href="./MoeData/Style.css?md5=ea985dbb5bebb4d3cbfed1926495360d"><!-- @@样式 -->
-		<script src="./MoeScript/INIT.js?md5=6a7f9918292585b72d94d6623bb98b89" defer></script><!-- @@预定义 -->
-		<script src="./MoeScript/EDIT.js?md5=342d07ac06578a2f6963afb1af47717e" defer></script><!-- @@预定义 -->
-		<script src="./MoeScript/CLIENT.js?md5=fb14e43001a8ccd6b96e9d030396df93" defer></script><!-- @@客户端 -->
-		<script src="./MoeScript/DATA.js?md5=af8e94540f51450cb97c34514b435868" defer></script><!-- @@存档 -->
-		<script src="./MoeScript/CHAR.js?md5=d143e132ba3acccb17c6afca29476e8b" defer></script><!-- @@角色 -->
-		<script src="./MoeScript/IMAGE.js?md5=57c60b01bd96f66d430ad3cb056ddbef" defer></script><!-- @@截图 -->
-		<script src="./MoeScript/CHAT.js?md5=380abf57f735540f4c1d15f0af39f0b8" defer></script><!-- @@消息 -->
-		<script src="./MoeScript/TOP.js?md5=1cf2f852bad7b4588a127fe8b462da16" defer></script><!-- @@首页 -->
+		<script src="./MoeScript/INIT.js?md5=f21ff1292f95f32ee78409f62a580278" defer></script><!-- @@预定义 -->
+		<script src="./MoeScript/EDIT.js?md5=b6c13f79693c3febb2712aaaaac815c3" defer></script><!-- @@预定义 -->
+		<script src="./MoeScript/CLIENT.js?md5=a3295f11d6aa39aeb35693f63ee9b632" defer></script><!-- @@客户端 -->
+		<script src="./MoeScript/DATA.js?md5=5393809fc564fd44074c6560fb55d73e" defer></script><!-- @@存档 -->
+		<script src="./MoeScript/CHAR.js?md5=71bb9c3a69be442cc1d131636d10de34" defer></script><!-- @@角色 -->
+		<script src="./MoeScript/IMAGE.js?md5=70cf49517e468b379b5df9c215bdcb3c" defer></script><!-- @@截图 -->
+		<script src="./MoeScript/CHAT.js?md5=927d733860500ac58f6c4b1e263e6e70" defer></script><!-- @@消息 -->
+		<script src="./MoeScript/TOP.js?md5=75098d1442133b240c53af0392c45adf" defer></script><!-- @@首页 -->
 <!-- MolluTalk -->
 		<script src="./MoeScript/Mollu/TEXT.js?md5=dc9ac5d2f983567f75da8f0984f7cf4f"></script><!-- @@提示文本 -->
 		<script src="./MoeScript/Mollu/MAIN.js?md5=ee8dd486856f4fa5580f9eab8094e728" defer></script><!-- @@ -->
-		<script src="./MoeScript/Mollu/APP.js?md5=f5592171b3c12a241aa4ca15e9114b9d" defer></script><!-- @@ -->
-		<script src="./MoeScript/Mollu/INDEX.js?md5=2303e1309b481d439851def653345798"></script><!-- @@ -->
-		<script src="./MoeScript/Old/OLD.js?md5=9f5710276b10a19bc16bcb9bc288d16a" defer></script><!-- @@旧版脚本 -->
+		<script src="./MoeScript/Mollu/APP.js?md5=81a4666a6c3daac2c956e97054bf82e7" defer></script><!-- @@ -->
+		<script src="./MoeScript/Mollu/INDEX.js?md5=1f76b66893e6a8bec2ae912f4206c1c8"></script><!-- @@ -->
+		<script src="./MoeScript/Old/OLD.js?md5=425c3225beb76637723a92ed1efe6e7d" defer></script><!-- @@旧版脚本 -->
 	</head>
 	<body style="touch-action: none;-webkit-tap-highlight-color: transparent;tap-highlight-color: transparent;"><!-- MikuTap style -->
 		<div id="__next"><div class="弹窗"></div></div>

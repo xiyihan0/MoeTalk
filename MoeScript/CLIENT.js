@@ -1,4 +1,35 @@
 /*@MoeScript/CLIENT.js@*/
+async function 删除文件(path)
+{
+	if(!本地)return
+	if(客户端 === 'HTML5+')
+	{
+		path = '_doc/'+path
+		return new Promise(function(resolve, reject)
+		{
+			plus.io.resolveLocalFileSystemURL(path, function (entry)
+			{
+				if(entry.isFile)entry.remove(()=>resolve(true),reject);//删除文件
+				else entry.removeRecursively(()=>resolve(true),reject);//删除目录
+			},function(e)// code 10 = NOT_FOUND_ERR，目标不存在时做幂等处理
+			{
+				if(e && e.code === 10)resolve(false);
+				else reject(e);
+			});
+		});
+	}
+	if(客户端 === 'phpwin')
+	{
+		return await $.ajax(
+		{
+			url: '/index.php',
+			type: 'POST',
+			data: {delfiles: path},
+			dataType: 'text'
+		})
+	}
+	if(客户端 === 'NW.js')await fs.remove(path)
+}
 async function isIos()
 {
 	let type = await $.ajax(
@@ -103,7 +134,7 @@ async function file_exists(filePath)
 				getfile: filePath,
 				exists: 'true'
 			},
-			dataType:'text'
+			dataType: 'text'
 		});
 	}
 }
@@ -407,18 +438,17 @@ async function 更新应用(time = Date.now())
 }
 async function 更新数据(time = Date.now())
 {
-	let game = mt_settings['选择游戏'] || 'NONE'
-	if(!本地 || game == 'NONE')return
+	if(!本地 || GAME == 'NONE')return
 	await waitPlus()
 	$('.更新数据').html('<span style="color:red;">数据更新中！请不要刷新或退出</span>')
-	本地数据版本 = JSON.parse(await $ajax(`${href}GameData/${game}/Version/Version.json?time=${time}`)) || [-1]
-	网络数据版本 = JSON.parse(await $ajax(`${MoeTalkURL}/GameData/${game}/Version/Version.json?time=${time}`),'检测版本……',$('.更新数据'))
+	本地数据版本 = JSON.parse(await $ajax(`${href}GameData/${GAME}/Version/Version.json?time=${time}`)) || [-1]
+	网络数据版本 = JSON.parse(await $ajax(`${MoeTalkURL}/GameData/${GAME}/Version/Version.json?time=${time}`),'检测版本……',$('.更新数据'))
 	if(网络数据版本 && 本地数据版本[0] < 网络数据版本[0])
 	{
 		if($('.版本:visible').length == 0)update()
-		let 本地列表 = JSON.parse(await $ajax(`${href}GameData/${game}/Version/${game}.json?time=${time}`)) || {}
-		let 网络列表 = JSON.parse(await $ajax(`${MoeTalkURL}/GameData/${game}/Version/${game}.json?ver=${网络数据版本[0]}`),'获取列表……',$('.更新数据'))
-		let Update = `更新补丁/${game}_${网络数据版本[0]}`
+		let 本地列表 = JSON.parse(await $ajax(`${href}GameData/${GAME}/Version/${GAME}.json?time=${time}`)) || {}
+		let 网络列表 = JSON.parse(await $ajax(`${MoeTalkURL}/GameData/${GAME}/Version/${GAME}.json?ver=${网络数据版本[0]}`),'获取列表……',$('.更新数据'))
+		let Update = `更新补丁/${GAME}_${网络数据版本[0]}`
 		let num = [0,0]
 		let md5 = 0
 		let files = []
@@ -430,7 +460,7 @@ async function 更新数据(time = Date.now())
 				num[0]++
 				if(!await file_exists(`${Update}/${file}.json`))//检测更新文件
 				{
-					let data = await ZipToJson(`${MoeTalkURL}/GameData/${game}/Version/${file}.zip?ver=${网络数据版本[0]}`,'下载：',$('.更新数据'))
+					let data = await ZipToJson(`${MoeTalkURL}/GameData/${GAME}/Version/${file}.zip?ver=${网络数据版本[0]}`,'下载：',$('.更新数据'))
 					if(await 保存文件(`${Update}/${file}.json`,data))
 					{
 						files.push(`${Update}/${file}.json`)
@@ -447,11 +477,11 @@ async function 更新数据(time = Date.now())
 		if(num[0] === num[1])
 		{
 			files.push(await 保存文件(`${Update}/Version/Version.json`,JSON.stringify(网络数据版本)))
-			files.push(await 保存文件(`${Update}/Version/${game}.json`,JSON.stringify(网络列表)))
-			await 复制目录(Update,'GameData/'+game,files)
+			files.push(await 保存文件(`${Update}/Version/${GAME}.json`,JSON.stringify(网络列表)))
+			await 复制目录(Update,'GameData/'+GAME,files)
 		}
 		$('.更新数据').html('数据更新完毕！文件请通过选择游戏或刷新页面来下载')
-		delete localStorage[game+'/Char']
+		delete localStorage[GAME+'/Char']
 	}
 	else $('.更新数据').html('<span style="color:red;">暂未发现更新</span>')
 }
@@ -460,14 +490,12 @@ var 数据列表 = []
 var 网址列表 = []
 async function 检查数据()
 {
-	if(!本地)return
-	let game = mt_settings['选择游戏'] || 'NONE'
-	if(game == 'NONE' || !本地)return
+	if(!本地 || GAME == 'NONE')return
 	$('.更新数据').text('获取文件列表……')
 	await waitPlus()
 	数据列表 = []
-	let data = JSON.parse(await $ajax(`${href}GameData/${mt_settings['选择游戏']}/List.json?ver=${本地数据版本}`))
-	let link = `GameData/${mt_settings['选择游戏']}`
+	let data = JSON.parse(await $ajax(`${href}GameData/${GAME}/List.json?ver=${本地数据版本}`))
+	let link = `GameData/${GAME}`
 	for(let key1 in data)
 	{
 		let val1 = data[key1]

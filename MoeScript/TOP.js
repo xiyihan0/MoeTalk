@@ -2,7 +2,7 @@
 var 恭喜发财 = false
 pause = true
 skip = false
-if(mt_settings['调试模式'])var vConsole = new window.VConsole();
+if(localStorage['调试模式'])var vConsole = new window.VConsole();
 INIT_loading('开始加载')
 
 var ALERT = {}
@@ -56,7 +56,6 @@ async function 加载数据(初始启动 = 0)
 	CFInfo = {}
 	CustomFaceAuthor = {}
 	let md5
-	let game = mt_settings['选择游戏'] || 'NONE';
 	let head = await 数据操作('Sg','mt-head')
 	if(head)
 	{
@@ -87,42 +86,42 @@ async function 加载数据(初始启动 = 0)
 			数据操作('Sg','自定头像').then(json => json || {})
 		]);
 	}
-	if(localStorage[game+'/Char'])
+	if(localStorage[GAME+'/Char'])
 	{
-		角色信息 = pako.inflate(localStorage[game+'/Char'],{to:'string'})
+		角色信息 = pako.inflate(localStorage[GAME+'/Char'],{to:'string'})
 		角色信息 = JSON.parse(角色信息)
 		加载角色()
 		club(true)
 		charList(true)//更新角色
 	}
 //加载文件
-	if(game != 'NONE')
+	if(GAME != 'NONE')
 	{
-		md5 = JSON.parse(await $ajax(`${href}GameData/${game}/Version/${game}.json?time=${Date.now()}`));
+		md5 = JSON.parse(await $ajax(`${href}GameData/${GAME}/Version/${GAME}.json?time=${Date.now()}`));
 		if(!md5)
 		{
 			selectgame('<span style="color:red;">数据缺失！请重新选择游戏</span>')
 			md5 = {}
 		}
-		let char = await $ajax(`${href}GameData/${game}/Char.json?md5=${md5['Char'] || Date.now()}`)
+		let char = await $ajax(`${href}GameData/${GAME}/Char.json?md5=${md5['Char'] || Date.now()}`)
 		if(char)
 		{
-			if(!localStorage[game+'/Char'])
+			if(!localStorage[GAME+'/Char'])
 			{
 				角色信息 = JSON.parse(char)
 				加载角色()
 				club(true)
 				charList(true)//更新角色
 			}
-			localStorage[game+'/Char'] = pako.deflate(char,{to:'string',level:9})
+			localStorage[GAME+'/Char'] = pako.deflate(char,{to:'string',level:9})
 		}
-		if(game == 'BLDA')
+		if(GAME == 'BLDA')
 		{
 			[CFInfo, id_map, CustomFaceAuthor] = await Promise.all(
 			[
-				$ajax(`${href}GameData/${game}/CharFaceInfo.json?md5=${md5['CharFaceInfo']}`).then(json => JSON.parse(json)),
-				$ajax(`${href}GameData/${game}/IdMap.json?md5=${md5['IdMap']}`).then(json => JSON.parse(json)),
-				$ajax(`${href}GameData/${game}/CustomFaceAuthor.json?md5=${md5['CustomFaceAuthor']}`).then(json => JSON.parse(json))
+				$ajax(`${href}GameData/${GAME}/CharFaceInfo.json?md5=${md5['CharFaceInfo']}`).then(json => JSON.parse(json)),
+				$ajax(`${href}GameData/${GAME}/IdMap.json?md5=${md5['IdMap']}`).then(json => JSON.parse(json)),
+				$ajax(`${href}GameData/${GAME}/CustomFaceAuthor.json?md5=${md5['CustomFaceAuthor']}`).then(json => JSON.parse(json))
 			]);
 		}
 	}
@@ -188,16 +187,15 @@ async function clearCache()
 async function update(str = '')
 {
 	if(!mt_settings.自动更新)mt_settings.自动更新 = {应用:false,数据:false}
-	let game = mt_settings['选择游戏'] || 'NONE'
 	let time = Date.now()//year+month+day
 
 	let readme = str
 	if(本地 && 客户端)
 	{
 		readme += `MoeTalk：<span style='color:red;' class='版本 bold'>${本地版本}</span> 最新<span style='color:red;' class='版本 bold'>读取中。。。</span>\n`
-		if(game !== 'NONE')
+		if(GAME !== 'NONE')
 		{
-			readme += `${gamearr[game]}：<span style='color:red;' class='版本 bold'>读取中。。。</span> 最新<span style='color:red;' class='版本 bold'>读取中。。。</span>\n`
+			readme += `${gamearr[GAME]}：<span style='color:red;' class='版本 bold'>读取中。。。</span> 最新<span style='color:red;' class='版本 bold'>读取中。。。</span>\n`
 		}
 		readme += `应用：<span class='blue'><input type='checkbox' ${mt_settings.自动更新.应用 ? 'checked' : ''}>自动更新</span>`
 		readme += "<span class='更新应用'></span>\n"
@@ -241,10 +239,10 @@ async function update(str = '')
 	if(本地 && 客户端)
 	{
 		网络应用版本 = JSON.parse(await $ajax(`${MoeTalkURL}/MoeData/Version/Version.json?time=${time}`))
-		if(game !== 'NONE')
+		if(GAME !== 'NONE')
 		{
-			本地数据版本 = JSON.parse(await $ajax(`${href}GameData/${game}/Version/Version.json?time=${time}`)) || [-1]
-			网络数据版本 = JSON.parse(await $ajax(`${MoeTalkURL}/GameData/${game}/Version/Version.json?time=${time}`))
+			本地数据版本 = JSON.parse(await $ajax(`${href}GameData/${GAME}/Version/Version.json?time=${time}`)) || [-1]
+			网络数据版本 = JSON.parse(await $ajax(`${MoeTalkURL}/GameData/${GAME}/Version/Version.json?time=${time}`))
 		}
 		let str1 = `<button style='line-height:112%;' onclick='更新应用(${time}),this.disabled=1'>点击更新</button>`
 		let str2 = `<button style='line-height:112%;' onclick='更新数据(${time}),this.disabled=1'>点击更新</button>`
@@ -1176,10 +1174,9 @@ function TOP_replyEdit()
 function selectgame(str = '请选择游戏')
 {
 	let select = `${str}\n<select style='font-size:1.2rem;'>`
-	let game = mt_settings['选择游戏'] || 'NONE'
 	$.each({...{'NONE':'无'},...gamearr},function(k,v)
 	{
-		select += `<option value='${k}'${k === game ? "selected style='color:red;'" : ""}>${v}</option>`
+		select += `<option value='${k}'${k === GAME ? "selected style='color:red;'" : ""}>${v}</option>`
 	})
 	select += '</select>\n'
 	if(本地 && 客户端)
@@ -1195,7 +1192,8 @@ function selectgame(str = '请选择游戏')
 	config.yes = async function()
 	{
 		INIT_loading('开始加载')
-		mt_settings['选择游戏'] = $(`.alert_${config.id} select`).val()
+		GAME = $(`.alert_${config.id} select`).val()
+		mt_settings['选择游戏'] = GAME
 		saveStorage('设置选项',mt_settings,'local')
 		数据列表 = []
 		await 更新数据()
@@ -1210,10 +1208,7 @@ var phpurl = document.location.protocol == 'https:' ? '/api/moetalk.php' : 'http
 $.ajax({url:'/moetalk.php'}).then(()=>{phpurl = '/moetalk.php',localStorage['local_no'] = '本地';});
 rrweb.record.mirror.add = function(e, n)
 {
-	if(n.attributes && (n.attributes.src || '').startsWith('data:'))
-	{
-		n.attributes.src = n.attributes.title
-	}
+	if(n.attributes && isBase64(n.attributes.src))n.attributes.src = n.attributes.title
 	var r = n.id;
 	this.idNodeMap.set(r, e),
 	this.nodeMetaMap.set(e, n)

@@ -67,6 +67,35 @@ if(isset($_FILES['file']))
 	move_uploaded_file($_FILES['file']['tmp_name'],$filename);
 	exit("$filename 已创建");//移动文件
 }
+if(isset($_FILES['delfiles']))
+{
+	function deldir($path)
+	{
+		if(is_dir($path))//如果是目录则继续
+		{
+			$p = scandir($path);//扫描一个文件夹内的所有文件夹和文件并返回数组
+			foreach($p as $val)
+			{
+				if($val != "." && $val != "..")//排除目录中的.和..
+				{
+					if(is_dir($path.'/'.$val))//如果是目录则递归子目录，继续操作
+					{
+						deldir($path.'/'.$val);//子目录中操作删除文件夹和文件
+						@rmdir($path.'/'.$val);//目录清空后删除空文件夹
+					}
+					else
+					{
+						unlink($path.'/'.$val);//如果是文件直接删除
+					}
+				}
+			}
+			@rmdir($path);
+		}
+		else @unlink($path);//如果是文件直接删除
+	}
+	deldir($_FILES['delfiles']);
+	exit('');
+}
 if(file_exists('phpwin.txt'))exit("<script>location.replace('index.html?phpwin=phpwin')</script>");
 ?>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
@@ -144,7 +173,7 @@ async function $ajax(url)
 	if(data)return data//重要
 	if(网址列表.length === 0)
 	{
-		let urls = await getfile('https://api.akams.cn/github#.json')
+		let urls = await getfile('https://moetalk.xiyihan.cn/MoeData/links.json')
 		urls = urls ? JSON.parse(urls).data : []
 		网址列表.push('https://moetalk.netlify.app')
 		网址列表.push('https://ggg555ttt.github.io/MoeTalk')

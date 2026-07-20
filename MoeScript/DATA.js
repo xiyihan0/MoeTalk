@@ -113,7 +113,7 @@ function repairChat(data)
 			if(count == 6)
 			{
 				let str = data.file.split('/')[6]
-				data.file = `GameData/${mt_settings['选择游戏']}/CharFace/`+str.replace('.','/')
+				data.file = `GameData/${GAME}/CharFace/`+str.replace('.','/')
 			}
 		}
 		
