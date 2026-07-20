@@ -49,8 +49,12 @@ async function IMAGE_error(image,play)
 }
 function isCusImg(src)
 {
-	src = src || ''
-	return src.startsWith('custom-') || src.startsWith('CharFace-') || src.startsWith('Emoji-')
+	if(typeof src != 'string')src = ''
+	return src.startsWith('custom-') ||
+	src.startsWith('CharFace-') ||
+	src.startsWith('Emoji-') ||
+	src.startsWith('Image-') ||
+	(mt_settings['选择游戏'] == 'BLDA' && src > 999) 
 }
 function loadImg(src)
 {
@@ -104,7 +108,7 @@ async function 等待图片(imgs)
 		if(!src.startsWith('data:'))
 		{//只选择链接图片
 			let url = src.split('/').pop().replace('.webp','')
-			if(url.startsWith('custom-') || url.startsWith('CharFace-') || url.startsWith('Emoji-'))
+			if(isCusImg(url))
 			{//匹配自定义图片
 				src = await 数据操作('Ig',url) || await 数据操作('Tg',url) || href+'MoeData/Ui/error.webp'
 			}
@@ -148,8 +152,22 @@ function compress(base64Img,type = 'head',mode = 'add',length = 0)
 
 		if(type === 'image')
 		{
-			if(mode === 'edit')$('.图片文件').attr({src: newBase64,title: ''})//编辑图片
-			else if(mode === 'add')sendMessage({content:'',type: 'image',file: newBase64},'image',mode)//发送图片
+			let img = 'Image-'+getNowDate()
+			if(mode === 'edit')
+			{
+				数据操作('Ts',img,newBase64).then(()=>
+				{
+					$('.图片文件').attr({src: img,title: img})//编辑图片
+				})
+				
+			}
+			else if(mode === 'add')
+			{
+				数据操作('Ts',img,newBase64).then(()=>
+				{
+					sendMessage({content:'',type: 'image',file: img},'image',mode)//发送图片
+				})
+			}
 			else//上传表情
 			{
 				let Emojis = $('.Emojis')

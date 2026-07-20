@@ -5929,7 +5929,7 @@
 											if(!本地)
 											{
 												text += '※浏览器下MoeTalk有网络连接波动以及数据被清理的风险\n'
-												text += '<span style="color:white;background-color:red;">开发者强烈建议您<button style="line-height:112%;" onclick="update()">安装应用或下载客户端</button></span>\n'
+												text += '<span style="color:white;background-color:red;">开发者强烈建议您<button style="line-height:112%;" onclick="update()">安装客户端</button></span>\n'
 											}
 											if(MikuTalk)
 											{

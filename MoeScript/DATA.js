@@ -70,7 +70,7 @@ function loaddata(json,play)//识别存档
 				if(!json.TEMP.IMAGE[img] && json.CUSTOM.IMAGE[img])json.TEMP.IMAGE[img] = json.CUSTOM.IMAGE[img]
 			}
 			img = chat.file || ''
-			if((img.startsWith('CharFace-') || img.startsWith('Emoji-')))
+			if(isCusImg(img))
 			{//自定义图片
 				if(!json.TEMP.IMAGE[img] && json.CUSTOM.IMAGE[img])json.TEMP.IMAGE[img] = json.CUSTOM.IMAGE[img]
 			}
@@ -244,7 +244,7 @@ async function 生成存档(info,cus = false,mmt)
 			if(mt_schar[id])json.TEMP.CHAR[id] = mt_schar[id]
 			if(json.TEMP.CHAR[id])delete json.TEMP.CHAR[id].emoji
 		}
-		if(!json.TEMP.IMAGE[img] && img.startsWith('custom-'))
+		if(!json.TEMP.IMAGE[img] && isCusImg(img))
 		{//自定义头像
 			let head = await 数据操作('Tg',img)
 			if(!head)head = await 数据操作('Ig',img)
@@ -254,7 +254,7 @@ async function 生成存档(info,cus = false,mmt)
 		for(let i=0,l=heads.length;i<l;i++)
 		{//自定义头像
 			img = heads[i]
-			if(!json.TEMP.IMAGE[img] && img.startsWith('custom-'))
+			if(!json.TEMP.IMAGE[img] && isCusImg(img))
 			{
 				let head = await 数据操作('Tg',img)
 				if(!head)head = await 数据操作('Ig',img)
@@ -262,7 +262,7 @@ async function 生成存档(info,cus = false,mmt)
 			}
 		}
 		img = chat.file || ''
-		if((img.startsWith('CharFace-') || img.startsWith('Emoji-')) && !json.TEMP.IMAGE[img])
+		if(isCusImg(img) && !json.TEMP.IMAGE[img])
 		{//自定义图片
 			let image = await 数据操作('Tg',img)
 			if(!image)image = await 数据操作('Ig',img)

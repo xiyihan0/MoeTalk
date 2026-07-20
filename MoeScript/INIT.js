@@ -225,6 +225,7 @@ function setting(SETTING)
 	if(!SETTING['社团列表'])SETTING['社团列表'] = {}
 	if(!SETTING['截图选项'])SETTING['截图选项'] = {}
 	if(!SETTING['右侧发言'])SETTING['右侧发言'] = {}
+	if(!SETTING['表情信息'])SETTING['表情信息'] = {}
 	if(!SETTING['选择角色'])
 	{
 		SETTING['选择角色'] = {}
@@ -353,8 +354,9 @@ function saveStorage(key,val,mode)
 			let arr = []
 			arr[0] = error
 			localStorage['error'] = JSON.stringify(arr)
-			alert('数据写入失败！麻烦请在设置页面“下载localStorage存档”后并向开发者提交')
+			alert('数据写入失败！麻烦请在设置页面“备份所有数据”后并向开发者提交')
 		});
+		if(key == 'chats')localStorage[key] = JSON.stringify(val)
 		return;
 	}
 	val = JSON.stringify(val)

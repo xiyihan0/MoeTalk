@@ -65,6 +65,8 @@ async function 加载数据(初始启动 = 0)
 	}
 //加载消息
 	allChats = await 数据操作('Sg','chats') || []
+	if(!allChats.length)try{allChats = JSON.parse(localStorage['chats'])}catch{}
+
 	otherChats = []
 	chats = []
 	foreach(allChats,function(k,v)
@@ -218,24 +220,13 @@ async function update(str = '')
 			readme += `<button onclick="plus.webview.currentWebview().loadURL('${MoeTalkURL}?eval=${code}')">访问网络端</button>\n`
 		}
 	}
-	if(!客户端)
-	{
-		if(安装PWA应用)
-		{
-			readme += '为了持久保存数据，请点击<button onclick="installBtn.click()">安装PWA应用</button>\n\n'
-		}
-		else if(安装PWA应用 === null)
-		{
-			readme += 'PWA应用已成功安装！\n\n'	
-		}
-		else if(设备信息.device.isApple)
-		{
-			readme += '为了持久保存数据，请点击底部共享图标<img src="MoeData/Ui/share.webp"style="width:1.5rem;">，选择“添加到主屏幕”\n\n'
-		}
-	}
+	if(!客户端)readme += '<i class="bold red">浏览器数据有被系统清理的风险，开发强烈建议您安装本地客户端\n</i>'
 	let bdwp = 'https://pan.baidu.com/s/19TBLCa1ammOPV7LAXma7MA?pwd=bwsm'
-	let link = `<a class="INIT_href bold" title="${bdwp}" style="text-decoration:underline;">${bdwp}</a>`
-	readme += `本地MoeTalk客户端下载地址：\n${link}\n提取码：${bdwp.split('=')[1]}\n`
+	bdwp = `2.<a class="INIT_href bold" title="${bdwp}" style="text-decoration:underline;">${bdwp}</a>提取码：${bdwp.split('=')[1]}`
+	let lzwp = 'https://404.lanzouu.com/b0kp4vckd?pwd=9ge9'
+	lzwp = `1.<a class="INIT_href bold" title="${lzwp}" style="text-decoration:underline;">${lzwp}</a>提取码：${lzwp.split('=')[1]}`
+	readme += `客户端下载地址：\n${lzwp}\n${bdwp}`
+
 	let config = {}
 	config.title = 本地 ? '更新应用' : '安装应用'
 	config.id = '安装应用'
@@ -297,7 +288,7 @@ $(async function()
 	if(!本地)
 	{
 		text += '※浏览器下MoeTalk有网络连接波动以及数据被清理的风险\n'
-		text += '<span style="color:white;background-color:red;">开发者强烈建议您<button style="line-height:112%;" onclick="update()">安装应用或下载客户端</button></span>\n'
+		text += '<span style="color:white;background-color:red;">开发者强烈建议您<button style="line-height:112%;" onclick="update()">安装客户端</button></span>\n'
 	}
 	config.title = `欢迎使用MoeTalk！`
 	config.style = 'text-align:center;'
@@ -611,7 +602,7 @@ $("body").on('click',"#截图设置",function()
 	ext += '<option value="image/webp">webp</option>'
 	let str = ''
 	str += `<input class='隐藏前缀' type='checkbox'>隐藏下载文件名前缀\n`
-	if(!客户端)str += `<input class='流式下载' type='checkbox'}>文件流式下载（此功有问题未解决，不建议开启）\n`
+	if(!客户端)str += `<input class='流式下载' type='checkbox'}>文件流式下载（解决部分浏览器无法下载文件的问题）\n`
 	if(客户端 === 'NW.js')
 	{
 		str += '<input type="file" id="下载位置" nwdirectory hidden/>'
