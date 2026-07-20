@@ -361,7 +361,7 @@ function saveStorage(key,val,mode)
 			localStorage['error'] = JSON.stringify(arr)
 			alert('数据写入失败！麻烦请在设置页面“备份所有数据”后并向开发者提交')
 		});
-		if(key == 'chats')localStorage[key] = JSON.stringify(val)
+		if(!本地 && key == 'chats')localStorage['chats'] = JSON.stringify(val)
 		return;
 	}
 	val = JSON.stringify(val)
@@ -660,7 +660,7 @@ async function 缓存文件(C,blob)
 		await cache.put(C[1], response);
 	}
 }
-function 数据操作(C,K = null,V = null)
+function 数据操作(C,K = false,V = false)
 {
 	let D,M
 	if(C[0] === 'I')D = MoeImage
@@ -711,12 +711,12 @@ function 数据操作(C,K = null,V = null)
 				}
 			}
 			resolve(e)
-		}).catch((e)=>
-		{
-			let str = `数据库操作失败！\n这可能是存储空间不足引起的\n如果不是请向开发者反馈此问题\n函数名：${D._config.name}.${M}\n键名：${K}`
-			let config = {id: 'error',title: '<span class="red">错误警告</span>'}
-			alert(str,config)
-			resolve(e)
-		})
+		})//.catch((e)=>
+		// {
+		// 	let str = `数据库操作失败！\n这可能是存储空间不足引起的\n如果不是请向开发者反馈此问题\n函数名：${D._config.name}.${M}\n键名：${K}`
+		// 	let config = {id: 'error',title: '<span class="red">错误警告</span>'}
+		// 	alert(str,config)
+		// 	resolve(e)
+		// })
 	})
 }

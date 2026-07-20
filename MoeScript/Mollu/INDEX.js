@@ -3267,7 +3267,7 @@
 																						v = v.title
 																						数据操作('Ir',v)
 																						delete CUSTOM_EMOJI[EMOJI.id][v]
-																						if(v.startsWith('CharFace-') || v.startsWith('Emoji-'))delete mt_settings['表情信息'][v]
+																						if(isCusImg(v))delete mt_settings['表情信息'][v]
 																					})
 																					saveStorage('设置选项',mt_settings,'local')
 																					saveStorage('DB_EMOJI',CUSTOM_EMOJI,'local')
@@ -3321,7 +3321,7 @@
 																			select += `<option>${end+1}</option>`
 																			str += '<input type="checkbox" style="width:1rem;height:1rem;"><span onclick="$(this).prev().click()">只删除表情</span>\n'
 																			str += `移动到：第<select style='font-size:1.2rem;'>${select}</select>页`
-																			if(v.startsWith('CharFace-') || v.startsWith('Emoji-'))
+																			if(isCusImg(v))
 																			{
 																				img = `<button onclick='$("#custom").attr("title","image").attr("alt","emoji").click()'>点击更改图片\n${img}</button>`
 																			}
@@ -3353,14 +3353,17 @@
 																		{
 																			if(EMOJI.custom.io)
 																			{//编辑自定义表情
-																				CUSTOM_EMOJI[EMOJI.id][v] = parseInt($$(`.alert_${config.id} select`).val()-1)
-																				if(v.startsWith('CharFace-') || v.startsWith('Emoji-'))数据操作('Is',v,$$('.Emojis').attr('src'))
 																				if($$(`.alert_${config.id} input:checked`).length)
 																				{//只删除表情
 																					数据操作('Ir',v)
 																					delete CUSTOM_EMOJI[EMOJI.id][v]
 																					if(!Object.keys(CUSTOM_EMOJI[EMOJI.id]).length)delete CUSTOM_EMOJI[EMOJI.id]
-																					if(v.startsWith('CharFace-') || v.startsWith('Emoji-'))$$(`.alert_${config.id} .text`).val('')
+																					if(isCusImg(v))$$(`.alert_${config.id} .text`).val('')
+																				}
+																				else
+																				{
+																					CUSTOM_EMOJI[EMOJI.id][v] = parseInt($$(`.alert_${config.id} select`).val()-1)
+																					if(isCusImg(v))数据操作('Is',v,$$('.Emojis').attr('src'))
 																				}
 																			}
 																			else

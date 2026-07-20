@@ -230,6 +230,7 @@ function 内部下载(filename, data, type)
 async function 保存文件(filename, data, type = 2)
 {
 	if(typeof data === 'object' && !data.size)data = JSON.stringify(data)
+	if(filename === 'moetalkStorage/chats.json')localStorage['chats'] = data
 	if(typeof data === 'string')data = new Blob([data],{type: 'application/octet-stream'});
 	if(!客户端)
 	{
@@ -276,7 +277,7 @@ async function 保存文件(filename, data, type = 2)
 		}
 		catch
 		{
-			alert(`文件名：<p class='red'>${path+filename}</p>路径不存在或没有读写权限！`,{title: '下载失败！'})
+			if(type !== 2)alert(`文件名：<p class='red'>${path+filename}</p>路径不存在或没有读写权限！`,{title: '下载失败！'})
 		}
 		return ''
 	}
