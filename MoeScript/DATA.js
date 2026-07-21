@@ -297,7 +297,7 @@ async function 读取存档(json)
 		else chats.push(v)
 	})
 	//写入临时数据
-	数据操作('Tc')
+	await 数据操作('Tc')
 	if(!json.TEMP)json.TEMP = {CHAR:{},IMAGE:{}}
 	mt_schar = json.TEMP.CHAR || {}
 	for(let key in json.TEMP.IMAGE)

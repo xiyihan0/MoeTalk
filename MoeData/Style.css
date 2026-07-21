@@ -63,13 +63,6 @@ button
 	cursor: pointer;
 }
 button:disabled{cursor: auto;transform: translateY(0px);}
-input[type="text"],
-input[type="file"]
-{
-	padding: 12px; 
-	border: 1px solid #ccc;
-	border-radius: 2px;
-}
 h1
 {
 	font-size: 32px;

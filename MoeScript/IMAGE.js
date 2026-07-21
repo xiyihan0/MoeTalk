@@ -63,7 +63,7 @@ function isCusImg(src)
 }
 function loadImg(src)
 {
-	if(isCusImg(src))return href+`${TempImg.has(src) ? 'MoeTemp' : 'MoeImage'}/${src}.webp`
+	// if(isCusImg(src))return href+`用户数据/${TempImg.has(src) ? 'MoeTemp' : 'MoeImage'}/${src}.webp`
 	return href+src
 }
 function 加载图片(images)

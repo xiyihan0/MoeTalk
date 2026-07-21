@@ -1137,7 +1137,7 @@ $("body").on('click',".INDEX_delete",function()
 			$('.reply').hide()
 			// mt_settings.选择角色 = {no: 0,index: 1,list: []}
 			// charList(true)//更新列表
-			数据操作('Tc')
+			await 数据操作('Tc')
 		}
 		sendMessage({},'','delete',indexs)
 		log(clear)

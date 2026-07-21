@@ -79,6 +79,7 @@ async function 加载数据(初始启动 = 0)
 //读取数据
 	if(初始启动)
 	{
+		if(本地)数据操作('Tk').then(arr=>{TempImg = new Set(arr || [])});
 		[mt_char,mt_schar,CUSTOM_HEAD] = await Promise.all(
 		[
 			数据操作('Sg','mt-char').then(json => json || {}),

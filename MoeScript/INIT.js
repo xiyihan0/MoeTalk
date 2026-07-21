@@ -127,83 +127,97 @@ const MoeTemp = localforage.createInstance({name:'MoeTemp'});//临时文件
 const MoeProject = localforage.createInstance({name:'MoeProject'});//项目库
 const MoeCache = localforage.createInstance({name:'MoeCache'});//播放器缓存
 数据操作('Cc')
-function getDeviceAndBrowserInfo() {
-  const ua = navigator.userAgent.toLowerCase();
+function getDeviceAndBrowserInfo()
+{
+	const ua = navigator.userAgent.toLowerCase();
 
-  // ================= 1. 判断设备 (Device) =================
-  const isMac = /macintosh|mac os x/i.test(ua);
-  const isIPhone = /iphone/i.test(ua);
-  const isIPod = /ipod/i.test(ua);
-  // 修复 iPadOS 13+ 将 UA 伪装成 Mac 的问题（通过最大触控点数判断）
-  const isIPad = /ipad/i.test(ua) || (isMac && navigator.maxTouchPoints > 0);
+	// ================= 1. 判断设备 (Device) =================
+	const isMac = /macintosh|mac os x/i.test(ua);
+	const isIPhone = /iphone/i.test(ua);
+	const isIPod = /ipod/i.test(ua);
+	// 修复 iPadOS 13+ 将 UA 伪装成 Mac 的问题（通过最大触控点数判断）
+	const isIPad = /ipad/i.test(ua) || (isMac && navigator.maxTouchPoints > 0);
 
-  // 核心需求：统一的苹果设备判断 (Mac, iPhone, iPad, iPod)
-  const isApple = isMac || isIPhone || isIPod || isIPad;
+	// 核心需求：统一的苹果设备判断 (Mac, iPhone, iPad, iPod)
+	const isApple = isMac || isIPhone || isIPod || isIPad;
   
-  const isAndroid = /android|adr/i.test(ua);
-  const isWindows = /windows|win32|win64/i.test(ua);
+	const isAndroid = /android|adr/i.test(ua);
+	const isWindows = /windows|win32|win64/i.test(ua);
 
-  // 判断是移动端还是 PC 端
-  const isMobile = isIPhone || isIPad || isIPod || isAndroid || /mobile/i.test(ua);
-  const isPc = !isMobile;
+	// 判断是移动端还是 PC 端
+	const isMobile = isIPhone || isIPad || isIPod || isAndroid || /mobile/i.test(ua);
+	const isPc = !isMobile;
 
-  // 提取具体的设备类型名称
-  let deviceType = 'unknown';
-  if (isIPhone) deviceType = 'iphone';
-  else if (isIPad) deviceType = 'ipad';
-  else if (isMac && !isIPad) deviceType = 'mac'; // 排除被误判的 iPad
-  else if (isAndroid) deviceType = 'android';
-  else if (isWindows) deviceType = 'windows';
+ 	// 提取具体的设备类型名称
+ 	let deviceType = 'unknown';
+ 	if (isIPhone) deviceType = 'iphone';
+ 	else if (isIPad) deviceType = 'ipad';
+ 	else if (isMac && !isIPad) deviceType = 'mac'; // 排除被误判的 iPad
+ 	else if (isAndroid) deviceType = 'android';
+ 	else if (isWindows) deviceType = 'windows';
 
-  // ================= 2. 判断浏览器 (Browser) =================
-  const isWechat = /micromessenger/i.test(ua); // 微信内置浏览器
-  const isEdge = /edg/i.test(ua) || /edge/i.test(ua);
-  const isFirefox = /firefox/i.test(ua);
-  // Chrome 的 UA 里包含 Safari，Edge 的 UA 包含 Chrome，所以需要按优先级排除
-  const isChrome = /chrome/i.test(ua) && !isEdge;
-  const isSafari = /safari/i.test(ua) && !/chrome/i.test(ua) && !isAndroid;
+ 	// ================= 2. 判断浏览器 (Browser) =================
+ 	const isWechat = /micromessenger/i.test(ua); // 微信内置浏览器
+ 	const isEdge = /edg/i.test(ua) || /edge/i.test(ua);
+ 	const isFirefox = /firefox/i.test(ua);
+ 	// Chrome 的 UA 里包含 Safari，Edge 的 UA 包含 Chrome，所以需要按优先级排除
+ 	const isChrome = /chrome/i.test(ua) && !isEdge;
+ 	const isSafari = /safari/i.test(ua) && !/chrome/i.test(ua) && !isAndroid;
 
-  // 提取浏览器类型和版本号
-  let browserType = 'unknown';
-  let browserVersion = 'unknown';
+	// 提取浏览器类型和版本号
+	let browserType = 'unknown';
+	let browserVersion = 'unknown';
 
-  if (isWechat) {
-    browserType = 'wechat';
-    browserVersion = (ua.match(/micromessenger\/([\d.]+)/) || [])[1] || 'unknown';
-  } else if (isEdge) {
-    browserType = 'edge';
-    browserVersion = (ua.match(/edg\/([\d.]+)/) || ua.match(/edge\/([\d.]+)/) || [])[1] || 'unknown';
-  } else if (isFirefox) {
-    browserType = 'firefox';
-    browserVersion = (ua.match(/firefox\/([\d.]+)/) || [])[1] || 'unknown';
-  } else if (isChrome) {
-    browserType = 'chrome';
-    browserVersion = (ua.match(/chrome\/([\d.]+)/) || [])[1] || 'unknown';
-  } else if (isSafari) {
-    browserType = 'safari';
-    browserVersion = (ua.match(/version\/([\d.]+)/) || [])[1] || 'unknown';
-  }
+	if(isWechat)
+	{
+		browserType = 'wechat';
+		browserVersion = (ua.match(/micromessenger\/([\d.]+)/) || [])[1] || 'unknown';
+	}
+	else if(isEdge)
+	{
+		browserType = 'edge';
+		browserVersion = (ua.match(/edg\/([\d.]+)/) || ua.match(/edge\/([\d.]+)/) || [])[1] || 'unknown';
+	}
+	else if(isFirefox)
+	{
+		browserType = 'firefox';
+		browserVersion = (ua.match(/firefox\/([\d.]+)/) || [])[1] || 'unknown';
+	}
+	else if(isChrome)
+	{
+		browserType = 'chrome';
+		browserVersion = (ua.match(/chrome\/([\d.]+)/) || [])[1] || 'unknown';
+	}
+	else if(isSafari)
+	{
+		browserType = 'safari';
+		browserVersion = (ua.match(/version\/([\d.]+)/) || [])[1] || 'unknown';
+	}
 
-  // ================= 3. 返回结果 =================
-  return {
-    device: {
-      isApple,     // 是否为苹果公司设备 (Mac, iPhone, iPad等)
-      isAndroid,   // 是否为安卓设备
-      isWindows,   // 是否为 Windows 设备
-      isMobile,    // 是否为移动端
-      isPc,        // 是否为 PC 端
-      type: deviceType // 'mac' | 'iphone' | 'ipad' | 'android' | 'windows' | 'unknown'
-    },
-    browser: {
-      isWechat,    // 是否为微信浏览器
-      isChrome,
-      isSafari,
-      isFirefox,
-      isEdge,
-      type: browserType,       // 'chrome' | 'safari' | 'firefox' | 'edge' | 'wechat' | 'unknown'
-      version: browserVersion  // 浏览器版本号，例如 '114.0.0.0'
-    }
-  };
+	// ================= 3. 返回结果 =================
+	let device = 
+	{
+		device:
+		{
+			isApple,     // 是否为苹果公司设备 (Mac, iPhone, iPad等)
+			isAndroid,   // 是否为安卓设备
+			isWindows,   // 是否为 Windows 设备
+			isMobile,    // 是否为移动端
+			isPc,        // 是否为 PC 端
+			type: deviceType // 'mac' | 'iphone' | 'ipad' | 'android' | 'windows' | 'unknown'
+		},
+		browser:
+		{
+			isWechat,    // 是否为微信浏览器
+			isChrome,
+			isSafari,
+			isFirefox,
+			isEdge,
+			type: browserType,       // 'chrome' | 'safari' | 'firefox' | 'edge' | 'wechat' | 'unknown'
+			version: browserVersion  // 浏览器版本号，例如 '114.0.0.0'
+		}
+	};
+	return device
 }
 var 设备信息 = getDeviceAndBrowserInfo()
 var player = (本地 ? '/' : href)+'Moedata'//播放器地址
@@ -618,33 +632,49 @@ function formatBytes(bytes,decimals = 2)
 	const value = parseFloat((bytes/Math.pow(1000, i)).toFixed(decimals));
 	return value + ' ' + sizes[i];
 }
-class Base64Utils {
-  static toBlob(base64, mimeType = '') {
-    const parts = base64.split(';base64,');
-    if (parts.length === 2) {
-      mimeType = parts[0].split(':')[1] || mimeType;
-      base64 = parts[1];
-    }
-
-    const byteCharacters = atob(base64);
-    const byteNumbers = new Array(byteCharacters.length);
-    for (let i = 0; i < byteCharacters.length; i++) {
-      byteNumbers[i] = byteCharacters.charCodeAt(i);
-    }
-    const byteArray = new Uint8Array(byteNumbers);
-    return new Blob([byteArray], { type: mimeType });
-  }
-
-  static toDataURL(blob) {
-    return new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result);
-      reader.readAsDataURL(blob);
-    });
-  }
+class Base64Utils
+{
+	static toBlob(base64, mimeType = '')
+	{
+		const parts = base64.split(';base64,');
+		if(parts.length === 2)
+		{
+			mimeType = parts[0].split(':')[1] || mimeType;
+			base64 = parts[1];
+		}
+		const byteCharacters = atob(base64);
+		const byteNumbers = new Array(byteCharacters.length);
+		for(let i = 0; i < byteCharacters.length; i++)
+		{
+			byteNumbers[i] = byteCharacters.charCodeAt(i);
+		}
+		const byteArray = new Uint8Array(byteNumbers);
+		return new Blob([byteArray], { type: mimeType });
+	}
+	static toDataURL(blob)
+	{
+		return new Promise((resolve) => 
+		{
+			const reader = new FileReader();
+			reader.onloadend = () => resolve(reader.result);
+			reader.readAsDataURL(blob);
+		});
+	}
 }
 async function 缓存文件(C,blob)
 {
+	if(!M && !客户端)
+	{
+		if(C[1] === 's' || C[1] === 'r')C += '删'
+		if(C[1] === 'c')C += '清';
+		if(C[2] && typeof e === 'string')
+		{
+			C = C.split('')
+			C[0] = D._config.name
+			C[1] = new URL(K, window.location.href).href;
+			缓存文件(C,e)
+		}
+	}
 	if(C[2] == '清')return await caches.delete(C[0]);
 	const cache = await caches.open(C[0]);
 	if(C[2] == '删')return await cache.delete(C[1]);
@@ -660,63 +690,64 @@ async function 缓存文件(C,blob)
 		await cache.put(C[1], response);
 	}
 }
-function 数据操作(C,K = false,V = false)
+function 处理数据(D,M,C,K = false,V = false)
 {
-	let D,M
-	if(C[0] === 'I')D = MoeImage
-	else if(C[0] === 'T')D = MoeTemp
-	else if(C[0] === 'P')D = MoeProject
-	else if(C[0] === 'S')D = moetalkStorage
-	else if(C[0] === 'C')D = MoeCache
-	if(C[1] === 's')M = 'setItem'
-	else if(C[1] === 'g')M = 'getItem'
-	else if(C[1] === 'r')M = 'removeItem'
-	else if(C[1] === 'c')M = 'clear'
-	else if(C[1] === 'k')M = 'keys'
-	
 	return new Promise(function(resolve)
 	{
 		D[M](K,V).then((e)=>
 		{
-			if(!M && !客户端)
-			{
-				if(C[1] === 's' || C[1] === 'r')C += '删'
-				if(C[1] === 'c')C += '清';
-				if(C[2] && typeof e === 'string')
-				{
-					C = C.split('')
-					C[0] = D._config.name
-					C[1] = new URL(K, window.location.href).href;
-					缓存文件(C,e)
-				}
-			}
-			if(本地 && window.保存文件 && window.删除文件)
-			{
-				if(C[1] === 's')
-				{
-					if(C === 'Ts')TempImg.add(K)
-					let file = `${D._config.name}/${K}`
-					if(typeof V === 'object')保存文件(file+'.json',V)
-					if(typeof V === 'string')保存文件(file+'.webp',Base64Utils.toBlob(V))
-				}
-				if(C[1] === 'c' || C[1] === 'r')
-				{
-					if(C === 'Tc')TempImg.clear()
-					if(C === 'Tr')TempImg.delete(K)
-					let file = `${D._config.name}`
-					if(K)file += `${D._config.name}/${K}`
-					if(typeof V === 'object')file += '.json'
-					if(typeof V === 'string')file += '.webp'
-					删除文件(file)
-				}
-			}
 			resolve(e)
-		})//.catch((e)=>
-		// {
-		// 	let str = `数据库操作失败！\n这可能是存储空间不足引起的\n如果不是请向开发者反馈此问题\n函数名：${D._config.name}.${M}\n键名：${K}`
-		// 	let config = {id: 'error',title: '<span class="red">错误警告</span>'}
-		// 	alert(str,config)
-		// 	resolve(e)
-		// })
+		}).catch((e)=>
+		{
+			let str = `数据库操作失败！\n这可能是存储空间不足引起的\n如果不是请向开发者反馈此问题\n函数名：${D._config.name}.${M}\n键名：${K}`
+			let config = {id: 'error',title: '<span class="red">错误警告</span>'}
+			alert(str,config)
+			resolve(e)
+		})
 	})
+}
+async function 处理文件(D,M,C,K = false,V = false)
+{
+	if(!本地 || !window.保存文件 || !window.删除文件)return;
+	if(C[1] === 's')
+	{
+		if(C === 'Ts')TempImg.add(K)
+		let file = `用户数据/${D._config.name}/${K}`
+		if(typeof V === 'object')await 保存文件(file+'.json',V)
+		if(typeof V === 'string')await 保存文件(file+'.webp',Base64Utils.toBlob(V))
+		return file;
+	}
+	else if(C[1] === 'c' || C[1] === 'r')
+	{
+		if(C === 'Tc')TempImg.clear()
+		if(C === 'Tr')TempImg.delete(K)
+		let file = `用户数据/${D._config.name}`
+		if(K)file += `/${K}`
+		if(typeof V === 'object')file += '.json'
+		if(typeof V === 'string')file += '.webp'
+		await 删除文件(file)
+		return file;
+	}
+	else return;
+}
+async function 数据操作(C,K = false,V = false)
+{
+	let D,M;
+	if(C[0] === 'I')D = MoeImage;
+	else if(C[0] === 'T')D = MoeTemp;
+	else if(C[0] === 'P')D = MoeProject;
+	else if(C[0] === 'S')D = moetalkStorage;
+	else if(C[0] === 'C')D = MoeCache;
+	if(C[1] === 's')M = 'setItem';
+	else if(C[1] === 'g')M = 'getItem';
+	else if(C[1] === 'r')M = 'removeItem';
+	else if(C[1] === 'c')M = 'clear';
+	else if(C[1] === 'k')M = 'keys';
+	
+	[V,K] = await Promise.all(
+	[
+		处理数据(D,M,C,K,V),
+		处理文件(D,M,C,K,V)
+	]);
+	return V
 }
