@@ -183,6 +183,7 @@
 							className: '锁定焦点',
 							style:
 							{
+								zIndex: 200,
 								flexGrow: "1",
 								overflow: "hidden",
 								margin: "0",
