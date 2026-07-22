@@ -266,24 +266,16 @@ async function edit_char()
 
 		CUSTOM_HEAD[id] = []
 	}
-	let arr = char_info.profile || []
-	for(let i=0,l=arr.length;i<l;i++)
+	let arr = []
+	for(const img of document.querySelectorAll('.heads img'))
 	{
-		if(arr[i].startsWith('custom-'))
-		{
-			delete mt_settings.人物改名[arr[i]]
-			await 数据操作('Ir',arr[i])
-		}
-	}
-	arr = []
-	$('.heads img').each(function()
-	{
-		index = $(this).attr('title')
+		const index = img.title
+		const src = img.src
 		arr.push(index)
 		if(mt_char[id])
 		{
 			mt_char[id].head.push(index)
-			数据操作('Is',index,$(this).attr('src'))
+			await 数据操作('Is',index,src)
 			if(index !== char_info.no)mt_char[id].names[index] = toString(char_info.names[index])
 		}
 		else if(id !== index)
@@ -291,12 +283,21 @@ async function edit_char()
 			if(index.startsWith('custom-'))
 			{
 				CUSTOM_HEAD[id].push(index)
-				数据操作('Is',index,$(this).attr('src'))
+				await 数据操作('Is',index,src)
 			}
 			mt_settings.人物改名[index] = toString(char_info.names[index])
 			if(!mt_settings.人物改名[index])delete mt_settings.人物改名[index]
 		}
-	})
+	}
+	for(let i=0,l=char_info.profile.length;i<l;i++)
+	{
+		const img = char_info.profile[i]
+		if(img.startsWith('custom-') && !arr.includes(img))
+		{
+			delete mt_settings.人物改名[img]
+			await 数据操作('Ir',img)
+		}
+	}
 	if(CUSTOM_HEAD[id])
 	{
 		CHAR_CharList[char_info.index].profile = arr
