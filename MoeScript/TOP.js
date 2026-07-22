@@ -51,17 +51,6 @@ $('body').on('click','.confirm',function()
 });
 async function 加载数据(初始启动 = 0)
 {
-//初始化
-	角色信息 = {info:{},name:{},group:[],charface:[]}
-	CFInfo = {}
-	CustomFaceAuthor = {}
-	let md5
-	let head = await 数据操作('Sg','mt-head')
-	if(head)
-	{
-		for(let key in head)await 数据操作('Is',key,head[key])
-		数据操作('Sr','mt-head')
-	}
 //加载消息
 	allChats = await 数据操作('Sg','chats') || []
 	if(!allChats.length)try{allChats = JSON.parse(localStorage['chats'])}catch{}
@@ -76,6 +65,17 @@ async function 加载数据(初始启动 = 0)
 	allChats = []
 	refreshMessage(chats)//$('#mt_watermark').click()//显示消息
 	INIT_loading(false)
+//初始化
+	角色信息 = {info:{},name:{},group:[],charface:[]}
+	CFInfo = {}
+	CustomFaceAuthor = {}
+	let md5
+	let head = await 数据操作('Sg','mt-head')
+	if(head)
+	{
+		for(let key in head)await 数据操作('Is',key,head[key])
+		数据操作('Sr','mt-head')
+	}
 //读取数据
 	if(初始启动)
 	{
@@ -278,7 +278,6 @@ $(async function()
 	{
 		加载数据('初始加载')
 	},".消息底座");
-	/[\u4e00-\u9fff]/.test($("#readme").text()) && $("#readme").css('font-family','moetalk')
 	let text = ''
 	let config = {}
 	let title = $('#readme').text().slice(0, -1)

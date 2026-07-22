@@ -47,11 +47,6 @@ async function IMAGE_error(image,play)
 	}
 	return
 }
-function isBase64(str)
-{
-	if(typeof str != 'string')str = ''
-	return str.startsWith('data:')
-}
 function isCusImg(src)
 {
 	if(typeof src != 'string')src = ''
@@ -63,7 +58,7 @@ function isCusImg(src)
 }
 function loadImg(src)
 {
-	// if(isCusImg(src))return href+`用户数据/${TempImg.has(src) ? 'MoeTemp' : 'MoeImage'}/${src}.webp`
+	if(isCusImg(src))return href+`用户数据/${TempImg.has(src) ? 'MoeTemp' : 'MoeImage'}/${src}.webp`
 	return href+src
 }
 function 加载图片(images)
@@ -511,7 +506,7 @@ async function 测试截图()
 		导出截图('test',blob,1)
 	},mt_settings['图片格式'] || 'image/png')
 }
-if(客户端 === 'HTML5+' || 客户端 === 'Cordova' || 客户端 === 'NW.js')
+if(客户端)
 {
 	var time = 0;//初始化起始时间
 	let touchstart = 'touchstart'
@@ -531,24 +526,10 @@ if(客户端 === 'HTML5+' || 客户端 === 'Cordova' || 客户端 === 'NW.js')
 			let config = {}
 			config.yes = async function()
 			{
-				let ext,data
-				if(isBase64(src))
-				{//base64转blob
-					ext = src.match(/:image\/(\S*);base64/)[1]
-					data = atob(src.split(',').pop())
-					let l = data.length;
-					let bytes = new Uint8Array(l);
-					for(let i=0;i<l;i++)bytes[i] = data.charCodeAt(i);
-					data = 'application/octet-stream'
-					data = new Blob([bytes],{type: data});
-					bytes = ''
-				}
-				else 
-				{
-					ext = src.split('.').pop()
-					data = await getfile(src) || await getfile(href+'MoeData/Ui/error.webp');
-				}
-				let file = await 保存文件(`${getNowDate()}.${ext}`,data,'image')
+				if(isBase64(src))src = await Base64ToBlob(src)
+				else src = await getfile(src) || await getfile(href+'MoeData/Ui/error.webp');
+				let ext = src.type.split('/')[1] || 'webp'
+				let file = await 保存文件(`${getNowDate()}.${ext}`,src,'image')
 				alert(`图片保存位置：<span class='red'>${file}</span>`)
 			}
 			alert(`确定要保存这张图片吗？\n<img src='${src}'class='保存图片'style='width:50%;'>`,config)

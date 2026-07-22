@@ -502,15 +502,7 @@ async function $ajax(url,text = '',html = null)
 			data: {getfile: url}
 		})
 		if(!data)return null;
-		if(!arr.includes(ext))//base64转blob
-		{
-			data = atob(data.split(',').pop())
-			let l = data.length;
-			let bytes = new Uint8Array(l);
-			for(let i=0;i<l;i++)bytes[i] = data.charCodeAt(i);
-			data = 'application/octet-stream'
-			return new Blob([bytes],{type: data});
-		}
+		if(!arr.includes(ext))return await Base64ToBlob(data)
 		else return data;
 	}
 	if(url.includes('/doc/') && 本地 && 客户端 === 'HTML5+')
@@ -522,19 +514,11 @@ async function $ajax(url,text = '',html = null)
 				entry.file(function(data)
 				{
 					var reader = new plus.io.FileReader();
-					reader.onload = function(e)
+					reader.onload = async function(e)
 					{
 						data = e.target.result
 						if(!data)resolve(null);
-						if(!arr.includes(ext))//base64转blob
-						{
-							data = atob(data.split(',').pop())
-							let l = data.length;
-							let bytes = new Uint8Array(l);
-							for(let i=0;i<l;i++)bytes[i] = data.charCodeAt(i);
-							data = 'application/octet-stream'
-							resolve(new Blob([bytes],{type: data}))
-						}
+						if(!arr.includes(ext))resolve(await Base64ToBlob(data))
 						else resolve(data)
 					};
 					reader.onerror = function(e){resolve(null)};
@@ -632,70 +616,51 @@ function formatBytes(bytes,decimals = 2)
 	const value = parseFloat((bytes/Math.pow(1000, i)).toFixed(decimals));
 	return value + ' ' + sizes[i];
 }
-class Base64Utils
+function isBase64(str)
 {
-	static toBlob(base64, mimeType = '')
-	{
-		const parts = base64.split(';base64,');
-		if(parts.length === 2)
-		{
-			mimeType = parts[0].split(':')[1] || mimeType;
-			base64 = parts[1];
-		}
-		const byteCharacters = atob(base64);
-		const byteNumbers = new Array(byteCharacters.length);
-		for(let i = 0; i < byteCharacters.length; i++)
-		{
-			byteNumbers[i] = byteCharacters.charCodeAt(i);
-		}
-		const byteArray = new Uint8Array(byteNumbers);
-		return new Blob([byteArray], { type: mimeType });
-	}
-	static toDataURL(blob)
-	{
-		return new Promise((resolve) => 
-		{
-			const reader = new FileReader();
-			reader.onloadend = () => resolve(reader.result);
-			reader.readAsDataURL(blob);
-		});
-	}
+	return typeof str === 'string' ? str.startsWith('data:') : !1
 }
-async function 缓存文件(C,blob)
+async function Base64ToBlob(base64String)
 {
-	if(!M && !客户端)
+	// fetch 可以直接解析 data: URI，并自动处理 MIME 类型和 Base64 解码
+	const response = await fetch(base64String);
+	return await response.blob();
+}
+async function 缓存文件(DB,C,K,V)
+{
+	if(客户端)return
+	if(C[1] === 'r')C += '删'
+	if(C[1] === 'c')C += '清';
+	if(C[2])
 	{
-		if(C[1] === 's' || C[1] === 'r')C += '删'
-		if(C[1] === 'c')C += '清';
-		if(C[2] && typeof e === 'string')
-		{
-			C = C.split('')
-			C[0] = D._config.name
-			C[1] = new URL(K, window.location.href).href;
-			缓存文件(C,e)
-		}
+		C = C.split('')
+		C[0] = DB
+		C[1] = `${href}用户数据/${DB}/${K}.webp`
 	}
 	if(C[2] == '清')return await caches.delete(C[0]);
 	const cache = await caches.open(C[0]);
 	if(C[2] == '删')return await cache.delete(C[1]);
+
+	if(!isBase64(V) || !C[2])return
+	V = await Base64ToBlob(V)
 	if(C[2] == '写')
 	{
-		blob = Base64Utils.toBlob(blob)
 		const headers = new Headers(//显式声明 Headers
 		{	
-			'Content-Type': blob.type || 'application/octet-stream',//从blob获取类型，如果没有则给个默认值
-			'Content-Length': blob.size.toString()//明确写入Content-Length，解决长度为 0 的问题
+			'Content-Type': V.type || 'application/octet-stream',//从blob获取类型，如果没有则给个默认值
+			'Content-Length': V.size.toString()//明确写入Content-Length，解决长度为 0 的问题
 		});
-		const response = new Response(blob, {headers: headers});
+		const response = new Response(V, {headers: headers});
 		await cache.put(C[1], response);
 	}
 }
-function 处理数据(D,M,C,K = false,V = false)
+function 处理数据(D,M,C,K,V)
 {
 	return new Promise(function(resolve)
 	{
 		D[M](K,V).then((e)=>
 		{
+			if(localStorage['调试模式'])缓存文件(D._config.name,C,K,e)
 			resolve(e)
 		}).catch((e)=>
 		{
@@ -706,25 +671,27 @@ function 处理数据(D,M,C,K = false,V = false)
 		})
 	})
 }
-async function 处理文件(D,M,C,K = false,V = false)
+async function 处理文件(DB,C,K,V)
 {
 	if(!本地 || !window.保存文件 || !window.删除文件)return;
 	if(C[1] === 's')
 	{
 		if(C === 'Ts')TempImg.add(K)
-		let file = `用户数据/${D._config.name}/${K}`
+		let file = `用户数据/${DB}/${K}`
 		if(typeof V === 'object')await 保存文件(file+'.json',V)
-		if(typeof V === 'string')await 保存文件(file+'.webp',Base64Utils.toBlob(V))
+		else await 保存文件(file+'.webp',await Base64ToBlob(V))
 		return file;
 	}
 	else if(C[1] === 'c' || C[1] === 'r')
 	{
 		if(C === 'Tc')TempImg.clear()
 		if(C === 'Tr')TempImg.delete(K)
-		let file = `用户数据/${D._config.name}`
-		if(K)file += `/${K}`
-		if(typeof V === 'object')file += '.json'
-		if(typeof V === 'string')file += '.webp'
+		let file = `用户数据/${DB}`
+		if(K)
+		{
+			if(isCusImg(K))file += `/${K}.webp`
+			else file += `/${K}.json`
+		}
 		await 删除文件(file)
 		return file;
 	}
@@ -743,11 +710,11 @@ async function 数据操作(C,K = false,V = false)
 	else if(C[1] === 'r')M = 'removeItem';
 	else if(C[1] === 'c')M = 'clear';
 	else if(C[1] === 'k')M = 'keys';
-	
+	if(C[1] === 's' && typeof V === 'string' && !isBase64(V))return V;
 	[V,K] = await Promise.all(
 	[
 		处理数据(D,M,C,K,V),
-		处理文件(D,M,C,K,V)
+		处理文件(D._config.name,C,K,V)
 	]);
 	return V
 }
