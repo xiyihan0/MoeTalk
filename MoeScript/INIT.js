@@ -637,14 +637,14 @@ async function 缓存文件(DB,C,K,V)
 		C[0] = DB
 		C[1] = `${href}用户数据/${DB}/${K}.webp`
 	}
-	if(C[2] == '清')return await caches.delete(C[0]);
+	if(!isBase64(V) || !C[2])return
+
 	const cache = await caches.open(C[0]);
 	if(C[2] == '删')return await cache.delete(C[1]);
-
-	if(!isBase64(V) || !C[2])return
-	V = await Base64ToBlob(V)
+	if(C[2] == '清')return await caches.delete(C[0]);
 	if(C[2] == '写')
 	{
+		V = await Base64ToBlob(V)
 		const headers = new Headers(//显式声明 Headers
 		{	
 			'Content-Type': V.type || 'application/octet-stream',//从blob获取类型，如果没有则给个默认值
