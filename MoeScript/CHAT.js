@@ -5,7 +5,6 @@ var 粘贴板;
 var 搜索 = [];
 var replyDepths = [0];//选择肢总集
 
-var allChats = false
 var otherChats = []//其他分支内容
 var chats = []//当前分支内容
 var 差分映射 = false
@@ -701,7 +700,7 @@ function sendMessage(data,type,mode = 'add',indexs = [],撤销 = false)
 		if(['heart','info','reply'].includes(type))behavior = "auto"
 		if(nextindex !== null)跳转索引(nextindex,{block:'center',behavior:behavior});
 	}, 100)
-	saveStorage('chats',[...chats,...otherChats],'local')
+	数据操作('Ss','chats',[...chats,...otherChats])
 	chats.length ? $('.INDEX_tips').hide() : $('.INDEX_tips').show()//开头提示
 	INIT_state()
 }

@@ -319,11 +319,12 @@ async function 读取存档(json)
 		await 数据操作('Ss','DB_EMOJI',CUSTOM_EMOJI)
 	}
 	if(json.SETTING)mt_settings = setting(json.SETTING)
-	加载数据()
+	const MMT = [...chats,...otherChats]
+	加载数据(null,MMT)
 	log(true)//清除历史记录
 	replyDepth(0,'home')//清除跳转记录
 	saveStorage('设置选项',mt_settings,'local')
-	saveStorage('chats',[...chats,...otherChats],'local')
+	数据操作('Ss','chats',MMT)
 	INIT_loading(!'读取存档')
 }
 function stringifyToChunks(data, chunks) {

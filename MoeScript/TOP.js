@@ -49,20 +49,22 @@ $('body').on('click','.confirm',function()
 	if(ALERT[id])ALERT[id]()
 	$(this).prev().click()
 });
-async function 加载数据(初始启动 = 0)
+async function 加载数据(first = null,MMT = null)
 {
 //加载消息
-	allChats = await 数据操作('Sg','chats') || []
-	if(!allChats.length)try{allChats = JSON.parse(localStorage['chats'])}catch{}
+	if(!MMT)
+	{
+		MMT = await 数据操作('Sg','chats') || []
+		if(!MMT.length)try{MMT = JSON.parse(localStorage['chats'])}catch{}
+	}
 
 	otherChats = []
 	chats = []
-	foreach(allChats,function(k,v)
+	foreach(MMT,function(k,v)
 	{
-		if(allChats[k].replyDepth !== 0)otherChats.push(allChats[k])
-		else chats.push(allChats[k])
+		if(MMT[k].replyDepth !== 0)otherChats.push(MMT[k])
+		else chats.push(MMT[k])
 	})
-	allChats = []
 	refreshMessage(chats)//$('#mt_watermark').click()//显示消息
 	INIT_loading(false)
 //初始化
@@ -77,7 +79,7 @@ async function 加载数据(初始启动 = 0)
 		数据操作('Sr','mt-head')
 	}
 //读取数据
-	if(初始启动)
+	if(first)
 	{
 		if(本地)数据操作('Tk').then(arr=>{TempImg = new Set(arr || [])});
 		[mt_char,mt_schar,CUSTOM_HEAD] = await Promise.all(
@@ -1166,7 +1168,7 @@ function TOP_replyEdit()
 			}
 			replyDepth(val,'edit')
 			refreshMessage(chats)
-			saveStorage('chats',[...chats,...otherChats],'local')
+			数据操作('Ss','chats',[...chats,...otherChats])
 		}
 		alert(str,config)
 	}
