@@ -592,6 +592,7 @@ async function 下载数据(url)
 }
 async function 导出存档(filename,json)
 {
+	filename = filename.replace(/[\\/:*?"<>|]/g, '_');
 	// 完全手动递归拆解，绝对不会生成超大字符串
 	if(typeof json == 'string')json = [json]
 	else
@@ -609,6 +610,7 @@ async function 导出存档(filename,json)
 }
 async function 导出截图(filename,data,num)
 {
+	filename = filename.replace(/[\\/:*?"<>|]/g, '_');
 	let ext = (mt_settings['图片格式'] || 'png').split('/').pop().replace('jpeg','jpg')
 	if(num == 1)ext = ext.toUpperCase()
 	if(imageZip)
