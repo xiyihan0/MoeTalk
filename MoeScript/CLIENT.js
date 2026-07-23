@@ -1,7 +1,7 @@
 /*@MoeScript/CLIENT.js@*/
 async function 删除文件(path)
 {
-	if(!本地)return
+	if(!本地)return null
 	if(客户端 === 'HTML5+')
 	{
 		path = '_doc/'+path
@@ -13,7 +13,7 @@ async function 删除文件(path)
 				else entry.removeRecursively(()=>resolve(true),reject);//删除目录
 			},function(e)// code 10 = NOT_FOUND_ERR，目标不存在时做幂等处理
 			{
-				if(e && e.code === 10)resolve(false);
+				if(e && e.code === 10)resolve(null);
 				else reject(e);
 			});
 		});

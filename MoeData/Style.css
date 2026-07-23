@@ -400,6 +400,6 @@ a
 .隐藏{display: none;}
 .编辑{cursor: pointer;}
 
-.bold{font-family: bold;font-weight: bold;}/* 加粗 */
+.bold{font-family: Segoe UI;font-weight: bold;}/* 加粗 */
 @font-face{font-family:Cyrillic;src:local(Arial);unicode-range:U+0400-04FF;}/*匹配西里尔字母*/
 body,input,button,textarea{font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,sans-serif;}

@@ -385,6 +385,7 @@ async function removeChar(n)
 $('body').on('click',"#makecus",function()
 {
 	let info = {
+		profile: [],
 		no: 'custom-'+getNowDate(),
 		make: !0
 	}

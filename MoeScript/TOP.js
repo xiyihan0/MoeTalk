@@ -283,7 +283,7 @@ $(async function()
 	let text = ''
 	let config = {}
 	let title = $('#readme').text().slice(0, -1)
-	let span = `<i onclick="$('#readme').click()"class="bold"style="background-color:${$('.Header__Navbar-sc-17b1not-0').css('background-color')};color:white;padding:4px;cursor:pointer;">`
+	let span = `<i onclick="$('#readme').click()"class="bold"style="background-color:${$('.Header__Navbar-sc-17b1not-0').css('background-color')};color:white;cursor:pointer;">`
 	text += `相关问题请点击${span}${title}</i>标题\n标题旁大写字母代表设备标识\n`
 	if(!本地)
 	{
