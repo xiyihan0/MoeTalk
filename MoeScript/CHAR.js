@@ -474,6 +474,7 @@ function 加载角色()
 	mt_school = {}
 	mt_club = {}
 	CHAR_CharList = []
+	if(GAME == 'BLDA' && 角色信息.info.月雪宫子)角色信息.name.en[角色信息.info.月雪宫子[0][0]] = 'SRT'
 	for(let id in 角色信息.info)
 	{
 		let index = 角色信息.info[id][0]

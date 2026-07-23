@@ -375,7 +375,6 @@ function saveStorage(key,val,mode)
 			localStorage['error'] = JSON.stringify(arr)
 			alert('数据写入失败！麻烦请在设置页面“备份所有数据”后并向开发者提交')
 		});
-		if(!本地 && key == 'chats')localStorage['chats'] = JSON.stringify(val)
 		return;
 	}
 	val = JSON.stringify(val)
@@ -626,6 +625,51 @@ async function Base64ToBlob(base64String)
 	const response = await fetch(base64String);
 	return await response.blob();
 }
+async function BlobToBase64(blob)
+{
+	return new Promise((resolve, reject)=>
+	{
+		const reader = new FileReader();
+
+		reader.onload = () => resolve(reader.result);
+		reader.onerror = reject;
+
+		reader.readAsDataURL(blob);
+	});
+}
+function 并发处理(...promises) {
+  return new Promise((resolve) => {
+    if (promises.length === 0) {
+      resolve(null);
+      return;
+    }
+
+    let remaining = promises.length;
+    let done = false;
+
+    const handle = (value) => {
+      if (done) return;
+
+      if (value !== null) {
+        done = true;
+        resolve(value);
+        return;
+      }
+
+      remaining -= 1;
+      if (remaining === 0) {
+        done = true;
+        resolve(null);
+      }
+    };
+
+    promises.forEach((promise) => {
+      Promise.resolve(promise)
+        .then(handle)
+        .catch(() => handle(null));
+    });
+  });
+}
 async function 缓存文件(DB,C,K,V)
 {
 	if(客户端)return
@@ -673,8 +717,12 @@ function 处理数据(D,M,C,K,V)
 }
 async function 处理文件(DB,C,K,V)
 {
-	if(!本地 || !window.保存文件 || !window.删除文件)return;
-	if(C[1] === 's')
+	if(!本地)
+	{
+		if(K === 'chats' && C === 'Ss')localStorage['chats'] = JSON.stringify(V)
+		return null;
+	}
+	if(C[1] === 's' && window.保存文件 && V)
 	{
 		if(C === 'Ts')TempImg.add(K)
 		let file = `用户数据/${DB}/${K}`
@@ -682,7 +730,22 @@ async function 处理文件(DB,C,K,V)
 		else await 保存文件(file+'.webp',await Base64ToBlob(V))
 		return file;
 	}
-	else if(C[1] === 'c' || C[1] === 'r')
+	else if(C[1] === 'g' && K)
+	{
+		let file = `用户数据/${DB}/${K}`
+		if(isCusImg(K))
+		{
+
+			file += '.webp'
+			return await BlobToBase64(await $ajax(file))
+		}
+		else
+		{
+			file += '.json'
+			return JSON.parse(await $ajax(file))
+		}
+	}
+	else if((C[1] === 'c' || C[1] === 'r') && window.删除文件)
 	{
 		if(C === 'Tc')TempImg.clear()
 		if(C === 'Tr')TempImg.delete(K)
@@ -695,9 +758,9 @@ async function 处理文件(DB,C,K,V)
 		await 删除文件(file)
 		return file;
 	}
-	else return;
+	else return null;
 }
-async function 数据操作(C,K = false,V = false)
+async function 数据操作(C,K = null,V = null)
 {
 	let D,M;
 	if(C[0] === 'I')D = MoeImage;
@@ -711,10 +774,20 @@ async function 数据操作(C,K = false,V = false)
 	else if(C[1] === 'c')M = 'clear';
 	else if(C[1] === 'k')M = 'keys';
 	if(C[1] === 's' && typeof V === 'string' && !isBase64(V))return V;
-	[V,K] = await Promise.all(
-	[
-		处理数据(D,M,C,K,V),
-		处理文件(D._config.name,C,K,V)
-	]);
+	if(C[1] === 'g')
+	{
+		V = await 并发处理(
+			处理数据(D,M,C,K,V),
+			处理文件(D._config.name,C,K,V)
+		);
+	}
+	else
+	{
+		[V,K] = await Promise.all(
+		[
+			处理数据(D,M,C,K,V),
+			处理文件(D._config.name,C,K,V)
+		]);
+	}
 	return V
 }
