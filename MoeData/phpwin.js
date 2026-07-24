@@ -67,7 +67,7 @@ if(isset($_FILES['file']))
 	move_uploaded_file($_FILES['file']['tmp_name'],$filename);
 	exit("$filename 已创建");//移动文件
 }
-if(isset($_FILES['delfiles']))
+if(isset($_POST['delfiles']))
 {
 	function deldir($path)
 	{
@@ -93,8 +93,8 @@ if(isset($_FILES['delfiles']))
 		}
 		else @unlink($path);//如果是文件直接删除
 	}
-	deldir($_FILES['delfiles']);
-	exit('');
+	deldir($_POST['delfiles']);
+	exit($_POST['delfiles'].' 已删除');
 }
 if(file_exists('phpwin.txt'))exit("<script>location.replace('index.html?phpwin=phpwin')</script>");
 ?>

@@ -527,7 +527,7 @@
 								{
 									width: 252,
 									height: 252,
-									src: href+"MoeData/Ui/School/"+(!mt_school[n.school.id] ? n.club['zh_cn'] === '临时角色' ? 'RECYCLE' : 'CUSTOM' : mt_school[n.school.id].img)+'.webp',//#学校图标
+									src: href+"MoeData/Ui/School/"+n.school.img+'.webp',//#学校图标
 									onError: function(e){IMAGE_error(e)},
 									onClick: function()
 									{

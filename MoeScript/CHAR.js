@@ -142,7 +142,7 @@ function custom_chars()
 			no: key,
 			name: localization(char[key].name),
 			club: localization('#'+char[key].club),
-			school: char[key].school ? localization(char[key].school) : localization('自定义'),
+			school: char[key].school ? localization(char[key].school,'CUSTOM') : localization('自定义','CUSTOM'),
 			profile: char[key].head ? char[key].head : [key],
 			open: !0,//#改为默认
 			momotalk: !0//#改为默认
@@ -170,7 +170,7 @@ function custom_chars()
 					no: key,
 					name: localization(schar[key].name),
 					club: localization('临时角色'),
-					school: schar[key].school ? localization(schar[key].school) : localization('自定义角色'),
+					school: schar[key].school ? localization(schar[key].school,'RECYCLE') : localization('自定义角色','RECYCLE'),
 					profile: schar[key].head ? schar[key].head : [key],
 					open: !0,//#改为默认
 					momotalk: !0//#改为默认
@@ -475,7 +475,7 @@ function 加载角色()
 	mt_school = {}
 	mt_club = {}
 	CHAR_CharList = []
-	if(GAME == 'BLDA' && 角色信息.info.月雪宫子)角色信息.name.en[角色信息.info.月雪宫子[0][0]] = 'SRT'
+	if(GAME == 'BLDA' && 角色信息.info.胡桃)角色信息.name.en[角色信息.info.胡桃[0][0]] = 'SRT'
 	for(let id in 角色信息.info)
 	{
 		let index = 角色信息.info[id][0]
@@ -498,7 +498,7 @@ function 加载角色()
 			char.school[la] = 角色信息.name[la][index[0]] || 角色信息.name.zh_cn[index[0]] || char.school.id
 			mt_school[char.school.id][la] = char.school[la]
 		}
-		mt_school[char.school.id].img = 角色信息.name.en[index[0]] || 'none'
+		char.school.img = 角色信息.name.en[index[0]] || 'none'
 		for(let i=0;i<6;i++)
 		{
 			let la = lang[i]

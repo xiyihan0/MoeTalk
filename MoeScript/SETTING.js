@@ -1,4 +1,5 @@
 /*@MoeScript/SETTING.js@*/
+var vConsole = new window.VConsole();
 删除文件('更新补丁')
 $('body').on('click',"input",function()
 {

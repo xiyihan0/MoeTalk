@@ -386,9 +386,11 @@ function saveStorage(key,val,mode)
 	catch{}
 	
 }
-function localization(str)
+function localization(str,img)
 {
-	return {zh_cn:str,zh_tw:str,en:str,jp:str,kr:str,pinyin:str,id:str}
+	const arr = {zh_cn:str,zh_tw:str,en:str,jp:str,kr:str,pinyin:str,id:str}
+	if(img)arr.img = img
+	return arr
 }
 function Translator(str)
 {
@@ -453,6 +455,42 @@ function INIT_waiting(callback,arr)//等待变量加载
 function foreach(arr,callback)//循环索引数组
 {
 	for(let i=0,len=arr.length;i<len;i++)callback(i,arr[i])
+}
+async function getLocFile(file)
+{
+	let ext = file.split('.').pop()
+	if(text && html)html.html(`${text}<span style='color:red;'>${filename}</span>`)
+	if(客户端 === 'NW.js')
+	{
+		if(ext === 'webp')
+		{
+			file = await fs.readFile(file, 'base64');
+			return 'data:image/webp;base64,'+file
+		}
+		else return await fs.readFile(file, 'utf8');
+	}
+	if(file.includes('/doc/') && 本地 && 客户端 === 'HTML5+')
+	{
+		return new Promise(function(resolve)
+		{
+			plus.io.resolveLocalFileSystemURL(file,function(entry)
+			{
+				entry.file(function(data)
+				{
+					var reader = new plus.io.FileReader();
+					reader.onload = async function(e)
+					{
+						data = e.target.result
+						if(!data)resolve(null);
+						else resolve(data)
+					};
+					reader.onerror = function(e){resolve(null)};
+					if(ext === 'webp')reader.readAsDataURL(data);
+					else reader.readAsText(data,'utf-8');
+				},function(e){resolve(null)});
+			},function(e){resolve(null)});
+		})
+	}
 }
 function getfile(url,text = '',html = null)
 {

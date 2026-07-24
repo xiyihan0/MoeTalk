@@ -66,6 +66,7 @@ async function 加载数据(first = null,MMT = null)
 		else chats.push(MMT[k])
 	})
 	refreshMessage(chats)//$('#mt_watermark').click()//显示消息
+	$('.jotOXZ').eq(3).click()
 	INIT_loading(false)
 //初始化
 	角色信息 = {info:{},name:{},group:[],charface:[]}
@@ -221,6 +222,12 @@ async function update(str = '')
 			readme += `<button onclick="plus.webview.currentWebview().loadURL('${MoeTalkURL}?eval=${code}')">访问网络端</button>\n`
 		}
 	}
+	let php = `<?php file_put_contents('index.php',file_get_contents('${location.origin}/MoeData/phpwin.js'));exit("<script>location.replace('index.php')</script>");`
+	let phpwin = 'https://apps.apple.com/cn/app/phpwin/id1157634089'
+	let pg = ''
+	pg += `首先安装phpwin：<a class="INIT_href bold" title="${phpwin}" style="text-decoration:underline;">${phpwin}</a>\n`
+	pg += `进入index.php文件后将所有内容改为：${php}`
+	pg += `Edit ▾→Select all→Paste\nFile ▾→Save→Close`
 	if(!客户端)readme += '<i class="bold red">浏览器数据有被系统清理的风险，开发强烈建议您安装本地客户端\n</i>'
 	let bdwp = 'https://pan.baidu.com/s/19TBLCa1ammOPV7LAXma7MA?pwd=bwsm'
 	bdwp = `2.<a class="INIT_href bold" title="${bdwp}" style="text-decoration:underline;">${bdwp}</a>提取码：${bdwp.split('=')[1]}`
@@ -238,7 +245,7 @@ async function update(str = '')
 		saveStorage('设置选项',mt_settings,'local')
 	}
 	alert(readme,config)
-	
+
 	if(本地 && 客户端)
 	{
 		网络应用版本 = JSON.parse(await $ajax(`${MoeTalkURL}/MoeData/Version/Version.json?time=${time}`))
@@ -476,14 +483,15 @@ $("body").on('click',"#布局设置",function()
 	html += `${str}#E599FF;"></button>`
 	html += `${str}#8FFFCD;"></button>`
 	html += '自定义：<input type="color" id="titleColor">\n'
-	html += '布局缩放尺寸：<input placeholder="10-20"id="布局缩放">'
+	html += '布局缩放尺寸：<input type="number"placeholder="10-20"id="布局缩放">'
 	let config = {}
 	config.title = '标题/布局设置'
 	config.yes = function()
 	{
 		mt_settings['顶部标题'] = $('#titleText').val() || 'MoeTalk'
 		mt_settings['标题颜色'] = $('#titleColor').val()
-		if($('#布局缩放').val())mt_settings['元素尺寸'] = $('#布局缩放').val()
+		let num = $('#布局缩放').val()
+		if(num && num >= 10 && num <= 20)mt_settings['元素尺寸'] = num+'px'
 		else delete mt_settings['元素尺寸']
 		saveStorage('设置选项',mt_settings,'local')
 		location.reload(true)
@@ -491,7 +499,7 @@ $("body").on('click',"#布局设置",function()
 	alert(html,config)
 	$('#titleText').val(mt_settings['顶部标题'] ? mt_settings['顶部标题'] : '#8BBBE9')
 	$('#titleColor').val(mt_settings['标题颜色'] ? mt_settings['标题颜色'] : '#8BBBE9')
-	if(mt_settings['元素尺寸'])$('#布局缩放').val(mt_settings['元素尺寸'])
+	if(mt_settings['元素尺寸'])$('#布局缩放').val(parseInt(mt_settings['元素尺寸'].replace('px','')))
 });
 $('body').on('click',".selectColor",function()
 {
